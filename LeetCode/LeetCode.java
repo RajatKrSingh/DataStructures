@@ -2,13 +2,6 @@ package LeetCode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.*;
-import org.apache.commons.codec.digest.DigestUtils;
-
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.MD5;
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_1;
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
-import java.io.*;
 
 public class LeetCode {
 /*
