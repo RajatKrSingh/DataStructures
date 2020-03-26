@@ -31,14 +31,6 @@ public class LeetCode {
         return nums;
     }
 
-    void DisplayList(ListNode lnode)
-    {
-        while(lnode!=null)
-        {
-            System.out.println(lnode.val);
-            lnode = lnode.next;
-        }
-    }
 
 /*
  2. PROBLEM DESCRIPTION (https://leetcode.com/problems/add-two-numbers/)
@@ -51,48 +43,40 @@ public class LeetCode {
         Explanation: 342 + 465 = 807.
 
 */
+
+    public void DisplayList(ListNode lnode)
+    {
+        while(lnode!=null)
+        {
+            System.out.println(lnode.val);
+            lnode = lnode.next;
+        }
+    }
+
     public ListNode addTwoNumbers(ListNode l1, ListNode l2)
     {
-        ListNode target = null,final_result=null;
-        int carry = 0;
-        while(l1!=null && l2!=null)
+        ListNode temp1=l1,temp2=l2;
+        ListNode final_list = new ListNode(0),temp_final = final_list;
+        int sum=0;
+        while(temp1!=null || temp2!=null)
         {
-            ListNode tmp_target = new ListNode((l1.val + l2.val + carry)%10);
-            carry = (int)((l1.val + l2.val + carry)/10);
-            if(target==null)
+            sum /= 10;
+            if(temp1!=null)
             {
-                final_result = tmp_target;
-                target = tmp_target;
+                sum += temp1.val;
+                temp1 = temp1.next;
             }
-            else {
-                target.next = tmp_target;
-                target = tmp_target;
+            if(temp2!=null)
+            {
+                sum += temp2.val;
+                temp2 = temp2.next;
             }
-            l1 = l1.next;
-            l2 = l2.next;
+            temp_final.next = new ListNode(sum%10);
+            temp_final = temp_final.next;
         }
-        while(l1!=null)
-        {
-            ListNode tmp_target = new ListNode((l1.val + carry)%10);
-            carry = (int)((l1.val + carry)/10);
-            target.next = tmp_target;
-            target = tmp_target;
-            l1 = l1.next;
-        }
-        while(l2!=null)
-        {
-            ListNode tmp_target = new ListNode((l2.val + carry)%10);
-            carry = (int)((l2.val + carry)/10);
-            target.next = tmp_target;
-            target = tmp_target;
-            l2 = l2.next;
-        }
-        if(carry==1)
-        {
-            ListNode tmp_target = new ListNode(1);
-            target.next = tmp_target;
-        }
-        return final_result;
+        if(sum/10==1)
+            temp_final.next = new ListNode(1);
+        return final_list.next;
     }
 
 /*
@@ -119,30 +103,14 @@ public class LeetCode {
 */
     public int lengthOfLongestSubstring(String s) {
 
-        int max_till_now = 0,index_start=0,final_max=0;
-        Map<Character,Character> map = new HashMap<>();
-        for(int i=0;i<s.length();i++)
+        int maximum=0,char_map[]= new int[256],j=0;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
         {
-            Character curr = (Character)s.charAt(i);
-            if(map.containsKey(curr))
-            {
-                while(s.charAt(index_start)!=s.charAt(i)) {
-                    map.remove((Character)s.charAt(index_start));
-                    index_start++;
-                    max_till_now--;
-                }
-                index_start++;
-//                System.out.println(index_start+" "+max_till_now);
-            }
-            else
-            {
-                max_till_now++;
-                map.put(curr,curr);
-                if(max_till_now>final_max)
-                    final_max = max_till_now;
-            }
+            j = char_map[s.charAt(iterator_i)]>0? Math.max(char_map[s.charAt(iterator_i)],j):j;
+            char_map[s.charAt(iterator_i)] = iterator_i+1;
+            maximum = Math.max(maximum,iterator_i-j+1);
         }
-        return final_max;
+        return maximum;
     }
 
 /*
@@ -401,6 +369,15 @@ public class LeetCode {
 
     }
 
+    public String intToRoman_opt(int num)
+    {
+        String M[] = {"", "M", "MM", "MMM"};
+        String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
+    }
+
 /*
  8. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-common-prefix/)
     Write a function to find the longest common prefix string amongst an array of strings.
@@ -516,63 +493,27 @@ public class LeetCode {
         Input: 1->2->4, 1->3->4
         Output: 1->1->2->3->4->4
 */
+
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-
-        ListNode mergedlist=null;
-        ListNode firstNode = null;
-        if((l1==null) && (l2==null))
-            return null;
-        if(l1==null)
-            return l2;
-        if(l2==null)
-            return l1;
-
+        ListNode final_result = new ListNode(0),temp_result=final_result;
         while(l1!=null && l2!=null)
         {
-            if(l1.val < l2.val) {
-                if (mergedlist == null) {
-                    mergedlist = new ListNode(l1.val);
-                    firstNode = mergedlist;
-                }
-                else
-                {
-                    ListNode temp = new ListNode(l1.val);
-                    mergedlist.next = temp;
-                    mergedlist = temp;
-                }
+            if(l1.val<l2.val)
+            {
+                temp_result.next = new ListNode(l1.val);
                 l1 = l1.next;
             }
             else
             {
-                if (mergedlist == null) {
-                    mergedlist = new ListNode(l2.val);
-                    firstNode = mergedlist;
-                }
-                else
-                {
-                    ListNode temp = new ListNode(l2.val);
-                    mergedlist.next = temp;
-                    mergedlist = temp;
-                }
+                temp_result.next = new ListNode(l2.val);
                 l2 = l2.next;
             }
+            temp_result = temp_result.next;
         }
-        while(l1!=null)
-        {
-            ListNode temp = new ListNode(l1.val);
-            mergedlist.next = temp;
-            mergedlist = temp;
-            l1 = l1.next;
-        }
-        while(l2!=null)
-        {
-            ListNode temp = new ListNode(l2.val);
-            mergedlist.next = temp;
-            mergedlist = temp;
-            l2 = l2.next;
-        }
-    return firstNode;
+        temp_result.next = l1==null?l2:l1;
+        return final_result.next;
     }
+
 
 /*
 11. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
@@ -589,14 +530,14 @@ public class LeetCode {
 
     Note: It doesn't matter what values are set beyond the returned length.
 */
-    public int removeDuplicates(int[] nums) {
 
-        int last_index=0,index=0;
-        while(index<nums.length)
+    public int removeDuplicates(int[] nums) {
+        int last_index=1,iterator_i=1;
+        while(iterator_i<nums.length)
         {
-            nums[last_index++] = nums[index++];
-            while((index<nums.length)&&(nums[index]==nums[last_index-1]))
-                index++;
+            if(nums[iterator_i]!=nums[iterator_i-1])
+                nums[last_index++] = nums[iterator_i];
+            iterator_i++;
         }
         return last_index;
     }
@@ -659,29 +600,23 @@ public class LeetCode {
         Input: 4
         Output: "1211"
 */
-    public String countAndSay(int n) {
 
-        int curr_arr[] = new int[10000],index=0;
-        String current_line ="1";
-        if(n==1)
-            return current_line;
-        //for loop
-        for(int i=1;i<n;i++) {
-            String new_line = "";
-            index =0;
-            while (index < current_line.length()) {
-                char current_char = current_line.charAt(index);
-                int iteration_of_current_char = 0;
-                while (index < current_line.length() && current_line.charAt(index) == current_char) {
-                    iteration_of_current_char++;
-                    index++;
-                }
-                new_line += (char) (iteration_of_current_char + 48);
-                new_line += (char) (current_char );
+    public String countAndSay(int n) {
+        String final_string="1";
+        for(int iterator_i=1;iterator_i<n;iterator_i++)
+        {
+            int iterator_j=0;String iterator_string="";
+            while(iterator_j<final_string.length())
+            {
+                int current__item_pos = iterator_j;
+                while(iterator_j<final_string.length()-1 && final_string.charAt(iterator_j)==final_string.charAt(iterator_j+1))
+                    iterator_j++;
+                iterator_string += (char)(iterator_j++ -current__item_pos+49) + "" + final_string.charAt(current__item_pos);
+
             }
-            current_line = new_line;
+            final_string = iterator_string;
         }
-        return current_line;
+        return final_string;
     }
 
 /*
@@ -755,28 +690,22 @@ public class LeetCode {
     public int[] plusOne(int[] digits) {
 
         int index=digits.length-1;
-        int carry =1;
         while(index>=0)
         {
-            digits[index] = (digits[index]+carry)%10;
-            if(digits[index]==0)
-                carry=1;
-            else
-                carry=0;
+            if(digits[index]<9) {
+                digits[index]++;
+                return digits;
+            }
+            digits[index]=0;
             index--;
-            if(carry==0)
-                break;
         }
-        if(index==-1 && carry==1)
-        {
-            int new_arr[] = new int[digits.length+1];
-            new_arr[0]=1;
-            for(int i=0;i<digits.length;i++)
-                new_arr[i+1] = digits[i];
-            return new_arr;
-        }
-        return digits;
+        int copy_arr[] = new int[digits.length+1];
+        copy_arr[0] = 1;
+        return copy_arr;
+
     }
+
+
 
 /*
     16. PROBLEM DESCRIPTION (https://leetcode.com/problems/sqrtx/)
@@ -823,28 +752,19 @@ public class LeetCode {
         Input: "Hello World"
         Output: 5
 */
+
     public int lengthOfLastWord(String s) {
-
-        int word_length = 0,index=0;
-        while(index<s.length()&& s.charAt(index)==' ' )
-            index++;
-        while(index<s.length())
+        int iterator_i=s.length()-1;
+        while(iterator_i>0)
         {
-            if(s.charAt(index) == ' ' ) {
-                while(index<s.length() && s.charAt(index)==' ')
-                    index++;
-                if(index==s.length())
-                    return word_length;
-                word_length = 0;
-            }
-            else {
-                word_length++;
-                index++;
-            }
+            while(iterator_i>=0 && s.charAt(iterator_i)==' ')
+                iterator_i--;
+            int curr_last=iterator_i;
+            while(iterator_i>=0 && s.charAt(iterator_i)!=' ')
+                iterator_i--;
+            return curr_last-iterator_i>0? curr_last-iterator_i+(iterator_i<0?1:0):0;
         }
-
-        return word_length;
-
+        return 0;
     }
 
 /*
