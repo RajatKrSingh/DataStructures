@@ -1,4 +1,5 @@
 package LeetCode;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -780,78 +781,29 @@ public class LeetCode {
         Input: a = "1010", b = "1011"
         Output: "10101"
 */
+
     public String addBinary(String a, String b) {
-
-        int index1 = a.length()-1, index2 = b.length()-1;
-        String result = "";
-        if(index1==-1 && index2==-1)
-            return result;
-        else if(index1==-1)
-            return b;
-        else if(index2==-1)
-            return a;
-        int carry=0;
-        while(index1>=0 && index2>=0)
+        int a_len = a.length()-1,b_len = b.length()-1,curr_sum=0;
+        String final_sum="";
+        while(a_len>=0 || b_len>=0)
         {
-            if((int)(a.charAt(index1)) + (int)(b.charAt(index2)) + carry - 96 == 3) {
-                result = '1' + result;
-            }
-            else if((int)(a.charAt(index1)) + (int)(b.charAt(index2)) + carry - 96 == 2)
+            if(a_len>=0)
             {
-                result = '0'+ result;
-                carry =1 ;
+                curr_sum += ((int)a.charAt(a_len))-48;
+                a_len--;
             }
-            else if((int)(a.charAt(index1)) + (int)(b.charAt(index2)) + carry - 96 == 1)
+            if(b_len>=0)
             {
-                result = '1' + result;
-                carry = 0;
+                curr_sum += ((int)b.charAt(b_len))-48;
+                b_len--;
             }
-            else if((int)(a.charAt(index1)) + (int)(b.charAt(index2)) + carry - 96 == 0)
-            {
-                result = '0' + result;
-            }
-            index1--;
-            index2--;
+            final_sum = curr_sum%2 + final_sum;
+            curr_sum = curr_sum>1?1:0;
         }
-        while(index1>=0)
-        {
-            if((int)(a.charAt(index1))+ carry -48 ==2)
-            {
-                result = '0'+ result;
-            }
-            else if((int)(a.charAt(index1))+ carry -48 ==1)
-            {
-                result = '1'+ result;
-                carry=0;
-            }
-            else if((int)(a.charAt(index1))+ carry -48 ==0)
-            {
-                result = '0' + result;
-            }
-            index1--;
-        }
-        while(index2>=0)
-        {
-            if((int)(b.charAt(index2))+ carry -48 ==2)
-            {
-                result = '0'+ result;
-            }
-            else if((int)(b.charAt(index2))+ carry -48 ==1)
-            {
-                result = '1'+ result;
-                carry=0;
-            }
-            else if((int)(b.charAt(index2))+ carry -48 ==0)
-            {
-                result = '0' + result;
-            }
-            index2--;
-        }
-        if(carry==1)
-            result = '1'+ result;
-        return result;
+        if(curr_sum==1)
+            return "1"+final_sum;
+        return  final_sum;
     }
-
 
 /*
 19. PROBLEM DESCRIPTION (https://leetcode.com/problems/climbing-stairs/)
@@ -901,34 +853,13 @@ public class LeetCode {
     Output: [1,2,2,3,5,6]
 */
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-
-        int index1 = m-1,index2=n-1,len=m+n-1;
-        while(index1>=0 && index2>=0)
+        int iterator_i=m-1,iterator_j=n-1;
+        while(iterator_i>=0 || iterator_j>=0)
         {
-            if(nums1[index1] > nums2[index2])
-            {
-                nums1[len] = nums1[index1];
-                index1--;
-                len--;
-            }
+            if(iterator_i<0 ? false : ( iterator_j<0? true : nums1[iterator_i]>nums2[iterator_j]))
+                nums1[iterator_i+iterator_j+1] = nums1[iterator_i--];
             else
-            {
-                nums1[len] = nums2[index2];
-                index2--;
-                len--;
-            }
-        }
-        while(index1>=0)
-        {
-            nums1[len] = nums1[index1];
-            index1--;
-            len--;
-        }
-        while(index2>=0)
-        {
-            nums1[len] = nums2[index2];
-            index2--;
-            len--;
+                nums1[iterator_i+iterator_j+1] = nums2[iterator_j--];
         }
     }
 
@@ -978,10 +909,8 @@ public class LeetCode {
         int max_profit = 0, min_till_now = Integer.MAX_VALUE;
         for(int i=0;i<prices.length;i++)
         {
-            if(prices[i]<min_till_now)
-                min_till_now = prices[i];
-            if(max_profit< prices[i]-min_till_now)
-                max_profit = prices[i] - min_till_now;
+            min_till_now = Math.min(min_till_now,prices[i]);
+            max_profit = Math.max(max_profit,prices[i] - min_till_now);
         }
         return max_profit;
     }
@@ -1016,10 +945,7 @@ public class LeetCode {
 
         int max_profit = 0;
         for(int i=0;i<prices.length-1;i++)
-        {
-            if(prices[i+1]>prices[i])
-                max_profit = max_profit+prices[i+1] - prices[i];
-        }
+                max_profit = prices[i+1]<prices[i]? max_profit : max_profit+prices[i+1] - prices[i];
         return max_profit;
     }
 
@@ -1039,23 +965,16 @@ public class LeetCode {
             Output: false
 */
     public boolean isPalindrome(String s) {
-        if(s.equals(" "))
-            return true;
-        s = s.toLowerCase();
-        int start_index = 0, last_index = s.length()-1;
-        while(start_index<=last_index)
+        int start_index=0,end_index=s.length()-1;
+        while(start_index<end_index)
         {
-            while(start_index<s.length()-1 && !Character.isDigit(s.charAt(start_index)) && !Character.isLetter(s.charAt(start_index)) )
-                start_index++;
-            while(last_index>-1 && !Character.isDigit(s.charAt(last_index)) && !Character.isLetter(s.charAt(last_index))   )
-                last_index--;
-            if(start_index<=last_index)
-            {
-                if(s.charAt(start_index)!=s.charAt(last_index))
+            if(Character.isLetterOrDigit(s.charAt(start_index)) && Character.isLetterOrDigit(s.charAt(end_index)))
+                if(Character.toUpperCase(s.charAt(start_index++)) != Character.toUpperCase(s.charAt(end_index--)))
                     return false;
+            if(!Character.isLetterOrDigit(s.charAt(start_index)))
                 start_index++;
-                last_index--;
-            }
+            if(!Character.isLetterOrDigit(s.charAt(end_index)))
+                end_index--;
         }
         return true;
     }
