@@ -981,63 +981,62 @@ public class LeetCode {
 
 
 /*
-    24. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
-        Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+    24. PROBLEM DESCRIPTION (https://leetcode.com/problems/implement-strstr/)
+        */
 
-        Note: For the purpose of this problem, we define empty string as valid palindrome.
-
-        Example 1:
-            Input: "A man, a plan, a canal: Panama"
-            Output: true
-
-        Example 2:
-            Input: "race a car"
-            Output: false
-*/
-    public void rotate(int[] nums, int k) {
-        k = k% nums.length;
-        int count = 0;
-        int temp = nums[0];
-        for(int i=0;i<k;i++) {
-            int t_temp = nums[i];
-            nums[i] = temp;
-            temp = t_temp;
-            int skip_index = i+k;
-            int j=i;
-            while (skip_index > i ) {
-                temp = nums[skip_index];
-                nums[skip_index] = temp;
-                j = (j+k)%nums.length;
-                skip_index= (skip_index+k)%nums.length;
-                temp = nums[j];
-            }
-        }
-    }
-
-    static String getBits(byte b)
-    {
-        String result = "";
-        for(int i = 0; i < 8; i++)
-            result += (b & (1 << i)) == 0 ? "0" : "1";
-        return result;
-    }
-
-    /* Create Binary Tree
-        -1 : End of tree
-        -2 : Skip the node (null)
-     */
-    public TreeNode CreateTree(Scanner sc )
-    {
-        TreeNode tree = new TreeNode();
-        int iv_val = 0;
-        while(true)
+    public int strStr(String haystack, String needle) {
+        int iterator_i=0,iterator_j;
+        while(iterator_i<haystack.length())
         {
-            if(iv_val == -1 )
-                return tree;
-            else if(iv_val == -2)
-            {
+            iterator_j=0;
+            while(iterator_j<needle.length() && iterator_i+iterator_j<haystack.length() && haystack.charAt(iterator_i+iterator_j) == needle.charAt(iterator_j))
+                iterator_j++;
+            if(iterator_j==needle.length())
+                return iterator_i;
+            iterator_i++;
+        }
+        return (haystack.length()==0 && needle.length()==0)?0:-1;
+    }
 
+    public static int strStr1(String haystack,String needle)
+    {
+        //Create shift table
+        int shift_table[] = new int[256];
+        for(int iterator_i=0;iterator_i<shift_table.length;iterator_i++)
+            shift_table[iterator_i] = needle.length();
+        for(int iterator_i=0;iterator_i<needle.length()-1;iterator_i++)
+            shift_table[needle.charAt(iterator_i)] = needle.length()-1-iterator_i;
+
+        // Create Bad Symbol Table
+        int bad_symbol[] = new int[needle.length()-1];
+        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
+            bad_symbol[iterator_i] = needle.length();
+        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
+        {
+            int iterator_j=needle.length()-2-iterator_i + ((iterator_i==0)?0:1),iterator_k=needle.length()-1;
+            while(iterator_j>=0 && iterator_k>=needle.length()-1-iterator_i)
+            {
+                if(needle.charAt(iterator_j)==needle.charAt(iterator_k))
+                    iterator_k--;
+                else
+                    iterator_k = needle.length()-1;
+                iterator_j--;
             }
+            if(iterator_j<0 || iterator_k<needle.length()-1-iterator_i)
+                bad_symbol[iterator_i] = iterator_k-iterator_j;
+        }
+
+        // Perform actual String Matching
+        int iterator_i = needle.length()-1;
+        while(iterator_i<haystack.length())
+        {
+            int iterator_j = 0;
+            while(iterator_j<needle.length() && needle.charAt(needle.length()-1-iterator_j)==haystack.charAt(iterator_i-iterator_j))
+                iterator_j++;
+            if(iterator_j==needle.length())
+                return iterator_i-iterator_j+1;
+            if(iterator_j==0)
+                iterator_i += shift_table[haystack.charAt()]
 
         }
     }
@@ -1359,11 +1358,13 @@ public class LeetCode {
 //        for(int i=0;i<len;i++)
 //            System.out.print(arr[i]+" ");
 
-
-        System.out.println("rotate is unfinished");
-
-        TreeNode tree1 = obj.CreateTree(sc);
-
+         /** Driver Code for strStr()
+          **
+          */
+            System.out.println("Enter haystack and needle");
+            String haystack = sc.nextLine();
+            String needle = sc.nextLine();
+            obj.strStr1(haystack,needle);
 
     }
 }
