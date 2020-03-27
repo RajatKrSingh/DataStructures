@@ -1,8 +1,6 @@
 package LeetCode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.*;
 
 public class LeetCode {
 /*
@@ -982,24 +980,38 @@ public class LeetCode {
 
 /*
     24. PROBLEM DESCRIPTION (https://leetcode.com/problems/implement-strstr/)
-        */
+        Implement strStr().
+        Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+
+        Example 1:
+            Input: haystack = "hello", needle = "ll"
+            Output: 2
+
+        Example 2:
+            Input: haystack = "aaaaa", needle = "bba"
+            Output: -1
+
+*/
 
     public int strStr(String haystack, String needle) {
-        int iterator_i=0,iterator_j;
-        while(iterator_i<haystack.length())
+        for(int iterator_i=0;;iterator_i++)
         {
-            iterator_j=0;
-            while(iterator_j<needle.length() && iterator_i+iterator_j<haystack.length() && haystack.charAt(iterator_i+iterator_j) == needle.charAt(iterator_j))
-                iterator_j++;
-            if(iterator_j==needle.length())
-                return iterator_i;
-            iterator_i++;
+            for(int iterator_j=0;;iterator_j++)
+            {
+                if(iterator_j==needle.length())
+                    return iterator_i;
+                if(iterator_i+iterator_j==haystack.length())
+                    return -1;
+                if(needle.charAt(iterator_j)!=haystack.charAt(iterator_i+iterator_j))
+                    break;
+            }
         }
-        return (haystack.length()==0 && needle.length()==0)?0:-1;
     }
 
     public static int strStr1(String haystack,String needle)
     {
+        if(needle.length()==0)
+            return 0;
         //Create shift table
         int shift_table[] = new int[256];
         for(int iterator_i=0;iterator_i<shift_table.length;iterator_i++)
@@ -1026,6 +1038,9 @@ public class LeetCode {
                 bad_symbol[iterator_i] = iterator_k-iterator_j;
         }
 
+        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
+            System.out.print(bad_symbol[iterator_i]+" ");
+        System.out.println();
         // Perform actual String Matching
         int iterator_i = needle.length()-1;
         while(iterator_i<haystack.length())
@@ -1035,8 +1050,64 @@ public class LeetCode {
                 iterator_j++;
             if(iterator_j==needle.length())
                 return iterator_i-iterator_j+1;
+
             if(iterator_j==0)
-                iterator_i += shift_table[haystack.charAt()]
+            {
+                iterator_i += shift_table[haystack.charAt(iterator_i)];
+                System.out.println(iterator_i + " " + iterator_j + " ");
+            }
+            else {
+                iterator_i += Math.max(shift_table[haystack.charAt(iterator_i - iterator_j )]-iterator_j, bad_symbol[iterator_j - 1]);
+                System.out.println(iterator_i + " " + iterator_j + " " + shift_table[haystack.charAt(iterator_i - iterator_j )]);
+            }
+        }
+        return -1;
+    }
+
+    /*
+    25. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations/)
+        Given a collection of distinct integers, return all possible permutations.
+
+        Example:
+
+        Input: [1,2,3]
+        Output:
+        [
+            [1,2,3],
+            [1,3,2],
+            [2,1,3],
+            [2,3,1],
+            [3,1,2],
+            [3,2,1]
+        ]
+    */
+    public int[]  create_array_int(Scanner sc) {
+        System.out.println("Enter size of array");
+        int n = sc.nextInt();
+        int created_arr[] = new int[n];
+        System.out.println("Enter elements");
+        for (int iterator_i = 0; iterator_i < n; iterator_i++)
+            created_arr[iterator_i] = sc.nextInt();
+        return created_arr;
+    }
+
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> all_permutations = new ArrayList<List<Integer>>();
+        permute_backtrack(nums,all_permutations,new ArrayList<>());
+        return all_permutations;
+    }
+
+    public static void permute_backtrack(int nums[],List<List<Integer>> all_permutations,List<Integer> curr_perm)
+    {
+        if(curr_perm.size()==nums.length)
+            all_permutations.add(new ArrayList<>(curr_perm));
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(curr_perm.contains(nums[iterator_i])) continue;
+            curr_perm.add(nums[iterator_i]);
+            permute_backtrack(nums,all_permutations,curr_perm);
+            System.out.println(iterator_i);
+            curr_perm.remove(curr_perm.size()-1);
 
         }
     }
@@ -1361,10 +1432,19 @@ public class LeetCode {
          /** Driver Code for strStr()
           **
           */
-            System.out.println("Enter haystack and needle");
-            String haystack = sc.nextLine();
-            String needle = sc.nextLine();
-            obj.strStr1(haystack,needle);
+//            System.out.println("Enter haystack and needle");
+//            String haystack = sc.nextLine();
+//            String needle = sc.nextLine();
+//            System.out.println("Found at: "+obj.strStr1(haystack,needle));
+
+        /** Driver Code for permute()
+         *
+         */
+//            System.out.println("Enter array");
+//            int input_arr[] = obj.create_array_int(sc);
+//            obj.permute(input_arr);
+
+        /** Driver Code
 
     }
 }
