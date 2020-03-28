@@ -1,4 +1,5 @@
 package LeetCode;
+import javax.lang.model.element.Element;
 import java.util.stream.Collectors;
 import java.util.*;
 
@@ -915,7 +916,7 @@ public class LeetCode {
 
 
 /*
-22. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
+23. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
     Say you have an array for which the ith element is the price of a given stock on day i.
     Design an algorithm to find the maximum profit. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).
 
@@ -949,7 +950,7 @@ public class LeetCode {
 
 
 /*
-    23. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
+    24. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
         Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
 
         Note: For the purpose of this problem, we define empty string as valid palindrome.
@@ -979,7 +980,7 @@ public class LeetCode {
 
 
 /*
-    24. PROBLEM DESCRIPTION (https://leetcode.com/problems/implement-strstr/)
+    25. PROBLEM DESCRIPTION (https://leetcode.com/problems/implement-strstr/)
         Implement strStr().
         Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
 
@@ -1065,7 +1066,7 @@ public class LeetCode {
     }
 
     /*
-    25. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations/)
+    26. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations/)
         Given a collection of distinct integers, return all possible permutations.
 
         Example:
@@ -1112,12 +1113,237 @@ public class LeetCode {
         }
     }
 
+    /*
+    27. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations-ii/)
+        Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+        Example:
+
+        Input: [1,1,2]
+        Output:
+        [
+            [1,1,2],
+            [1,2,1],
+            [2,1,1]
+        ]
+    */
+
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        Arrays.sort(nums);
+        permuteUniqueBacktrack(nums,new boolean[nums.length],new ArrayList<Integer>(),list);
+        return list;
+    }
+
+    public boolean isPermuteReached(boolean[] position_visited_flag)
+    {
+        for(boolean value: position_visited_flag){
+            if(!value){ return false;}
+        }
+        return true;
+    }
+
+    public void permuteUniqueBacktrack(int[] nums,boolean[] position_visited_flag,List curr_perm,List<List<Integer>> list)
+    {
+        if(isPermuteReached(position_visited_flag))
+        {
+            list.add(new ArrayList<>(curr_perm));
+            return;
+        }
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(position_visited_flag[iterator_i]==true || (iterator_i>0 && nums[iterator_i-1]==nums[iterator_i] && !position_visited_flag[iterator_i-1]))
+                continue;
+            position_visited_flag[iterator_i]=true;
+            curr_perm.add(nums[iterator_i]);
+            permuteUniqueBacktrack(nums,position_visited_flag,curr_perm,list);
+            curr_perm.remove(curr_perm.size()-1);
+            position_visited_flag[iterator_i] = false;
+        }
+    }
+
+    /*
+    28. PROBLEM DESCRIPTION (https://leetcode.com/problems/multiply-strings/)
+        Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2, also represented as a string.
+
+        Example 1:
+        Input: num1 = "2", num2 = "3"
+        Output: "6"
+
+        Example 2:
+        Input: num1 = "123", num2 = "456"
+        Output: "56088"
+    */
+
+    public String multiply(String num1, String num2)
+    {
+        int final_product[] = new int[num1.length()+num2.length()],carry=0;
+        String product_str="";
+        for(int iterator_i=num1.length()-1;iterator_i>=0;iterator_i--)
+        {
+            for (int iterator_j = num2.length() - 1; iterator_j >= 0; iterator_j--)
+            {
+                int temp=carry;
+                carry = (temp + final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] + (int) (num1.charAt(iterator_i) - 48) * (int) (num2.charAt(iterator_j) - 48)) / 10;
+                final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] = (temp + final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] + (int) (num1.charAt(iterator_i) - 48) * (int) (num2.charAt(iterator_j) - 48)) % 10;
+            }
+            final_product[num2.length()+num1.length()-1-iterator_i] += carry;
+            carry=0;
+        }
+        int last_pos=final_product.length-1;
+        while(last_pos>0 && final_product[last_pos]==0)
+            last_pos--;
+        for(int digits:Arrays.copyOfRange(final_product,0,last_pos+1))
+            product_str = digits+product_str;
+        return carry>0?carry+product_str:product_str;
+    }
+
+    /*
+    28. PROBLEM DESCRIPTION (http://leetcode.com/problems/generate-parentheses/)
+        Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+        For example, given n = 3, a solution set is:
+        [
+          "((()))",
+          "(()())",
+          "(())()",
+          "()(())",
+          "()()()"
+        ]
+    */
+
+    public List<String> generateParenthesis(int n)
+    {
+        List<String> list = new ArrayList<String>();
+        generateParenthesisBacktrack(list,0,"",n*2);
+        return list;
+    }
+
+    public void generateParenthesisBacktrack(List<String> list,int bracket_count,String current_string,int n)
+    {
+        if(current_string.length()==n)
+        {
+            if(bracket_count==0)
+                list.add(current_string);
+            return;
+        }
+        if(bracket_count>0)
+            generateParenthesisBacktrack(list,bracket_count-1,new String(current_string+")"),n);
+        if(bracket_count<n/2)
+            generateParenthesisBacktrack(list,bracket_count+1,new String(current_string+"("),n);
+    }
+
+    /*
+    30. PROBLEM DESCRIPTION (https://leetcode.com/problems/combination-sum/)
+
+        Given a set of candidate numbers (candidates) (without duplicates) and a target number (target), find all unique combinations in candidates where the candidate numbers sums to target.
+        The same repeated number may be chosen from candidates unlimited number of times.
+
+        Note:
+        All numbers (including target) will be positive integers.
+        The solution set must not contain duplicate combinations.
+
+        Example 1:
+        Input: candidates = [2,3,6,7], target = 7,
+        A solution set is:
+        [
+            [7],
+            [2,2,3]
+        ]
+    */
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        Arrays.sort(candidates);
+        combinationSumBacktrack(list,target,new ArrayList<Integer>(),0,candidates,0);
+        return list;
+    }
+
+    public static void combinationSumBacktrack(List<List<Integer>> list,int target,List current_items,int current_sum,int[] candidates,int current_item)
+    {
+        for(int iterator_i=current_item;iterator_i<candidates.length;iterator_i++)
+        {
+            if(current_sum+candidates[iterator_i]==target)
+            {
+                current_items.add(candidates[iterator_i]);
+                list.add(new ArrayList<>(current_items));
+                current_items.remove(current_items.size()-1);
+                return;
+            }
+            if(current_sum+candidates[iterator_i]<target)
+            {
+                current_items.add(candidates[iterator_i]);
+                combinationSumBacktrack(list, target,current_items , current_sum+candidates[iterator_i], candidates, iterator_i);
+                current_items.remove(current_items.size()-1);
+            }
+            else
+                return;
+        }
+    }
+
+    /*
+    31. PROBLEM DESCRIPTION (https://leetcode.com/problems/combination-sum-ii/)
+        Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sums to target.
+        Each number in candidates may only be used once in the combination.
+
+        Note:
+        All numbers (including target) will be positive integers.
+        The solution set must not contain duplicate combinations.
+
+        Example 1:
+        Input: candidates = [10,1,2,7,6,1,5], target = 8,
+        A solution set is:
+        [
+            [1, 7],
+            [1, 2, 5],
+            [2, 6],
+            [1, 1, 6]
+        ]
+    */
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        Arrays.sort(candidates);
+        combinationSumBacktrack2(list,target,new ArrayList<Integer>(),0,candidates,-1);
+        return list;
+    }
+
+    public static void combinationSumBacktrack2(List<List<Integer>> list,int target,List current_items,int current_sum,int[] candidates,int current_item)
+    {
+        System.out.print("pos:"+current_item+":"+current_sum+" ");
+        for(Object e:current_items)
+            System.out.print(e.toString()+" ");
+        System.out.println();
+        for(int iterator_i=current_item+1;iterator_i<candidates.length;iterator_i++)
+        {
+            if(current_sum+candidates[iterator_i]==target)
+            {
+                current_items.add(candidates[iterator_i]);
+                for(Object e:current_items)
+                    System.out.print(e.toString()+" ");
+                System.out.println();
+                list.add(new ArrayList<>(current_items));
+                current_items.remove(current_items.size()-1);
+                return;
+            }
+            if(current_sum+candidates[iterator_i]<target)
+            {
+                if((iterator_i==current_item+1)||(candidates[iterator_i]!=candidates[iterator_i-1])) {
+                    current_items.add(candidates[iterator_i]);
+                    combinationSumBacktrack2(list, target, current_items, current_sum + candidates[iterator_i], candidates, iterator_i);
+                    current_items.remove(current_items.size() - 1);
+                }
+            }
+            else
+                return;
+        }
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
         LeetCode obj = new LeetCode();
 
-        /** Driver Code for twoSum
+        /** Driver Code for Q1. twoSum
          **
          */
 //
@@ -1137,7 +1363,7 @@ public class LeetCode {
 //
 //        System.out.println(result[0]+" "+result[1]);
 
-        /** Driver Code for addTwoNumbers
+        /** Driver Code for Q2. addTwoNumbers
          **
          */
 //        int len1,len2;
@@ -1175,7 +1401,7 @@ public class LeetCode {
 //        obj.DisplayList(obj.addTwoNumbers(firstList, secondList));
 
 
-        /** Driver Code for lengthOfLongestSubstring
+        /** Driver Code for Q3. lengthOfLongestSubstring
          **
          */
 //        System.out.println("Enter string\n");
@@ -1183,7 +1409,7 @@ public class LeetCode {
 //        System.out.println(obj.lengthOfLongestSubstring(str));
 
 
-        /** Driver Code for reverse
+        /** Driver Code for Q4. reverse
          **
          */
 
@@ -1191,7 +1417,7 @@ public class LeetCode {
 //        int num = sc.nextInt();
 //        System.out.println(obj.reverse(num));
 
-        /** Driver Code for myAtoi
+        /** Driver Code for Q5. myAtoi
          **
          */
 
@@ -1199,7 +1425,7 @@ public class LeetCode {
 //        String str = sc.next();
 //        System.out.println(obj.myAtoi(str));
 
-        /** Driver Code for isPalindrome
+        /** Driver Code for Q6. isPalindrome
          **
          */
 
@@ -1207,14 +1433,14 @@ public class LeetCode {
 //        int num = sc.nextInt();
 //        System.out.println(obj.isPalindrome(num));
 
-        /** Driver Code for intToRoman
+        /** Driver Code for Q7. intToRoman
          **
          */
 //        System.out.println("Enter number");
 //        int num = sc.nextInt();
 //        System.out.println(obj.intToRoman(num));
 
-        /** Driver Code for longestCommonPrefix
+        /** Driver Code for Q8. longestCommonPrefix
          **
          */
 //        System.out.println("Enter number of string");
@@ -1224,14 +1450,14 @@ public class LeetCode {
 //            str[i] = sc.next();
 //        System.out.println(obj.longestCommonPrefix(str));
 
-        /** Driver Code for isValid
+        /** Driver Code for Q9. isValid
          **
          */
 //        System.out.println("Enter string");
 //        String str = sc.next();
 //        System.out.println(obj.isValid(str));
 
-        /** Driver Code for mergeTwoLists
+        /** Driver Code for Q10. mergeTwoLists
          **
          */
 //        int len1,len2;
@@ -1269,7 +1495,7 @@ public class LeetCode {
 //        obj.DisplayList(obj.mergeTwoLists(firstList, secondList));
 
 
-        /** Driver Code for removeDuplicates
+        /** Driver Code for Q11. removeDuplicates
          **
          */
 //        System.out.println("Enter length");
@@ -1279,7 +1505,7 @@ public class LeetCode {
 //            arr[i] = sc.nextInt();
 //        obj.removeDuplicates(arr);
 
-        /** Driver Code for removeElement
+        /** Driver Code for Q12. removeElement
          **
          */
 //        System.out.println("Enter length");
@@ -1291,14 +1517,14 @@ public class LeetCode {
 //        int val=sc.nextInt();
 //        obj.removeElement(arr,val);
 
-        /** Driver Code for countAndSay
+        /** Driver Code for Q13. countAndSay
          **
          */
 //        System.out.println("Enter n");
 //        int n = sc.nextInt();
 //        obj.countAndSay(n);
 
-        /** Driver Code for searchInsert
+        /** Driver Code for Q14. searchInsert
          **
          */
 //        System.out.println("Enter length of array");
@@ -1311,7 +1537,7 @@ public class LeetCode {
 //        System.out.println(obj.searchInsert(arr,target));
 
 
-        /** Driver Code for plusOne
+        /** Driver Code for Q15. plusOne
          **
          */
 //        System.out.println("Enter length");
@@ -1321,14 +1547,14 @@ public class LeetCode {
 //            digits[i] = sc.nextInt();
 //        obj.plusOne(digits);
 
-        /** Driver Code for mySqrt
+        /** Driver Code for Q16. mySqrt
          **
          */
 //        System.out.println("Enter number");
 //        int square = sc.nextInt();
 //        System.out.println(obj.mySqrt(square));
 
-        /** Driver Code for lengthOfLastWord
+        /** Driver Code for Q17. lengthOfLastWord
          **
          */
 //        System.out.println("Enter String");
@@ -1337,7 +1563,7 @@ public class LeetCode {
 //        System.out.println(obj.lengthOfLastWord(str));
 
 
-        /** Driver Code for addBinary
+        /** Driver Code for Q18. addBinary
          **
          */
 //        System.out.println("Enter binary strings");
@@ -1345,7 +1571,7 @@ public class LeetCode {
 //        String bin2 = sc.next();
 //        System.out.println(obj.addBinary(bin1,bin2));
 
-        /** Driver Code for climbStairs
+        /** Driver Code for Q19. climbStairs
          **
          */
 //        System.out.println("Enter n");
@@ -1353,7 +1579,7 @@ public class LeetCode {
 //        System.out.println(obj.climbStairs(n));
 
 
-        /** Driver Code for merge
+        /** Driver Code for Q20. merge
         **
         */
 //        System.out.println("Enter array lengths");
@@ -1372,7 +1598,7 @@ public class LeetCode {
 //        for(int i=0;i<len1+len2;i++)
 //            System.out.print( arr1[i] + " ");
 
-        /** Driver Code for singleNumber
+        /** Driver Code for Q21. singleNumber
          **
          */
 //        System.out.println("Enter length");
@@ -1384,7 +1610,7 @@ public class LeetCode {
 //
 //        System.out.println(obj.singleNumber(arr));
 
-        /** Driver Code for maxProfit
+        /** Driver Code for Q22. maxProfit
          **
          */
 //        System.out.println("Enter length ");
@@ -1395,7 +1621,7 @@ public class LeetCode {
 //
 //        System.out.println(obj.maxProfit(arr));
 
-        /** Driver Code for maxProfit1
+        /** Driver Code for Q23. maxProfit1
          **
          */
 //        System.out.println("Enter length ");
@@ -1406,30 +1632,15 @@ public class LeetCode {
 //
 //        System.out.println(obj.maxProfit1(arr));
 
-        /** Driver Code for isPalindrome
+        /** Driver Code for Q24. isPalindrome
          **
          */
 //        System.out.println("Enter string");
 //        String str = sc.nextLine();
 //        System.out.println(obj.isPalindrome(str));
 
-        /** Driver Code for rotate
-         **
-         */
-//        System.out.println("Enter length");
-//        int len = sc.nextInt();
-//        System.out.println("Enter k");
-//        int k = sc.nextInt();
-//        int arr[] = new int[len];
-//        for(int i=0;i<len;i++)
-//            arr[i] = sc.nextInt();
-//
-//        obj.rotate(arr,k);
-//
-//        for(int i=0;i<len;i++)
-//            System.out.print(arr[i]+" ");
 
-         /** Driver Code for strStr()
+         /** Driver Code for Q25. strStr()
           **
           */
 //            System.out.println("Enter haystack and needle");
@@ -1437,14 +1648,44 @@ public class LeetCode {
 //            String needle = sc.nextLine();
 //            System.out.println("Found at: "+obj.strStr1(haystack,needle));
 
-        /** Driver Code for permute()
+        /** Driver Code for Q26. permute()
          *
          */
 //            System.out.println("Enter array");
 //            int input_arr[] = obj.create_array_int(sc);
 //            obj.permute(input_arr);
 
-        /** Driver Code
+        /** Driver Code for Q27. permuteUnique()
+         *
+         */
+//            System.out.println("Enter array");
+//            int input_arr[] = obj.create_array_int(sc);
+//            obj.permuteUnique(input_arr);
 
+        /** Driver Code for Q28. multiply()
+         *
+         */
+//            System.out.println("Enter numbers");
+//            System.out.println(obj.multiply(sc.next(),sc.next()));
+
+        /** Driver Code for Q29. generateParenthesis()
+         *
+         */
+//        System.out.println("Enter n");
+//        obj.generateParenthesis(sc.nextInt());
+
+        /** Driver Code for Q30.combinationSum
+         *
+         */
+//        int candidates[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        obj.combinationSum(candidates,sc.nextInt());
+
+        /** Driver Code for Q31.combinationSum
+         *
+         */
+//        int candidates[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        obj.combinationSum2(candidates,sc.nextInt());
     }
 }
