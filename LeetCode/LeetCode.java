@@ -1338,6 +1338,235 @@ public class LeetCode {
         }
     }
 
+    /*
+    32. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-sudoku/)
+        Determine if a 9x9 Sudoku board is valid. Only the filled cells need to be validated according to the following rules:
+
+        Each row must contain the digits 1-9 without repetition.
+        Each column must contain the digits 1-9 without repetition.
+        Each of the 9 3x3 sub-boxes of the grid must contain the digits 1-9 without repetition.
+    */
+
+    public boolean isValidSudoku(char[][] board) {
+        HashSet<String> hset = new HashSet<>();
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+            {
+                if(board[iterator_i][iterator_j]!='.')
+                {
+                    if(!hset.add(iterator_i+"-"+board[iterator_i][iterator_j]) ||!hset.add("-"+board[iterator_i][iterator_j]+""+iterator_j)||!hset.add(iterator_i/3+"-"+board[iterator_i][iterator_j]+""+iterator_j/3))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /*
+    33. PROBLEM DESCRIPTION (https://leetcode.com/problems/sudoku-solver/)
+        Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+        A sudoku solution must satisfy all of the following rules:
+
+        Each of the digits 1-9 must occur exactly once in each row.
+        Each of the digits 1-9 must occur exactly once in each column.
+        Each of the the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.
+        Empty cells are indicated by the character '.'.
+    */
+
+    public void solveSudoku(char[][] board) {
+        solveSudokuBacktrack(board,0,0);
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+                System.out.print(board[iterator_i][iterator_j]+" ");
+            System.out.println();
+        }
+    }
+
+    public static boolean isSudokuValid(char[][] board,int row_current,int column_current,char value)
+    {
+        //Column Elements Check
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+            if(board[iterator_i][column_current]==value)
+                return false;
+
+        //Row Elements Check
+        for(int iterator_i=0;iterator_i<board[0].length;iterator_i++)
+            if(board[row_current][iterator_i]==value)
+                return false;
+
+        //Subsection check
+        for(int iterator_i=3*(row_current/3);iterator_i<3*(row_current/3) + 3;iterator_i++)
+        {
+            for(int iterator_j=3*(column_current/3);iterator_j<3*(column_current/3)+3;iterator_j++)
+                if(board[iterator_i][iterator_j]==value)
+                    return false;
+        }
+        return true;
+    }
+
+    public static boolean solveSudokuBacktrack(char[][] board,int row_current,int column_current)
+    {
+        //System.out.println(row_current+""+column_current+" "+((board[0].length)-1));
+        if(board[row_current][column_current]!='.')
+        {
+            if(row_current==board.length-1 && column_current==board[0].length-1)
+                return true;
+            if(solveSudokuBacktrack(board,column_current==board[0].length-1? row_current+1:row_current,column_current==board[0].length-1?0:column_current+1))
+                return true;
+        }
+        else
+        {
+            for (char iterator_i = '1'; iterator_i <= '9'; iterator_i++) {
+                if (isSudokuValid(board, row_current, column_current, iterator_i)) {
+                    board[row_current][column_current] = iterator_i;
+                    if (row_current == board.length - 1 && column_current == board[0].length - 1)
+                        return true;
+                    if (solveSudokuBacktrack(board, column_current == board[0].length - 1 ? row_current + 1 : row_current, column_current == board[0].length - 1 ? 0 : column_current + 1))
+                        return true;
+                    board[row_current][column_current] = '.';
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+    34. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum/)
+        Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+        Note:
+            The solution set must not contain duplicate triplets.
+
+        Example:
+        Given array nums = [-1, 0, 1, 2, -1, -4],
+        A solution set is:
+        [
+            [-1, 0, 1],
+            [-1, -1, 2]
+        ]
+    */
+
+
+
+    public List<List<Integer>> threeSum(int[] nums)
+    {
+        List<List<Integer>> list = new ArrayList<>();
+        Arrays.sort(nums);
+        int iterator_i=0;
+        while(iterator_i<nums.length-2)
+        {
+            if(iterator_i==0 || nums[iterator_i]!=nums[iterator_i-1])
+            {
+                int l_pos = iterator_i + 1, r_pos = nums.length - 1;
+                while (l_pos < r_pos)
+                {
+                    if ((l_pos != iterator_i + 1 && nums[l_pos] == nums[l_pos - 1])||(nums[iterator_i] + nums[l_pos] + nums[r_pos] < 0))
+                        l_pos++;
+                    else if ((r_pos != nums.length - 1 && nums[r_pos] == nums[r_pos + 1])||(nums[iterator_i] + nums[l_pos] + nums[r_pos] > 0))
+                        r_pos--;
+                    else {
+                        list.add(Arrays.asList(nums[iterator_i], nums[l_pos], nums[r_pos]));
+                        l_pos++;
+                        r_pos--;
+                    }
+                }
+            }
+            iterator_i++;
+        }
+        return list;
+    }
+
+    /*
+    34. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum-closest/)
+        Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+        Example:
+        Given array nums = [-1, 2, 1, -4], and target = 1.
+        The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+    */
+
+    public int threeSumClosest(int[] nums, int target) {
+        int min_diff = Integer.MAX_VALUE,iterator_i=0;
+        while(iterator_i<nums.length-2)
+        {
+            int l_pos=iterator_i+1,r_pos=nums.length-1;
+            while(l_pos<r_pos)
+            {
+                System.out.println(l_pos+" "+r_pos);
+                if(Math.abs(nums[iterator_i]+nums[l_pos]+nums[r_pos]-target)<Math.abs(min_diff))
+                    min_diff = nums[iterator_i]+nums[l_pos]+nums[r_pos]-target;
+                if(nums[iterator_i]+nums[l_pos]+nums[r_pos]-target<0)
+                    l_pos++;
+                else
+                    r_pos--;
+            }
+            iterator_i++;
+        }
+        return min_diff+target;
+    }
+
+    /*
+    35. PROBLEM DESCRIPTION (https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
+        Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+        A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+        Input: "23"
+        Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+    */
+
+    public List<String> letterCombinations(String digits)
+    {
+        List<String> list= new ArrayList<String>();
+        String vocabulary[] = {"abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+        letterCombinationsBacktrack(list,digits,0,vocabulary,new StringBuilder());
+        return list;
+    }
+
+    public static void letterCombinationsBacktrack(List<String> list,String digits,int position,String[] vocabulary,StringBuilder curr_elements)
+    {
+        if(position==digits.length())
+        {
+            if(curr_elements.toString().length()>0)
+                list.add(curr_elements.toString());
+            return;
+        }
+        for(int iterator_i=0;iterator_i<vocabulary[digits.charAt(position)-50].length();iterator_i++)
+        {
+            curr_elements.append(vocabulary[digits.charAt(position)-50].charAt(iterator_i));
+            letterCombinationsBacktrack(list,digits,position+1,vocabulary,curr_elements);
+            curr_elements.deleteCharAt(curr_elements.length()-1);
+        }
+    }
+
+    /*
+    36. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-valid-parentheses/)
+        Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+        Example 1:
+        Input: "(()"
+        Output: 2
+        Explanation: The longest valid parentheses substring is "()"
+        Space not optimized
+    */
+
+    public int longestValidParentheses(String s)
+    {
+        if(s.length()==0)
+            return 0;
+        int max_valid[]=new int[s.length()];
+        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
+        {
+            if(s.charAt(iterator_i) == ')' && s.charAt(iterator_i-1)=='(')
+                max_valid[iterator_i] = iterator_i<2?2:Math.max(max_valid[iterator_i], max_valid[iterator_i - 2] + 2);
+            else if(s.charAt(iterator_i) == ')' && s.charAt(iterator_i-1)==')' && iterator_i -1-max_valid[iterator_i-1]>=0 && s.charAt(iterator_i -1-max_valid[iterator_i-1])=='(')
+                max_valid[iterator_i] = Math.max(max_valid[iterator_i], max_valid[iterator_i-1]+2+((iterator_i -1-max_valid[iterator_i-1]>0)?max_valid[iterator_i -2-max_valid[iterator_i-1]]:0));
+        }
+        Arrays.sort(max_valid);
+        return max_valid[max_valid.length-1];
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -1681,11 +1910,62 @@ public class LeetCode {
 //        System.out.println("Enter target");
 //        obj.combinationSum(candidates,sc.nextInt());
 
-        /** Driver Code for Q31.combinationSum
+        /** Driver Code for Q31.combinationSum2
          *
          */
 //        int candidates[] = obj.create_array_int(sc);
 //        System.out.println("Enter target");
 //        obj.combinationSum2(candidates,sc.nextInt());
+
+        /** Driver Code for Q32.isValidSudoku
+         *
+         */
+//        System.out.println("Enter board");
+//        char board[][] = new char[9][9];
+//        for(int iterator_i=0;iterator_i<9;iterator_i++)
+//            for(int iterator_j=0;iterator_j<9;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.next().charAt(0);
+//        obj.isValidSudoku(board);
+
+        /** Driver Code for Q33.solveSudoku
+         *
+         */
+//        System.out.println("Enter board");
+//        char board[][] ={{'5','3','.','.','7','.','.','.','.'},
+//                        {'6','.','.','1','9','5','.','.','.'},
+//                        {'.','9','8','.','.','.','.','6','.'},
+//                        {'8','.','.','.','6','.','.','.','3'},
+//                        {'4','.','.','8','.','3','.','.','1'},
+//                        {'7','.','.','.','2','.','.','.','6'},
+//                        {'.','6','.','.','.','.','2','8','.'},
+//                        {'.','.','.','4','1','9','.','.','5'},
+//                        {'.','.','.','.','8','.','.','7','9'}
+//                        };
+//        obj.solveSudoku(board);
+
+        /** Driver Code for Q34.threeSum
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.threeSum(input_arr);
+
+        /** Driver Code for Q34.threeSumClosest
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        System.out.println("Closest Sum is: " +obj.threeSumClosest(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q35.letterCombinations
+         *
+         */
+//        System.out.println("Enter numbers");
+//        obj.letterCombinations(sc.next());
+
+        /** Driver Code for Q35.longestValidParentheses
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println(obj.longestValidParentheses(sc.next()));
     }
 }
