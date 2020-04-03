@@ -1567,6 +1567,130 @@ public class LeetCode {
         return max_valid[max_valid.length-1];
     }
 
+    /*
+    37. PROBLEM DESCRIPTION (https://leetcode.com/problems/decode-ways/)
+        A message containing letters from A-Z is being encoded to numbers using the following mapping:
+
+        'A' -> 1
+        'B' -> 2
+        ...
+        'Z' -> 26
+        Given a non-empty string containing only digits, determine the total number of ways to decode it.
+    */
+    public int numDecodings(String s)
+    {
+        if(s.length()==0)
+            return 0;
+        int num_decodings[] = new int[s.length()+1];
+        num_decodings[0] = 1;
+        num_decodings[1] = s.charAt(0)=='0'?0:1;
+        for(int iterator_i=2;iterator_i<num_decodings.length;iterator_i++)
+        {
+            if(s.charAt(iterator_i-1)!='0')
+                num_decodings[iterator_i] = num_decodings[iterator_i-1];
+            if(s.charAt(iterator_i-2)<'3' && (s.charAt(iterator_i-2)=='2'?s.charAt(iterator_i-1)<'7':true) && s.charAt(iterator_i-2)!='0')
+                num_decodings[iterator_i] += num_decodings[iterator_i-2];
+        }
+        return num_decodings[num_decodings.length-1];
+    }
+
+    /*
+    38. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/)
+        Given an integer array arr and a target value target, return the integer value such that when we change all the integers larger than value in the given array to be equal to value, the sum of the array gets as close as possible (in absolute difference) to target.
+
+        In case of a tie, return the minimum such integer.
+        Notice that the answer is not neccesarilly a number from arr.
+
+        Example 1:
+
+            Input: arr = [4,9,3], target = 10
+            Output: 3
+            Explanation: When using 3 arr converts to [3, 3, 3] which sums 9 and that's the optimal answer.
+    */
+
+    public static int findClosestposition(int[] arr,int value)
+    {
+        int lb=0,ub=arr.length-1,mid=0;
+        while(lb<=ub)
+        {
+            mid = (lb+ub)/2;
+            if(arr[mid]==value ||( mid>0 && arr[mid]>value && arr[mid-1]<value)||(mid==0 && arr[mid]>value))
+                return mid;
+            else if(arr[mid]<value)
+                lb = mid+1;
+            else
+                ub = mid-1;
+        }
+        return mid;
+    }
+
+    public int findBestValue(int[] arr, int target)
+    {
+        Arrays.sort(arr);
+        int lb = arr[0],ub=arr[arr.length-1],sum_arr[] = new int[arr.length+1],current_closest_val=Integer.MAX_VALUE,current_best_value=-1;
+        for(int iterator_i=1;iterator_i<=arr.length;iterator_i++)
+            sum_arr[iterator_i] = sum_arr[iterator_i-1]+arr[iterator_i-1];
+        if(target<arr[0]*arr.length)
+            return (int)(Math.round(1.0*target/arr.length));
+        while(lb<=ub)
+        {
+            int mid = (lb+ub)/2,pos_mid = findClosestposition(arr,mid);
+            System.out.println(lb+" "+ub+" "+pos_mid+" "+(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target));
+            if(current_closest_val==Integer.MAX_VALUE || Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)<Math.abs(current_closest_val)|| mid<current_best_value && Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)==Math.abs(current_closest_val))
+            {
+                current_closest_val = sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target;
+                current_best_value = mid;
+            }
+            if(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target<0)
+                lb = mid+1;
+            else if(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target>0)
+                ub = mid-1;
+            else
+                return current_best_value;
+        }
+        return current_best_value;
+    }
+
+    /*
+    39. PROBLEM DESCRIPTION (https://leetcode.com/problems/happy-number/)
+        A happy number is a number defined by the following process: Starting with any positive integer, replace the number by the sum of the squares of its digits, and repeat the process until the number equals 1 (where it will stay), or it loops endlessly in a cycle which does not include 1. Those numbers for which this process ends in 1 are happy numbers.
+
+        Example:
+        Input: 19
+        Output: true
+        Explanation:
+            1^2 + 9^2 = 82
+            8^2 + 2^2 = 68
+            6^2 + 8^2 = 100
+            1^2 + 0^2 + 0^2 = 1
+    */
+
+    public boolean isHappy(int n) {
+        HashSet<String> hset = new HashSet<>();
+        int new_number=0;
+        while(true)
+        {
+            char curr_temp[] = new char[1];
+            int sum=0;
+            while(n!=0)
+            {
+                curr_temp[curr_temp.length-1] = (char)(n%10+48);
+                sum += n%10;
+                curr_temp = Arrays.copyOf(curr_temp,curr_temp.length+1);
+                new_number += Math.pow((n%10),2);
+                n /= 10;
+            }
+            if(sum==1)
+                return true;
+            n = new_number;
+            new_number=0;
+            Arrays.sort(curr_temp);
+            if(!hset.add(new String(curr_temp)))
+                return false;
+            System.out.println(n+":"+sum);
+        }
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -1962,10 +2086,29 @@ public class LeetCode {
 //        System.out.println("Enter numbers");
 //        obj.letterCombinations(sc.next());
 
-        /** Driver Code for Q35.longestValidParentheses
+        /** Driver Code for Q36.longestValidParentheses
          *
          */
 //        System.out.println("Enter string");
 //        System.out.println(obj.longestValidParentheses(sc.next()));
+
+        /** Driver Code for Q37. numDecodings
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println(obj.numDecodings(sc.next()));
+
+        /** Driver Code for Q38.findBestValue
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        System.out.println(obj.findBestValue(input_arr, sc.nextInt()));
+
+
+        /** Driver Code for Q39.isHappy
+         *
+         */
+//        obj.isHappy(23);
     }
 }
