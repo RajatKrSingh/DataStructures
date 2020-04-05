@@ -1,4 +1,6 @@
 package LeetCode;
+import sun.reflect.generics.tree.Tree;
+
 import javax.lang.model.element.Element;
 import java.util.stream.Collectors;
 import java.util.*;
@@ -1635,7 +1637,6 @@ public class LeetCode {
         while(lb<=ub)
         {
             int mid = (lb+ub)/2,pos_mid = findClosestposition(arr,mid);
-            System.out.println(lb+" "+ub+" "+pos_mid+" "+(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target));
             if(current_closest_val==Integer.MAX_VALUE || Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)<Math.abs(current_closest_val)|| mid<current_best_value && Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)==Math.abs(current_closest_val))
             {
                 current_closest_val = sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target;
@@ -1689,6 +1690,267 @@ public class LeetCode {
                 return false;
             System.out.println(n+":"+sum);
         }
+    }
+
+    /*
+    40. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-inorder-traversal/)
+        Given a binary tree, return the inorder traversal of its nodes' values.
+
+        Example:
+        Input: [1,null,2,3]
+          1
+           \
+            2
+           /
+          3
+
+        Output: [1,3,2]
+    */
+
+    public static TreeNode create_binary_tree(TreeNode input_treenode, Scanner sc)
+    {
+        System.out.println("Enter value");
+        int val = sc.nextInt();
+        if(val==-1)
+            return input_treenode;
+        input_treenode = new TreeNode(val);
+        System.out.println("Left Node of "+val);
+        input_treenode.left =  create_binary_tree(input_treenode.left,sc);
+        System.out.println("Right node of "+val);
+        input_treenode.right = create_binary_tree(input_treenode.right,sc);
+        return input_treenode;
+    }
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+        Stack node_stack = new Stack();
+        List<Integer> list = new ArrayList<>();
+        TreeNode current_node = root;
+        while(!node_stack.empty() || current_node!=null)
+        {
+            while(current_node!=null)
+            {
+                node_stack.push(current_node);
+                current_node = current_node.left;
+            }
+            while(current_node==null && !node_stack.empty())
+            {
+                list.add(((TreeNode) (node_stack.peek())).val);
+                System.out.print(((TreeNode) (node_stack.peek())).val+" ");
+                current_node = ((TreeNode) (node_stack.pop())).right;
+            }
+        }
+        return list;
+    }
+
+    /*
+    41. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-inorder-traversal/)
+        Given the root of a binary tree, each node in the tree has a distinct value.
+
+        After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+        Return the roots of the trees in the remaining forest.  You may return the result in any order.
+    */
+
+    public static boolean isForDeletion(int val,int[] del_arr)
+    {
+        for(int del_val:del_arr)
+            if(del_val==val)
+                return true;
+        return false;
+    }
+
+    public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        delNodesHelper(root,to_delete,list,true);
+        return list;
+    }
+
+    public static TreeNode delNodesHelper(TreeNode node,int[] to_delete,List<TreeNode> list,boolean is_root)
+    {
+        if(node==null)
+            return null;
+        if(is_root && !isForDeletion(node.val,to_delete))
+            list.add(node);
+        node.left = delNodesHelper(node.left,to_delete,list,isForDeletion(node.val,to_delete));
+        node.right = delNodesHelper(node.right,to_delete,list,isForDeletion(node.val,to_delete));
+        return isForDeletion(node.val,to_delete)?null:node;
+    }
+
+    /*
+    42. PROBLEM DESCRIPTION (https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+        Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+        According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the
+        lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+    */
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q)
+    {
+        if(root==null || root==p || root==q)
+            return root;
+        TreeNode left = lowestCommonAncestor(root.left,p,q);
+        TreeNode right = lowestCommonAncestor(root.right,p,q);
+        if(left!=null && right!=null)
+            return root;
+        if(left==null && right==null)
+            return null;
+        return left==null?right:left;
+    }
+
+    public TreeNode lowestCommonAncestorIter(TreeNode root, TreeNode p, TreeNode q)
+    {
+        Stack bfs_stack = new Stack();
+        Map<TreeNode,TreeNode> parents_edges = new HashMap<TreeNode, TreeNode>();
+        TreeNode current_node = root;
+        bfs_stack.push(current_node);
+        parents_edges.put(current_node,null);
+        while(!parents_edges.containsKey(p) || !parents_edges.containsKey(q))
+        {
+            current_node = (TreeNode) bfs_stack.pop();
+            if(current_node.left!=null)
+            {
+                bfs_stack.push(current_node.left);
+                parents_edges.put(current_node.left,current_node);;
+            }
+            if(current_node.right!=null)
+            {
+                parents_edges.put(current_node.right,current_node);
+                bfs_stack.push(current_node.right);
+            }
+        }
+        HashSet<TreeNode> ancestor_path = new HashSet<>();
+        ancestor_path.add(p);
+        while(p!=null &&parents_edges.containsKey(p))
+        {
+            p = parents_edges.get(p);
+            ancestor_path.add(p);
+        }
+        while(!ancestor_path.contains(q))
+            q = parents_edges.get(q);
+
+        return q;
+    }
+
+    /*
+    43. PROBLEM DESCRIPTION (https://leetcode.com/problems/subarray-sum-equals-k/)
+        Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum equals to k.
+
+        Example 1:
+        Input:nums = [1,1,1], k = 2
+        Output: 2
+    */
+
+    public int subarraySum_alt(int[] nums, int k) //DP approach
+    {
+        int dp_arr[][] = new int[2][nums.length],count=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            dp_arr[0][iterator_i] = nums[iterator_i];
+            if(nums[iterator_i]==k)
+                count++;
+        }
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            for(int iterator_j=iterator_i;iterator_j<nums.length;iterator_j++)
+            {
+                if(dp_arr[0][iterator_j-1]+nums[iterator_j]==k)
+                    count++;
+                dp_arr[1][iterator_j] = dp_arr[0][iterator_j-1]+nums[iterator_j];
+            }
+            dp_arr[0] = dp_arr[1].clone();
+        }
+        return count;
+    }
+    public int subarraySum(int[] nums, int k)
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(0,1);
+        int sum=0,count=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            sum += nums[iterator_i];
+            count += map.getOrDefault(sum-k,0);
+            map.put(sum,map.getOrDefault(sum,0) +1);
+        }
+        return count;
+    }
+
+    /*
+    44. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-subarray/)
+        Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+
+        Example:
+        Input: [-2,1,-3,4,-1,2,1,-5,4],
+        Output: 6
+        Explanation: [4,-1,2,1] has the largest sum = 6.
+    */
+
+    public int maxSubArray(int[] nums)
+    {
+        int current_sum = Integer.MIN_VALUE,max_till_now = Integer.MIN_VALUE;
+        for(int curr_num: nums)
+        {
+            current_sum = (current_sum==Integer.MIN_VALUE || curr_num+current_sum<curr_num)?curr_num:current_sum+curr_num;
+            max_till_now =Math.max(max_till_now,current_sum);
+        }
+        return max_till_now;
+    }
+
+    /*
+    45. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-palindromic-substring/solution/)
+        Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
+
+        Example 1:
+        Input: "babad"
+        Output: "bab"
+        Note: "aba" is also a valid answer.
+    */
+
+    public String longestPalindrome_alt(String s) // O(n^2) time and space
+    {
+        if(s.length()==0)
+            return "";
+        int dp_arr[][] = new int[s.length()][s.length()];
+        String max_palindrome=""+s.charAt(0);
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+            dp_arr[0][iterator_i] = 1;
+
+        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
+        {
+            for(int iterator_j=iterator_i;iterator_j<s.length();iterator_j++)
+            {
+                dp_arr[iterator_i][iterator_j] = ( (iterator_i>1?dp_arr[iterator_i-2][iterator_j-1] == 1:true) && s.charAt(iterator_j)==s.charAt(iterator_j-iterator_i))?1:0;
+                if(dp_arr[iterator_i][iterator_j]==1)
+                    max_palindrome = s.substring(iterator_j-iterator_i ,iterator_j+1);
+            }
+        }
+        return max_palindrome;
+    }
+
+    public String longestPalindrome(String s) // O(n^2) time  O(1)space
+    {
+        String max_palindrome = "";
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            String curr_pal = expandFromCenterPalindrome(s,iterator_i,iterator_i);
+            if(curr_pal.length()>max_palindrome.length())
+                max_palindrome = curr_pal;
+            if(iterator_i>0 && s.charAt(iterator_i-1)==s.charAt(iterator_i))
+            {
+                curr_pal = expandFromCenterPalindrome(s,iterator_i-1,iterator_i);
+                if(curr_pal.length()>max_palindrome.length())
+                    max_palindrome = curr_pal;
+            }
+        }
+        return max_palindrome;
+    }
+
+    public static String expandFromCenterPalindrome(String s, int left,int right)
+    {
+        while(left>=0 && right<s.length() && s.charAt(left)==s.charAt(right))
+        {
+            left--;
+            right++;
+        }
+        return s.substring(left+1,right);
     }
 
     public static void main(String args[]) throws Exception
@@ -2110,5 +2372,44 @@ public class LeetCode {
          *
          */
 //        obj.isHappy(23);
+
+        /** Driver Code for Q40.inorderTraversal
+         *
+         */
+//        TreeNode tree1 = create_binary_tree(null,sc);
+//        obj.inorderTraversal(tree1);
+
+        /** Driver Code for Q41.delNodes
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println("Enter deletion_array");
+//        int del_arr[] = obj.create_array_int(sc);
+//        obj.delNodes(input_tree,del_arr);
+
+        /** Driver Code for Q42.lowestCommonAncestor
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.lowestCommonAncestor(input_tree,input_tree.left,input_tree.left.right.right);
+
+        /** Driver Code for Q43.subarraySum
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        System.out.println(obj.subarraySum(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q44.maxSubArray
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.maxSubArray(input_arr);
+
+        /** Driver Code for Q45.longestPalindrome
+         *
+         */
+        System.out.println("Enter String");
+        System.out.println(obj.longestPalindrome(sc.nextLine()));
     }
 }
