@@ -1953,6 +1953,257 @@ public class LeetCode {
         return s.substring(left+1,right);
     }
 
+    /*
+    46. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+        Given a linked list, remove the n-th node from the end of list and return its head.
+
+        Example:
+        Given linked list: 1->2->3->4->5, and n = 2.
+        After removing the second node from the end, the linked list becomes 1->2->3->5.
+    */
+
+    public ListNode removeNthFromEnd(ListNode head, int n)
+    {
+        ListNode slow_ptr=head,fast_ptr=head,prev_ptr=null;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+            fast_ptr = fast_ptr.next;
+        while(fast_ptr!=null)
+        {
+            int slide = 0;
+            while(slide<n && fast_ptr!=null)
+            {
+                fast_ptr = fast_ptr.next;
+                slide++;
+            }
+            for(int iterator_i=0;iterator_i<slide;iterator_i++)
+            {
+                prev_ptr = slow_ptr;
+                slow_ptr = slow_ptr.next;
+            }
+        }
+        if(prev_ptr!=null)
+            prev_ptr.next = slow_ptr.next;
+        else return head.next;
+        return head;
+    }
+
+    public static ListNode create_linked_list(Scanner sc)
+    {
+        System.out.println("Enter number of items");
+        int n = sc.nextInt();
+        ListNode return_node = null,current_node=null;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            if(return_node==null) {
+                current_node = new ListNode(sc.nextInt());
+                return_node = current_node;
+            }
+            else
+            {
+                current_node.next = new ListNode(sc.nextInt());
+                current_node = return_node.next;
+            }
+        }
+        return return_node;
+    }
+
+    /*
+    47. PROBLEM DESCRIPTION (https://leetcode.com/problems/container-with-most-water/)
+        Given n non-negative integers a1, a2, ..., an , where each represents a point at coordinate (i, ai).
+        n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together
+        with x-axis forms a container, such that the container contains the most water.
+    */
+    public int maxArea(int[] height)
+    {
+        int left_ptr=0,right_ptr=height.length-1,max_area = Integer.MIN_VALUE;
+        while(left_ptr<right_ptr)
+        {
+            System.out.println(left_ptr+" "+right_ptr);
+            max_area = Math.max(max_area,Math.min(height[left_ptr],height[right_ptr])*(right_ptr-left_ptr));
+            if(height[left_ptr]<height[right_ptr])
+                left_ptr++;
+            else
+                right_ptr--;
+        }
+        return max_area;
+    }
+
+    /*
+    48. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-colors/)
+        Given an array with n objects colored red, white or blue, sort them in-place so that objects of the same color are adjacent,
+        with the colors in the order red, white and blue.
+        Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+        Example:
+        Input: [2,0,2,1,1,0]
+        Output: [0,0,1,1,2,2]
+    */
+    public void sortColors(int[] nums)
+    {
+        int pos[] = new int[2];
+        pos[0]=-1;pos[1]=-1;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums[iterator_i]==0)
+            {
+                int temp = nums[pos[0]+1];
+                nums[++pos[0]] = nums[iterator_i];
+                pos[1]++;
+                if(temp==1)
+                {
+                    int temp1 = nums[pos[1]];
+                    nums[pos[1]] = temp;
+                    temp = temp1;
+                }
+                if(temp==2)
+                    nums[iterator_i] = 2;
+            }
+            else if(nums[iterator_i]==1)
+            {
+                int temp = nums[pos[1]+1];
+                nums[++pos[1]] = nums[iterator_i];
+                if(temp==2)
+                    nums[iterator_i]=2;
+            }
+            System.out.println(pos[0]+":"+pos[1]);
+            for(int iterator_k=0;iterator_k<nums.length;iterator_k++)
+                System.out.print(nums[iterator_k]+" ");
+            System.out.println();
+        }
+    }
+
+    /*
+    49. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+        Given an array of integers nums sorted in ascending order, find the starting and ending position of a given target value.
+        Your algorithm's runtime complexity must be in the order of O(log n).
+
+        If the target is not found in the array, return [-1, -1].
+        Example 1:
+        Input: nums = [5,7,7,8,8,10], target = 8
+        Output: [3,4]
+    */
+    public int[] searchRange(int[] nums, int target)
+    {
+        int lb=0,ub=nums.length-1;
+        int return_range[] = {-1,-1};
+        while(lb<=ub)
+        {
+            int mid = (lb+ub)/2;
+            if(nums[mid]==target)
+            {
+                int front=mid,rear=mid;
+                while(front>=0 && nums[front] == target)
+                    front--;
+                while(rear<nums.length && nums[rear] == target)
+                    rear++;
+                return_range[0] = front+1;
+                return_range[1] = rear-1;
+                return return_range;
+            }
+            else if(nums[mid]>target && ((mid>0 && nums[mid-1]<target)||mid==0))
+                return return_range;
+            else if(nums[mid]>target)
+                ub = mid-1;
+            else
+                lb = mid+1;
+        }
+        return return_range;
+    }
+
+    /*
+    50. PROBLEM DESCRIPTION (https://leetcode.com/problems/copy-list-with-random-pointer/)
+        A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+        Return a deep copy of the list.
+        The Linked List is represented in the input/output as a list of n nodes. Each node is represented as a pair of
+        [val, random_index] where:
+            val: an integer representing Node.val
+            random_index: the index of the node (range from 0 to n-1) where random pointer points to, or null if it does not point
+                    to any node.
+    */
+    public Node copyRandomList(Node head)
+    {
+        if(head==null)
+            return head;
+        Node temp = head;
+        while(temp!=null)
+        {
+            Node newnode = new Node(temp.val);
+            newnode.next = temp.next;
+            temp.next = newnode;
+            temp = temp.next.next;
+        }
+
+        temp = head;
+        while(temp!=null)
+        {
+            temp.next.random = (temp.random==null)?null:temp.random.next;;
+            temp = temp.next.next;
+        }
+        Node return_head = null,return_temp=null;
+        temp=head;
+        while(temp!=null)
+        {
+            if(return_head==null) {
+                return_head = temp.next;
+                return_temp = return_head;
+            }
+            else {
+                return_temp.next = temp.next;
+                return_temp = return_temp.next;
+            }
+            temp.next = temp.next.next;
+            temp = temp.next;
+        }
+        return return_head;
+    }
+
+    /*
+    51. PROBLEM DESCRIPTION (https://leetcode.com/problems/daily-temperatures/)
+        Given a list of daily temperatures T, return a list such that, for each day in the input, tells you how many days you would have to wait until a warmer temperature.
+        If there is no future day for which this is possible, put 0 instead.
+        For example, given the list of temperatures T = [73, 74, 75, 71, 69, 72, 76, 73], your output should be [1, 1, 4, 2, 1, 1, 0, 0].
+
+        Note: The length of temperatures will be in the range [1, 30000]. Each temperature will be an integer in the range [30, 100].
+    */
+    public int[] dailyTemperatures_alt(int[] T) { // O(N*W) Time  O(W+N) Space
+        int temperature_record[] = new int[70];
+        int return_result[] = new int[T.length];
+        Arrays.fill(temperature_record,Integer.MAX_VALUE);
+        for(int iterator_i=T.length-1;iterator_i>=0;iterator_i--)
+        {
+            int current_pos = Integer.MAX_VALUE,current_valid_temp_found=0;
+            for(int iterator_j=T[iterator_i]-29;iterator_j<temperature_record.length && current_valid_temp_found<T.length-iterator_i-1 ;iterator_j++)
+            {
+                if(temperature_record[iterator_j]!=Integer.MAX_VALUE)
+                    current_valid_temp_found++;
+                if(temperature_record[iterator_j]<current_pos)
+                    current_pos = temperature_record[iterator_j];
+            }
+            temperature_record[T[iterator_i]-30] = iterator_i;
+            return_result[iterator_i] = (current_pos==Integer.MAX_VALUE)?0:current_pos-iterator_i;
+        }
+        return return_result;
+    }
+
+    public int[] dailyTemperatures(int[] T)
+    {
+        Stack temp_stack = new Stack();
+        int return_result[] = new int[T.length];
+        for(int iterator_i=T.length-1;iterator_i>=0;iterator_i--)
+        {
+            int next_ele = (temp_stack.empty())?-1:(int)temp_stack.peek();
+            while(!temp_stack.empty() && T[(int)temp_stack.peek()]<=T[iterator_i])
+                next_ele = (int)temp_stack.pop();
+            if(next_ele==-1 || temp_stack.isEmpty())
+                return_result[iterator_i] = 0;
+            else
+                return_result[iterator_i] = (int)temp_stack.peek() - iterator_i;
+            temp_stack.push(iterator_i);
+        }
+        return return_result;
+    }
+
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -2409,7 +2660,46 @@ public class LeetCode {
         /** Driver Code for Q45.longestPalindrome
          *
          */
-        System.out.println("Enter String");
-        System.out.println(obj.longestPalindrome(sc.nextLine()));
+//        System.out.println("Enter String");
+//        System.out.println(obj.longestPalindrome(sc.nextLine()));
+
+        /** Driver Code for Q46.removeNthFromEnd
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        System.out.println("Enter n");
+//        obj.removeNthFromEnd(input_list,sc.nextInt());
+
+        /** Driver Code for Q47.maxArea
+         *
+         */
+//        int height[] = obj.create_array_int(sc);
+//        obj.maxArea(height);
+
+        /** Driver Code for Q48.sortColors
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.sortColors(input_arr);
+
+        /** Driver Code for Q49.searchRange
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        int return_arr[] = obj.searchRange(input_arr,sc.nextInt());
+//        System.out.println(return_arr[0]+","+return_arr[1]);
+
+        /**  No Driver Code for Q50.copyRandomList
+         *
+         */
+
+        /**  Driver Code for Q51.dailyTemperatures
+         *
+         */
+//        int temperatures[] = obj.create_array_int(sc);
+//        int return_days[] = obj.dailyTemperatures(temperatures);
+//        for(int iterator_i=0;iterator_i<return_days.length;iterator_i++)
+//            System.out.print(return_days[iterator_i]+" ");
     }
 }
