@@ -2203,6 +2203,159 @@ public class LeetCode {
         return return_result;
     }
 
+    /*
+    51. PROBLEM DESCRIPTION (https://leetcode.com/problems/invert-binary-tree/)
+        Invert a binary tree.
+    */
+    public TreeNode invertTree(TreeNode root)
+    {
+        if(root==null)
+            return root;
+        TreeNode right = invertTree(root.left);
+        root.left = invertTree(root.right);
+        root.right = right;
+        return root;
+    }
+
+    public TreeNode invertTree_stck(TreeNode root)
+    {
+        Stack treenode_stack = new Stack();
+        TreeNode current_node = root;
+        while(current_node!=null)
+        {
+            if(current_node.left!=null)
+                treenode_stack.push(current_node.left);
+            if(current_node.right!=null)
+                treenode_stack.push(current_node.right);
+            TreeNode temp = current_node.left;
+            current_node.left = current_node.right;
+            current_node.right = temp;
+
+            current_node =  treenode_stack.empty()?null:(TreeNode)treenode_stack.pop();
+        }
+        return root;
+    }
+
+    /*
+    52. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle/)
+        Given a linked list, determine if it has a cycle in it.
+    */
+    public boolean hasCycle(ListNode head)
+    {
+        ListNode slow_ptr = head, fast_ptr = head;
+        while(fast_ptr!=null)
+        {
+            if(fast_ptr.next==null)
+                return false;
+            fast_ptr = fast_ptr.next.next;
+            slow_ptr = slow_ptr.next;
+            if(fast_ptr == slow_ptr)
+                return true;
+        }
+        return false;
+    }
+
+    /*
+    53. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle-ii/)
+        Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+
+    */
+    public ListNode detectCycle(ListNode head)
+    {
+        ListNode slow_ptr = head, fast_ptr = head;
+        boolean isCycle = false;
+        while(fast_ptr!=null)
+        {
+            if(fast_ptr.next==null)
+                break;
+            fast_ptr = fast_ptr.next.next;
+            slow_ptr = slow_ptr.next;
+            if(fast_ptr == slow_ptr) {
+                isCycle = true;
+                break;
+            }
+        }
+        if(!isCycle)
+            return null;
+
+        slow_ptr = head;
+        while(slow_ptr != fast_ptr)
+        {
+            slow_ptr = slow_ptr.next;
+            fast_ptr = fast_ptr.next;
+        }
+        return slow_ptr;
+    }
+
+    /*
+    54. PROBLEM DESCRIPTION (https://leetcode.com/problems/palindrome-linked-list/)
+        Given a singly linked list, determine if it is a palindrome.
+
+        Example 1:
+        Input: 1->2
+        Output: false
+    */
+    public boolean isPalindrome(ListNode head)
+    {
+        if(head==null || head.next==null)
+            return true;
+        ListNode first = head;
+        int count = 0;
+        while(first!=null)
+        {
+            first = first.next;
+            count++;
+        }
+        first = head;
+        for(int iterator_i=0;iterator_i<Math.ceil(count/2.0)-1;iterator_i++)
+            first = first.next;
+
+        ListNode prev_node = first;
+        first = first.next;
+        for(int iterator_i=0;iterator_i<Math.floor(count/2.0);iterator_i++)
+        {
+            ListNode next_node = first.next;
+            first.next = prev_node;
+            prev_node = first;
+            if(next_node != null)
+                first = next_node;
+        }
+        for(int iterator_i=0;iterator_i<Math.floor(count/2.0);iterator_i++)
+        {
+            if(head.val != first.val)
+                return false;
+            head = head.next;
+            first = first.next;
+        }
+        return true;
+
+    }
+
+    /*
+    55. PROBLEM DESCRIPTION (https://leetcode.com/problems/majority-element/)
+        Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.
+
+        You may assume that the array is non-empty and the majority element always exist in the array.
+        Example 1:
+        Input: [3,2,3]
+        Output: 3
+    */
+    public int majorityElement(int[] nums)
+    {
+        int current_ele =0,count_majority=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(count_majority==0) {
+                current_ele = nums[iterator_i];
+                count_majority = 1;
+            }
+            else if(current_ele == nums[iterator_i])
+                count_majority++;
+            else
+                count_majority--;
+        }
+        return current_ele;
+    }
 
     public static void main(String args[]) throws Exception
     {
@@ -2701,5 +2854,25 @@ public class LeetCode {
 //        int return_days[] = obj.dailyTemperatures(temperatures);
 //        for(int iterator_i=0;iterator_i<return_days.length;iterator_i++)
 //            System.out.print(return_days[iterator_i]+" ");
+
+        /**  No Driver Code for Q52.hasCycle
+         *
+         */
+
+        /**  No Driver Code for Q53.detectCycle
+         *
+         */
+
+        /**  No Driver Code for Q54.isPalindrome
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        System.out.println(obj.isPalindrome(input_list));
+
+        /**  Driver Code for Q55.majorityElement
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.majorityElement(input_arr));
     }
 }
