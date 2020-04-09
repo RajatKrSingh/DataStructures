@@ -2340,7 +2340,7 @@ public class LeetCode {
         Input: [3,2,3]
         Output: 3
     */
-    public int majorityElement(int[] nums)
+    public int majorityElement(int[] nums) // Boyer Moore Voting
     {
         int current_ele =0,count_majority=0;
         for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
@@ -2355,6 +2355,209 @@ public class LeetCode {
                 count_majority--;
         }
         return current_ele;
+    }
+
+    /*
+    56. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-largest-element-in-an-array/)
+        Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+        Example 1:
+        Input: [3,2,1,5,6,4] and k = 2
+        Output: 5
+    */
+    public int findKthLargest_alt(int[] nums, int k) // Priority Dueue
+    {
+        PriorityQueue pqueue = new PriorityQueue();
+        for(int num:nums)
+        {
+            pqueue.offer(num);
+            while(pqueue.size()>k)
+                pqueue.poll();
+        }
+        return (int)pqueue.peek();
+    }
+
+    public int findKthLargest(int[] nums,int k)
+    {
+        int lb = 0,ub = nums.length-1;
+        k=nums.length-k;
+        while(lb<=ub)
+        {
+            int s = findKthPartition(nums, lb, ub);
+            if(s<k)
+                lb = s+1;
+            else if(s>k)
+                ub = s-1;
+            else
+                return nums[s];
+        }
+        return -1;
+    }
+
+    public static int findKthPartition(int[] nums,int lb, int ub)
+    {
+        int i=lb+1,j=ub;
+        while(i<=j)
+        {
+            while(i<=ub && nums[lb]>nums[i])
+                i++;
+            while(j>=i && nums[j]>=nums[lb])
+                j--;
+
+            if(i<j)
+            {
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+            }
+        }
+        int temp = nums[lb];
+        nums[lb] = nums[j];
+        nums[j] = temp;
+        return j;
+    }
+
+    /*
+    57. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-two-binary-trees/)
+        Given two binary trees and imagine that when you put one of them to cover the other, some nodes of the two trees are overlapped
+        while the others are not.
+        You need to merge them into a new binary tree. The merge rule is that if two nodes overlap, then sum node values up as the new
+        value of the merged node. Otherwise, the NOT null node will be used as the node of new tree.
+    */
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2)
+    {
+        if(t1==null)
+            return t2;
+        if(t2 ==null)
+            return t1;
+        t1 .val = t1.val + t2.val;
+        t1.left = mergeTrees(t1.left,t2.left);
+        t1.right = mergeTrees(t1.right,t2.right);
+        return t1;
+    }
+
+    /*
+    58. PROBLEM DESCRIPTION (https://leetcode.com/problems/game-of-life/)
+        According to the Wikipedia's article: "The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
+
+        Given a board with m by n cells, each cell has an initial state live (1) or dead (0). Each cell interacts with its eight
+        neighbors (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):
+            1. Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+            2. Any live cell with two or three live neighbors lives on to the next generation.
+            3. Any live cell with more than three live neighbors dies, as if by over-population..
+            4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+
+        Write a function to compute the next state (after one update) of the board given its current state.
+        The next state is created by applying the above rules simultaneously to every cell in the current state, where births and deaths occur simultaneously.
+    */
+    public void gameOfLife(int[][] board)
+    {
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+                updateLivingCondition(board,iterator_i,iterator_j);
+
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+            {
+                if(board[iterator_i][iterator_j]==2)
+                    board[iterator_i][iterator_j] = 1;
+                else if(board[iterator_i][iterator_j]==-1)
+                    board[iterator_i][iterator_j] = 0;
+            }
+        }
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++)
+                System.out.print(board[iterator_i][iterator_j] + " ");
+            System.out.println();
+        }
+    }
+
+    public static void updateLivingCondition(int[][] board,int row, int col)
+    {
+        int offset[] ={-1,0,1},count_active_neighbors = 0;
+        for(int iterator_i=0;iterator_i<offset.length;iterator_i++)
+        {
+
+            for(int iterator_j=0;iterator_j<offset.length;iterator_j++)
+            {
+                if(row+offset[iterator_i]<0 || row+offset[iterator_i]>=board.length || col+offset[iterator_j]<0 || col+offset[iterator_j]>=board[0].length || (iterator_i==1 && iterator_j==1))
+                    continue;
+                if(board[row+offset[iterator_i]][col+offset[iterator_j]]==1 || board[row+offset[iterator_i]][col+offset[iterator_j]]==-1)
+                    count_active_neighbors++;
+            }
+        }
+        if(board[row][col]==1)
+        {
+            if(count_active_neighbors<2 || count_active_neighbors>3)
+                board[row][col] = -1;
+        }
+        else
+        {
+            if(count_active_neighbors==3)
+                board[row][col] = 2;
+        }
+    }
+
+    /*
+    59. PROBLEM DESCRIPTION (https://leetcode.com/problems/diameter-of-binary-tree/)
+        Given a binary tree, you need to compute the length of the diameter of the tree. The diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root.
+
+        Example:
+        Given a binary tree
+              1
+             / \
+            2   3
+           / \
+          4   5
+        Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
+    */
+    int max_dia=0;
+    public int diameterOfBinaryTree(TreeNode root)
+    {
+        depth(root);
+        return max_dia;
+    }
+
+    public int depth(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        int lheight = depth(root.left);
+        int rheight = depth(root.right);
+        max_dia = Math.max(max_dia,lheight+rheight);
+        return 1+Math.max(lheight,rheight);
+    }
+
+    /*
+    60. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-linked-lists/)
+        Write a program to find the node at which the intersection of two singly linked lists begins.
+
+    */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB)
+    {
+        ListNode list1 = headA, list2= headB;
+        if(headA==null || headB==null)
+            return null;
+        boolean cycle_completed = false;
+        while(list1!=list2)
+        {
+            if(list1.next==null) {
+                if(cycle_completed)
+                    return null;
+                list1 = headB;
+                cycle_completed = true;
+            }
+            else
+                list1 = list1.next;
+
+            if(list2.next==null)
+                list2=headA;
+            else
+                list2 = list2.next;
+        }
+        return list1;
     }
 
     public static void main(String args[]) throws Exception
@@ -2874,5 +3077,44 @@ public class LeetCode {
          */
 //        int input_arr[] = obj.create_array_int(sc);
 //        System.out.println(obj.majorityElement(input_arr));
+
+
+        /**  Driver Code for Q56.findKthLargest
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        System.out.println(obj.findKthLargest(input_arr,sc.nextInt()));
+
+
+        /**  Driver Code for Q57.mergeTrees
+         *
+         */
+//        TreeNode t1 = create_binary_tree(null,sc);
+//        TreeNode t2 = create_binary_tree(null,sc);
+//        obj.mergeTrees(t1,t2);
+
+        /**  Driver Code for Q58.gameOfLife
+         *
+         */
+//        System.out.println("Enter n and m");
+//        int board[][] = new int[sc.nextInt()][sc.nextInt()];
+//        System.out.println("Enter board");
+//        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+//            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.nextInt();
+//        obj.gameOfLife(board);
+
+        /**  Driver Code for Q59.diameterOfBinaryTree
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.diameterOfBinaryTree(input_tree);
+
+        /** No Driver Code for Q60.getIntersectionNode
+         *
+         */
+
+
     }
 }
