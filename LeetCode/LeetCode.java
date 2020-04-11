@@ -2001,7 +2001,7 @@ public class LeetCode {
             else
             {
                 current_node.next = new ListNode(sc.nextInt());
-                current_node = return_node.next;
+                current_node = current_node.next;
             }
         }
         return return_node;
@@ -2560,6 +2560,485 @@ public class LeetCode {
         return list1;
     }
 
+    /*
+    61. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list/)
+        Reverse a singly linked list.
+
+        Example:
+        Input: 1->2->3->4->5->NULL
+        Output: 5->4->3->2->1->NULL
+
+    */
+    public ListNode reverseList_alt(ListNode head) // Iter
+    {
+        if(head==null)
+            return head;
+        ListNode prev_node = head,next_node = head.next;
+        prev_node.next = null;
+        while(next_node!=null)
+        {
+            ListNode temp = next_node.next;
+            next_node.next = prev_node;
+            prev_node = next_node;
+            next_node = temp;
+        }
+        return prev_node;
+    }
+
+    public ListNode reverseList(ListNode head)
+    {
+        if(head==null || head.next == null)
+            return head;
+        ListNode temp = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return temp;
+    }
+
+    /*
+    62. PROBLEM DESCRIPTION (https://leetcode.com/problems/house-robber/)
+        You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only
+        constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically
+        contact the police if two adjacent houses were broken into on the same night.
+
+        Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can
+        rob tonight without alerting the police.
+
+        Example 1:
+
+        Input: [1,2,3,1]
+        Output: 4
+        Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
+             Total amount you can rob = 1 + 3 = 4.
+
+    */
+    public int rob(int[] nums)
+    {
+       int max_prev1 = 0,max_prev2 = 0;
+       for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+       {
+           int temp = max_prev1;
+           max_prev1 = Math.max(max_prev2+nums[iterator_i],max_prev1);
+           max_prev2 = temp;
+       }
+       return max_prev1;
+    }
+
+    /*
+    63. PROBLEM DESCRIPTION (https://leetcode.com/problems/lru-cache/)
+        Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and put.
+
+        get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
+        put(key, value) - Set or insert the value if the key is not already present. When the cache reached its capacity, it should
+        invalidate the least recently used item before inserting a new item.
+
+        The cache is initialized with a positive capacity.
+        O(1) time complexity?
+
+        Example:
+        LRUCache cache = new LRUCache( 2  capacity  )
+
+        cache.put(1, 1);
+        cache.put(2, 2);
+        cache.get(1);       // returns 1
+        cache.put(3, 3);    // evicts key 2
+        cache.get(2);       // returns -1 (not found)
+        cache.put(4, 4);    // evicts key 1
+        cache.get(1);       // returns -1 (not found)
+        cache.get(3);       // returns 3
+        cache.get(4);       // returns 4
+
+        New Class created
+    */
+
+    /*
+    64. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/)
+        Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+        Find all the elements of [1, n] inclusive that do not appear in this array.
+        Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+
+        Example:
+        Input:
+        [4,3,2,7,8,2,3,1]
+        Output:
+        [5,6]
+    */
+    public List<Integer> findDisappearedNumbers(int[] nums)
+    {
+        List<Integer> list = new ArrayList<>();
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            nums[Math.abs(nums[iterator_i])-1] = Math.min(nums[Math.abs(nums[iterator_i])-1],-nums[Math.abs(nums[iterator_i])-1]);
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums[iterator_i]>0) {
+                System.out.println(iterator_i);
+                list.add(iterator_i);
+            }
+
+        }
+        return list;
+    }
+
+    /*
+    65. PROBLEM DESCRIPTION (https://leetcode.com/problems/target-sum/)
+        You are given a list of non-negative integers, a1, a2, ..., an, and a target, S. Now you have 2 symbols + and -. For each integer, you should choose one from + and - as its new symbol.
+
+        Find out how many ways to assign symbols to make sum of integers equal to target S.
+
+        Example 1:
+        Input: nums is [1, 1, 1, 1, 1], S is 3.
+        Output: 5
+        Explanation:
+
+            -1+1+1+1+1 = 3
+            +1-1+1+1+1 = 3
+            +1+1-1+1+1 = 3
+            +1+1+1-1+1 = 3
+            +1+1+1+1-1 = 3
+
+        There are 5 ways to assign symbols to make the sum of nums be target 3.
+        Note:
+            The length of the given array is positive and will not exceed 20.
+            The sum of elements in the given array will not exceed 1000.
+            Your output answer is guaranteed to be fitted in a 32-bit integer.
+    */
+    public int findTargetSumWays(int[] nums, int S) // Can also be done as Subset Sum Problem
+    {
+        // DP Programming
+        return findTargetSumWays_dp(nums,S);
+
+
+        // Memoization and Recursion
+//        int mem_arr[][] = new int[nums.length][2001];
+//        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+//            Arrays.fill(mem_arr[iterator_i], Integer.MIN_VALUE);
+//        return findTargetSumWays_memoization(nums,S,0,0,mem_arr);
+
+        //Recursive
+//        return findTargetSumWays_rcur(nums,S,0,0);
+    }
+
+    public static int findTargetSumWays_rcur(int[] nums,int sum, int position,int current_sum)
+    {
+        if(position==nums.length)
+        {
+            if (sum == current_sum)
+                return 1;
+            return 0;
+        }
+        return (findTargetSumWays_rcur(nums,sum,position+1,current_sum+nums[position]) +
+        findTargetSumWays_rcur(nums,sum,position+1,current_sum-nums[position]));
+    }
+
+    public static  int findTargetSumWays_memoization(int nums[],int sum,int position,int current_sum,int[][] mem_arr)
+    {
+        if(position<nums.length && mem_arr[position][current_sum+1000]!=Integer.MIN_VALUE)
+            return mem_arr[position][current_sum+1000];
+        if(position==nums.length)
+        {
+            if(current_sum==sum)
+                return 1;
+            return 0;
+        }
+        mem_arr[position][current_sum+1000] = findTargetSumWays_memoization(nums,sum,position+1,current_sum+nums[position],mem_arr)+ findTargetSumWays_memoization(nums,sum,position+1,current_sum-nums[position],mem_arr);
+        return mem_arr[position][current_sum+1000];
+    }
+
+    public static int findTargetSumWays_dp(int[] nums,int sum)
+    {
+        int max_sum=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            max_sum += nums[iterator_i];
+        int dp_prev[] = new int[max_sum*2+1],dp_curr[] = new int[max_sum*2+1];
+        Arrays.fill(dp_prev,Integer.MIN_VALUE);
+
+        dp_prev[max_sum+nums[0]] = 1;
+        dp_prev[max_sum-nums[0]] = dp_prev[max_sum-nums[0]]==Integer.MIN_VALUE?1:2;
+
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            Arrays.fill(dp_curr,Integer.MIN_VALUE);
+            for(int iterator_j=0;iterator_j<max_sum*2+1;iterator_j++)
+            {
+                if(dp_prev[iterator_j]!=Integer.MIN_VALUE)
+                {
+                    dp_curr[iterator_j + nums[iterator_i]] = ((dp_curr[iterator_j + nums[iterator_i]]==Integer.MIN_VALUE)?dp_prev[iterator_j]:(dp_curr[iterator_j + nums[iterator_i]]+dp_prev[iterator_j]));
+                    dp_curr[iterator_j - nums[iterator_i]] = ((dp_curr[iterator_j - nums[iterator_i]]==Integer.MIN_VALUE)?dp_prev[iterator_j]:(dp_curr[iterator_j - nums[iterator_i]]+dp_prev[iterator_j]));
+                }
+            }
+            dp_prev = Arrays.copyOf(dp_curr,dp_curr.length);
+        }
+        return ( sum>max_sum || dp_prev[sum+max_sum]==Integer.MIN_VALUE)?0:dp_prev[sum+max_sum];
+    }
+
+    /*
+    66. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+        Given a binary tree, find its maximum depth.
+
+        The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+        Note: A leaf is a node with no children.
+
+        Example:
+
+        Given binary tree [3,9,20,null,null,15,7],
+                 3
+                / \
+               9  20
+                 /  \
+                15   7
+        return its depth = 3.
+    */
+    public int maxDepth(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        return 1+ Math.max(maxDepth(root.left),maxDepth(root.right));
+    }
+
+    /*
+    67. PROBLEM DESCRIPTION (https://leetcode.com/problems/flatten-binary-tree-to-linked-list/)
+        Given a binary tree, flatten it to a linked list in-place.
+
+        For example, given the following tree:
+
+              1
+             / \
+            2   5
+           / \   \
+          3   4   6
+        The flattened tree should look like:
+
+        1
+         \
+          2
+           \
+            3
+             \
+              4
+               \
+                5
+                 \
+                  6
+    */
+    TreeNode curr = null;
+    public void flatten(TreeNode root) {
+        if(root==null)
+            return ;
+        flatten(root.left);
+        flatten(root.right);
+        root.right = curr;
+        root.left = null;
+        curr = root;
+    }
+
+    /*
+    68. PROBLEM DESCRIPTION (https://leetcode.com/problems/subsets/)
+        Given a set of distinct integers, nums, return all possible subsets (the power set).
+
+        Note: The solution set must not contain duplicate subsets.
+
+        Example:
+        Input: nums = [1,2,3]
+        Output:
+            [
+                [3],
+                [1],
+                [2],
+                [1,2,3],
+                [1,3],
+                [2,3],
+                [1,2],
+                []
+            ]
+    */
+    public List<List<Integer>> subsets(int[] nums)
+    {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        subsetsSpace(nums,new ArrayList<>(),0,list);
+        return null;
+    }
+
+    public static void subsetsSpace(int[] nums, List<Integer> current_set,int position,List<List<Integer>> list)
+    {
+        if(position==nums.length) {
+            list.add(new ArrayList<> (current_set));
+            return;
+        }
+        subsetsSpace(nums,current_set,position+1,list);
+        current_set.add(nums[position]);
+        subsetsSpace(nums,current_set,position+1,list);
+        current_set.remove(current_set.size()-1);
+    }
+
+    /*
+    69. PROBLEM DESCRIPTION (https://leetcode.com/problems/symmetric-tree/)
+        Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+    */
+    public boolean isSymmetric(TreeNode root)
+    {
+        if(root==null)
+            return true;
+        return isSymmetricHelper(root.left,root.right);
+    }
+
+    public boolean isSymmetricHelper(TreeNode left, TreeNode right)
+    {
+        if(left==null && right==null)
+            return true;
+        if(left==null||right==null)
+            return false;
+        return isSymmetricHelper(left.left,left.right) && isSymmetricHelper(right.left,right.right) && left.val==right.val;
+    }
+
+    /*
+    70. PROBLEM DESCRIPTION (https://leetcode.com/problems/subsets-ii/)
+        Given a collection of integers that might contain duplicates, nums, return all possible subsets (the power set).
+
+        Note: The solution set must not contain duplicate subsets.
+        Example:
+
+        Input: [1,2,2]
+        Output:
+            [
+              [2],
+              [1],
+              [1,2,2],
+              [2,2],
+              [1,2],
+              []
+            ]
+    */
+    public List<List<Integer>> subsetsWithDup(int[] nums)
+    {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        Arrays.sort(nums);
+        subsetsWithDupSpace(nums,list,new ArrayList<Integer>(),0);
+        return list;
+    }
+
+
+    public void subsetsWithDupSpace(int[] nums,List<List<Integer>> list,List<Integer> current_set,int position)
+    {
+        if(position==nums.length)
+        {
+            list.add(new ArrayList<>(current_set));
+            return;
+        }
+        current_set.add(nums[position]);
+        subsetsWithDupSpace(nums,list,current_set,++position);
+        current_set.remove(current_set.size()-1);
+        while(position<nums.length && nums[position]==nums[position-1])
+            position++;
+        subsetsWithDupSpace(nums,list,current_set,position);
+    }
+
+    public List<List<Integer>> subsetsWithDup_iter(int[] nums)
+    {
+        List<List<Integer>> list= new ArrayList<List<Integer>>();
+        Arrays.sort(nums);
+        list.add(new ArrayList<>());
+        int count=0;
+        for(int i=0;i<nums.length;i+=count)
+        {
+            count=0;
+            while(i+count<nums.length && nums[i+count]==nums[i])
+                count++;
+            int count_prev_sets = list.size();
+            for(int subset_iterator=0;subset_iterator<count_prev_sets;subset_iterator++)
+            {
+                List<Integer> prev_set = new ArrayList<>(list.get(subset_iterator));
+                for(int addition_iterator=0;addition_iterator<count;addition_iterator++)
+                {
+                    prev_set.add(nums[i+addition_iterator]);
+                    list.add(new ArrayList<>(prev_set));
+                    for(Integer setval:prev_set)
+                        System.out.print(setval+" ");
+                    System.out.println();
+                }
+            }
+        }
+        return list;
+    }
+
+    /*
+    71. PROBLEM DESCRIPTION (https://leetcode.com/problems/jump-game/)
+        Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+        Each element in the array represents your maximum jump length at that position.
+
+        Determine if you are able to reach the last index.
+        Example 1:
+            Input: [2,3,1,1,4]
+            Output: true
+            Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+        Example 2:
+            Input: [3,2,1,0,4]
+            Output: false
+            Explanation: You will always arrive at index 3 no matter what. Its maximum
+             jump length is 0, which makes it impossible to reach the last index.
+    */
+    public boolean canJump(int[] nums)
+    {
+        int zero_pos = 1;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(zero_pos<=iterator_i)
+                return false;
+            while(zero_pos<nums.length)
+            {
+                if(nums[iterator_i]+iterator_i>=zero_pos)
+                    zero_pos++;
+                else
+                    break;
+            }
+            if(zero_pos==nums.length)
+                return true;
+        }
+        return false;
+    }
+
+    /*
+    72. PROBLEM DESCRIPTION (https://leetcode.com/problems/group-anagrams/)
+        Given an array of strings, group anagrams together.
+
+        Example:
+            Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+            Output:
+                [
+                    ["ate","eat","tea"],
+                    ["nat","tan"],
+                    ["bat"]
+                ]
+        Note:
+            All inputs will be in lowercase.
+            The order of your output does not matter.
+    */
+    public List<List<String>> groupAnagrams(String[] strs)
+    {
+        HashMap<String,List<String>> hmap = new HashMap<String,List<String>>();
+        String key;
+        int count[] = new int[26];
+        for(int iterator_i=0;iterator_i<strs.length;iterator_i++)
+        {
+            Arrays.fill(count,0);
+            for(int iterator_j=0;iterator_j<strs[iterator_i].length();iterator_j++)
+                count[strs[iterator_i].charAt(iterator_j)-'a']++;
+            key = Arrays.toString(count);
+            if(hmap.containsKey(key))
+            {
+                List<String> curr_list = hmap.get(key);
+                curr_list.add(strs[iterator_i]);
+            }
+            else
+                hmap.put(key,new ArrayList<>(Arrays.asList(strs[iterator_i])));
+        }
+        return new ArrayList<>(hmap.values());
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -3115,6 +3594,98 @@ public class LeetCode {
          *
          */
 
+        /** Driver Code for Q61.reverseList
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        input_list = obj.reverseList(input_list);
+//        while(input_list!=null)
+//        {
+//            System.out.print(input_list.val+" ");
+//            input_list = input_list.next;
+//        }
 
+        /** Driver Code for Q62.rob
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.rob(input_arr));
+
+        /** Driver Code for Q63.LRUCache
+         *
+         */
+//        LRUCache cache = new LRUCache( 2 );
+//
+//        cache.put(2, 1);
+//        cache.put(1, 1);
+//        cache.put(2, 3);
+//        cache.put(4, 1);
+//        System.out.println(cache.get(1));
+//        System.out.println(cache.get(2));
+
+        /** Driver Code for Q64.findDisappearedNumbers
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.findDisappearedNumbers(input_arr);
+
+        /** Driver Code for Q65.findTargetSumWays
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter sum");
+//        System.out.println(obj.findTargetSumWays(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q66.maxDepth
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println(obj.maxDepth(input_tree));
+
+        /** Driver Code for Q67.flatten
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.flatten(input_tree);
+
+        /** Driver Code for Q68.subsets
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.subsets(input_arr);
+
+        /** Driver Code for Q69.isSymmetric
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.isSymmetric(input_tree);
+
+        /** Driver Code for Q70.subsetsWithDup
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.subsetsWithDup(input_arr);
+
+        /** Driver Code for Q71.canJump
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.canJump(input_arr));
+
+        /** Driver Code for Q72.groupAnagrams
+         *
+         */
+//        System.out.println("Enter number of strings");
+//        int n = sc.nextInt();
+//        String input_strs[] = new String[n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            input_strs[iterator_i] = sc.next();
+//        List<List<String>> final_list = obj.groupAnagrams(input_strs);
+//        for(List<String> lists:final_list) {
+//            for (String s : lists)
+//                System.out.print(s + " ");
+//            System.out.println();
+//        }
+        
     }
 }
