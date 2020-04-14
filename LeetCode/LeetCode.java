@@ -3039,6 +3039,684 @@ public class LeetCode {
         return new ArrayList<>(hmap.values());
     }
 
+    /*
+    73. PROBLEM DESCRIPTION (https://leetcode.com/problems/unique-paths/)
+        A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+        The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of
+        the grid (marked 'Finish' in the diagram below).
+
+        How many possible unique paths are there?
+
+        Example 1:
+            Input: m = 3, n = 2
+            Output: 3
+            Explanation:
+                From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+                1. Right -> Right -> Down
+                2. Right -> Down -> Right
+                3. Down -> Right -> Right
+
+        Example 2:
+            Input: m = 7, n = 3
+            Output: 28
+
+        Constraints:
+            1 <= m, n <= 100
+            It's guaranteed that the answer will be less than or equal to 2 * 10 ^ 9.
+    */
+    public int uniquePaths_alt(int m, int n) // TLE
+    {
+        int dp_prev[][] = new int[m][n],dp_next[][] = new int[m][n];
+        dp_prev[0][0] = 1;
+        HashSet<String> current_set = new HashSet<String>(),next_set;
+        current_set.add("00");
+        while(current_set.size()!=1 || !current_set.contains((m-1)+""+(n-1)))
+        {
+            next_set = new HashSet<String>();
+            for(String s:current_set)
+            {
+                int i = s.charAt(0)-'0',j=s.charAt(1)-'0';
+                if(i<m-1)
+                {
+                    dp_next[i + 1][j] += dp_prev[i][j];
+                    next_set.add(((i+1)+""+j));
+                }
+                if(j<n-1)
+                {
+                    dp_next[i][j + 1] += dp_prev[i][j];
+                    next_set.add(i+""+(j+1));
+                }
+            }
+            current_set = (HashSet<String>) next_set.clone();
+            for(int iterator_i=0;iterator_i<m;iterator_i++)
+            {
+                dp_prev[iterator_i] = Arrays.copyOf(dp_next[iterator_i],dp_next[iterator_i].length);
+                Arrays.fill(dp_next[iterator_i],0);
+            }
+
+        }
+        return dp_prev[m-1][n-1];
+    }
+
+    public int uniquePaths(int m, int n)
+    {
+        int curr[] = new int[n];
+        Arrays.fill(curr,1);
+        for(int iterator_i=1;iterator_i<m;iterator_i++)
+            for(int iterator_j=1;iterator_j<n;iterator_j++)
+                curr[iterator_j] = curr[iterator_j] + curr[iterator_j-1];
+        return curr[n-1];
+    }
+
+    /*
+    74. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-path-sum/)
+        Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+        Note: You can only move either down or right at any point in time.
+
+        Example:
+        Input:
+        [
+            [1,3,1],
+            [1,5,1],
+            [4,2,1]
+        ]
+        Output: 7
+        Explanation: Because the path 1→3→1→1→1 minimizes the sum.
+    */
+    public int minPathSum(int[][] grid)
+    {
+        int dp_next[] = Arrays.copyOf(grid[0],grid[0].length);
+        for(int iterator_i=1;iterator_i<dp_next.length;iterator_i++)
+            dp_next[iterator_i] += dp_next[iterator_i-1];
+        for(int iterator_i=1;iterator_i<grid.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+                dp_next[iterator_j] = grid[iterator_i][iterator_j] + Math.min(dp_next[iterator_j],(iterator_j==0?Integer.MAX_VALUE:dp_next[iterator_j-1]));
+        }
+        return dp_next[dp_next.length-1];
+    }
+
+    /*
+    75. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-level-order-traversal/)
+        Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+
+        For example:
+        Given binary tree [3,9,20,null,null,15,7],
+            3
+           / \
+          9  20
+            /  \
+           15   7
+        return its level order traversal as:
+        [
+          [3],
+          [9,20],
+          [15,7]
+        ]
+    */
+    public List<List<Integer>> levelOrder_iter(TreeNode root)
+    {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        int nodes_in_level;
+        queue.add(root);
+        while(!queue.isEmpty())
+        {
+            int iterator_level=0;
+            nodes_in_level = queue.size();
+            List<Integer> current_level_list = new ArrayList<Integer>();
+            while(iterator_level<nodes_in_level)
+            {
+                TreeNode curr_node = queue.remove();
+                if(curr_node!=null)
+                {
+                    current_level_list.add(curr_node.val);
+                    if(curr_node.left!=null)
+                        queue.add(curr_node.left);
+                    if(curr_node.right!=null)
+                        queue.add(curr_node.right);
+                }
+                iterator_level++;
+            }
+            list.add(new ArrayList<>(current_level_list));
+        }
+        return list;
+    }
+
+    public List<List<Integer>> levelOrder(TreeNode root)
+    {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        levelOrderRcurSpace(root,list,0);
+        return list;
+    }
+
+    public static void levelOrderRcurSpace(TreeNode root,List<List<Integer>> list,int height)
+    {
+        if(root==null)
+            return;
+        if(height==list.size())
+            list.add(new ArrayList<>());
+        list.get(height).add(root.val);
+
+        levelOrderRcurSpace(root.left,list,height+1);
+        levelOrderRcurSpace(root.right,list,height+1);
+    }
+
+    /*
+    76. PROBLEM DESCRIPTION (https://leetcode.com/problems/validate-binary-search-tree/)
+        Given a binary tree, determine if it is a valid binary search tree (BST).
+
+        Assume a BST is defined as follows:
+        1. The left subtree of a node contains only nodes with keys less than the node's key.
+        2. The right subtree of a node contains only nodes with keys greater than the node's key.
+        3. Both the left and right subtrees must also be binary search trees.
+    */
+    public boolean isValidBST(TreeNode root)
+    {
+        return isValidBSTHelper(root,Long.MAX_VALUE,Long.MIN_VALUE);
+    }
+
+    public static boolean isValidBSTHelper(TreeNode root,long max_allowed,long min_allowed)
+    {
+        if(root==null)
+            return true;
+
+        if(root.val<max_allowed  && root.val>min_allowed )
+        {
+            Long max_allowed_new =Math.min(max_allowed,root.val);
+            Long min_allowed_new =Math.max(min_allowed,root.val);
+            return isValidBSTHelper(root.left,max_allowed_new,min_allowed) && isValidBSTHelper(root.right,max_allowed,min_allowed_new);
+        }
+        return false;
+    }
+
+    /*
+    77. PROBLEM DESCRIPTION (https://leetcode.com/problems/word-search/)
+        Given a 2D board and a word, find if the word exists in the grid.
+
+        The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or
+        vertically neighboring. The same letter cell may not be used more than once.
+
+        Example:
+            board =
+                [
+                    ['A','B','C','E'],
+                    ['S','F','C','S'],
+                    ['A','D','E','E']
+                ]
+
+            Given word = "ABCCED", return true.
+            Given word = "SEE", return true.
+            Given word = "ABCB", return false.
+
+
+        Constraints:
+        1. board and word consists only of lowercase and uppercase English letters.
+        2. 1 <= board.length <= 200
+        3. 1 <= board[i].length <= 200
+        4. 1 <= word.length <= 10^3
+    */
+    public boolean exist(char[][] board, String word)
+    {
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
+            {
+                if(existRcurSpace(board,word,0,iterator_i,iterator_j))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean existRcurSpace(char[][] board,String word,int word_pos,int board_x,int board_y)
+    {
+        boolean existence_found=false;
+        if(board_x<0||board_x==board.length||board_y<0||board_y==board[0].length||board[board_x][board_y]!=word.charAt(word_pos))
+            return false;
+        if(word_pos == word.length()-1)
+                return true;
+
+        board[board_x][board_y] ^= 256;
+        existence_found = (existRcurSpace(board, word, word_pos + 1, board_x - 1, board_y) ||
+                existRcurSpace(board, word, word_pos + 1, board_x, board_y - 1) ||
+                existRcurSpace(board, word, word_pos + 1, board_x + 1, board_y) ||
+                existRcurSpace(board, word, word_pos + 1, board_x, board_y + 1));
+        board[board_x][board_y] ^= 256;
+        return existence_found;
+    }
+
+    /*
+    78. PROBLEM DESCRIPTION (https://leetcode.com/problems/contains-duplicate/)
+        Given an array of integers, find if the array contains any duplicates.
+
+        Your function should return true if any value appears at least twice in the array, and it should return false if every element is
+        distinct.
+
+        Example 1:
+            Input: [1,2,3,1]
+            Output: true
+
+            Example 2:
+            Input: [1,2,3,4]
+            Output: false
+    */
+    public boolean containsDuplicate(int[] nums)
+    {
+        HashSet<Integer> set = new HashSet<>();
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            if(!set.add(nums[iterator_i]))
+                return true;
+        return false;
+    }
+
+    /*
+    79. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-primes/)
+        Count the number of prime numbers less than a non-negative number, n.
+
+        Example:
+            Input: 10
+            Output: 4
+            Explanation: There are 4 prime numbers less than 10, they are 2, 3, 5, 7.
+    */
+    public int countPrimes(int n) {
+        if(n<3)
+            return 0;
+        boolean prime_arr[] = new boolean[n];
+        int count = n/2;
+        for(int iterator_i=3;iterator_i*iterator_i<n;iterator_i+=2)
+        {
+            if(!prime_arr[iterator_i])
+            {
+                for(int j = iterator_i*iterator_i;j<n;j+=2*iterator_i)
+                {
+                    if(!prime_arr[j])
+                    {
+                        prime_arr[j] = true;
+                        count--;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    /*
+    80. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-islands/)
+        Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by
+        connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+        Example 1:
+        Input:
+            11110
+            11010
+            11000
+            00000
+        Output: 1
+
+        Example 2:
+        Input:
+            11000
+            11000
+            00100
+            00011
+        Output: 3
+    */
+    public int numIslands(char[][] grid)
+    {
+        int count_islands=0;
+        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+            {
+                if(grid[iterator_i][iterator_j]=='1')
+                {
+                    sinkIsland(grid, iterator_i, iterator_j);
+                    count_islands++;
+                }
+            }
+        }
+        return  count_islands;
+    }
+
+    public static void sinkIsland(char[][] grid,int pos_row,int pos_col)
+    {
+        if(pos_col<0 || pos_col==grid[0].length || pos_row<0 || pos_row==grid.length || grid[pos_row][pos_col]=='0')
+            return;
+        grid[pos_row][pos_col] = '0';
+        sinkIsland(grid,pos_row-1,pos_col);
+        sinkIsland(grid,pos_row+1,pos_col);
+        sinkIsland(grid,pos_row,pos_col-1);
+        sinkIsland(grid,pos_row,pos_col+1);
+    }
+
+    /*
+    81. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-peak-element/)
+        A peak element is an element that is greater than its neighbors.
+        Given an input array nums, where nums[i] ≠ nums[i+1], find a peak element and return its index.
+        The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+        You may imagine that nums[-1] = nums[n] = -∞.
+
+        Example 1:
+        Input: nums = [1,2,3,1]
+        Output: 2
+        Explanation: 3 is a peak element and your function should return the index number 2.
+
+        Example 2:
+        Input: nums = [1,2,1,3,5,6,4]
+        Output: 1 or 5
+        Explanation: Your function can return either index number 1 where the peak element is 2,
+             or index number 5 where the peak element is 6.
+    */
+    public int findPeakElement(int[] nums)
+    {
+        int lb=0,ub=nums.length-1,mid;
+        while(lb<=ub)
+        {
+            mid = (lb+ub)/2;
+            if(mid>0 && nums[mid-1]>nums[mid])
+                ub = mid-1;
+            else if(mid<nums.length-1 && nums[mid+1]>nums[mid])
+                lb = mid+1;
+            else
+                return mid;
+        }
+        return -1;
+    }
+
+    /*
+    82. PROBLEM DESCRIPTION (https://leetcode.com/problems/fizz-buzz/)
+        Write a program that outputs the string representation of numbers from 1 to n.
+        But for multiples of three it should output “Fizz” instead of the number and for the multiples of five output “Buzz”. For numbers
+        which are multiples of both three and five output “FizzBuzz”.
+
+        Example:
+        n = 15,
+        Return:
+        [
+            "1",
+            "2",
+            "Fizz",
+            "4",
+            "Buzz",
+            "Fizz",
+            "7",
+            "8",
+            "Fizz",
+            "Buzz",
+            "11",
+            "Fizz",
+            "13",
+            "14",
+            "FizzBuzz"
+        ]
+    */
+    public List<String> fizzBuzz(int n)
+    {
+        List<String> list = new ArrayList<>();
+        HashMap<Integer,String> divisibility_ruleset = new HashMap();
+        divisibility_ruleset.put(3,"Fizz");
+        divisibility_ruleset.put(5,"Buzz");
+        for(int i=1;i<=n;i++)
+        {
+            String curr_string = "";
+            for(Integer div_rule:divisibility_ruleset.keySet())
+                if(i%div_rule==0)
+                    curr_string += divisibility_ruleset.get(div_rule);
+
+            if(curr_string.length()==0)
+                list.add(i+"");
+            else
+                list.add(curr_string);
+        }
+        return list;
+    }
+
+    /*
+    83. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)
+        Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
+
+        Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+
+        Example:
+        matrix = [
+            [ 1,  5,  9],
+            [10, 11, 13],
+            [12, 13, 15]
+        ],
+        k = 8,
+        return 13.
+
+        Note: You may assume k is always valid, 1 ≤ k ≤ n2.
+    */
+    public int kthSmallest_alt(int[][] matrix, int k)
+    {
+        PriorityQueue<Tuple> prio_queue = new PriorityQueue<Tuple>();
+        for(int iterator_i=0;iterator_i<matrix[0].length;iterator_i++)
+            prio_queue.add(new Tuple(0,iterator_i,matrix[0][iterator_i]));
+
+        for(int iterator_i=1;iterator_i<k;iterator_i++)
+        {
+            Tuple lowestEle = prio_queue.poll();
+            if(lowestEle.pos_x==matrix.length-1)
+                continue;
+            prio_queue.add(new Tuple(lowestEle.pos_x+1,lowestEle.pos_y,matrix[lowestEle.pos_x+1][lowestEle.pos_y]));
+        }
+        return prio_queue.peek().val;
+    }
+
+    static int closest_val, far_val ;
+    public int kthSmallest(int[][] matrix, int k)
+    {
+        int lb=matrix[0][0],ub=matrix[matrix.length-1][matrix[0].length-1],mid,count_lesser;
+        while(lb<ub)
+        {
+            mid = lb +(ub-lb)/2;
+            count_lesser = count_for_kthSmallest(matrix,mid);
+            if(count_lesser>k)
+                ub = mid - closest_val;
+            else if(count_lesser<k)
+                lb = mid+far_val;
+            else
+                return mid - closest_val;
+        }
+        return lb;
+    }
+
+    public static int count_for_kthSmallest(int matrix[][],int mid)
+    {
+        closest_val = Integer.MAX_VALUE;
+        far_val = Integer.MAX_VALUE;
+        int count = 0;
+        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
+        {
+            int iterator_j=0;
+            while(iterator_j<matrix[0].length && matrix[iterator_i][iterator_j]<=mid) {
+                closest_val = Math.min(closest_val,mid - matrix[iterator_i][iterator_j]);
+                iterator_j++;
+                count++;
+            }
+            while(iterator_j<matrix[0].length) {
+                far_val = Math.min(far_val,matrix[iterator_i][iterator_j]-mid);
+                iterator_j++;
+            }
+        }
+        return count;
+    }
+
+    /*
+    84. PROBLEM DESCRIPTION (https://leetcode.com/problems/odd-even-linked-list/)
+        Given a singly linked list, group all odd nodes together followed by the even nodes. Please note here we are
+        talking about the node number and not the value in the nodes.
+        You should try to do it in place. The program should run in O(1) space complexity and O(nodes) time complexity.
+
+        Example 1:
+            Input: 1->2->3->4->5->NULL
+            Output: 1->3->5->2->4->NULL
+
+        Example 2:
+            Input: 2->1->3->5->6->4->7->NULL
+            Output: 2->3->6->7->1->5->4->NULL
+
+        Note:
+        1. The relative order inside both the even and odd groups should remain as it was in the input.
+        2. The first node is considered odd, the second node even and so on
+    */
+    public ListNode oddEvenList(ListNode head)
+    {
+        if(head == null || head.next==null)
+            return head;
+        int count = 0;
+        ListNode odd_ptr_tail = head, even_ptr_tail = head.next, curr_ptr=head.next.next;
+        while(curr_ptr != null)
+        {
+            if(count%2==0) //Odd Sequence
+            {
+                even_ptr_tail.next = curr_ptr.next;
+                curr_ptr.next = odd_ptr_tail.next;
+                odd_ptr_tail.next = curr_ptr;
+                odd_ptr_tail = odd_ptr_tail.next;
+            }
+            else
+                even_ptr_tail = even_ptr_tail.next;
+            curr_ptr = even_ptr_tail.next;
+            count++;
+        }
+        return head;
+    }
+
+    /*
+    85. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-the-duplicate-number/)
+        Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
+
+        Example 1:
+            Input: [1,3,4,2,2]
+            Output: 2
+
+        Example 2:
+            Input: [3,1,3,4,2]
+            Output: 3
+
+        Note:
+        1. You must not modify the array (assume the array is read only).
+        2. You must use only constant, O(1) extra space.
+        3. Your runtime complexity should be less than O(n^2).
+        4. There is only one duplicate number in the array, but it could be repeated more than once.
+    */
+    public int findDuplicate(int[] nums)
+    {
+        int slow_ptr = nums[0], fast_ptr = nums[0];
+        do
+        {
+            slow_ptr = nums[slow_ptr];
+            fast_ptr = nums[nums[fast_ptr]];
+        }while(slow_ptr!=fast_ptr);
+
+        // Since Cycle formed, get point of intersection
+        slow_ptr = nums[0];
+        while(slow_ptr!=fast_ptr)
+        {
+            slow_ptr = nums[slow_ptr];
+            fast_ptr = nums[fast_ptr];
+        }
+
+        return slow_ptr;
+    }
+
+    /*
+    86. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-anagram/)
+        Given two strings s and t , write a function to determine if t is an anagram of s.
+
+        Example 1:
+            Input: s = "anagram", t = "nagaram"
+            Output: true
+
+        Example 2:
+            Input: s = "rat", t = "car"
+            Output: false
+
+        Note:
+            You may assume the string contains only lowercase alphabets.
+    */
+    public boolean isAnagram(String s, String t) { // Generic Solution Use
+        if(s.length()!=t.length())
+            return false;
+        HashMap<Character,Integer> char_hmap = new HashMap<>();
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+            char_hmap.put(s.charAt(iterator_i),char_hmap.getOrDefault(s.charAt(iterator_i),0)+1);
+
+        for(int iterator_i=0;iterator_i<t.length();iterator_i++)
+        {
+            int new_val = char_hmap.getOrDefault(t.charAt(iterator_i),-1);
+            if(new_val<=0)
+                return false;
+            if(new_val>1)
+                char_hmap.put(t.charAt(iterator_i),new_val-1);
+            else
+                char_hmap.remove(t.charAt(iterator_i));
+        }
+        if(char_hmap.isEmpty())
+            return true;
+        return false;
+    }
+
+    /*
+    87. PROBLEM DESCRIPTION (https://leetcode.com/problems/product-of-array-except-self/)
+        Given an array nums of n integers where n > 1,  return an array output such that output[i] is equal to the product of all
+        the elements of nums except nums[i].
+
+        Example:
+        Input:  [1,2,3,4]
+        Output: [24,12,8,6]
+        Constraint: It's guaranteed that the product of the elements of any prefix or suffix of the array (including the whole array) fits in a 32 bit integer.
+
+        Note: Solve it without division and in O(n) time and O(1) space.
+    */
+    public int[] productExceptSelf(int[] nums)
+    {
+        int result_arr[] = new int[nums.length];
+        result_arr[0] =1;
+        // Store product from left of element
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+            result_arr[iterator_i] = result_arr[iterator_i-1]* nums[iterator_i-1];
+
+        // Combine result with right products
+        int curr_right_product = 1;
+        for(int iterator_i=nums.length-1;iterator_i>=0;iterator_i--)
+        {
+            result_arr[iterator_i] *= curr_right_product;
+            curr_right_product *= nums[iterator_i];
+        }
+        return result_arr;
+    }
+
+    /*
+    88. PROBLEM DESCRIPTION (https://leetcode.com/problems/factorial-trailing-zeroes/)
+        Given an integer n, return the number of trailing zeroes in n!.
+
+        Example 1:
+        Input: 3
+        Output: 0
+        Explanation: 3! = 6, no trailing zero.
+
+        Example 2:
+        Input: 5
+        Output: 1
+        Explanation: 5! = 120, one trailing zero.
+
+        Note: Your solution should be in logarithmic time complexity.
+    */
+    public int trailingZeroes(int n) {
+        int count = 0;
+        while (n != 0) {
+            int tmp = n / 5;
+            count += tmp;
+            n = tmp;
+        }
+        return count;
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -3686,6 +4364,137 @@ public class LeetCode {
 //                System.out.print(s + " ");
 //            System.out.println();
 //        }
-        
+
+        /** Driver Code for Q73.uniquePaths
+         *
+         */
+//        System.out.println("Enter m and n");
+//        System.out.println(obj.uniquePaths(sc.nextInt(),sc.nextInt()));
+
+        /** Driver Code for Q74.minPathSum
+         *
+         */
+//        System.out.println("Enter m and n");
+//        int m = sc.nextInt(),n=sc.nextInt();
+//        int board[][] = new int[m][n];
+//        System.out.println("Enter board");
+//        for(int iterator_i=0;iterator_i<m;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.nextInt();
+//
+//        System.out.println(obj.minPathSum(board));
+
+        /** Driver Code for Q75.levelOrder
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.levelOrder(input_tree);
+
+        /** Driver Code for Q76.isValidBST
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println(obj.isValidBST(input_tree));
+
+        /** Driver Code for Q77.exist
+         *
+         */
+//        System.out.println("Enter m and n");
+//        int m = sc.nextInt(),n = sc.nextInt();
+//        char board[][] = new char[m][n];
+//        System.out.println("Enter board");
+//        for(int iterator_i=0;iterator_i<m;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.next().charAt(0);
+//        System.out.println("Enter word to search");
+//        obj.exist(board,sc.next());
+
+        /** Driver Code for Q78.containsDuplicate
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.containsDuplicate(input_arr));
+
+        /** Driver Code for Q79.countPrimes
+         *
+         */
+//        System.out.println("Enter n ");
+//        System.out.println(obj.countPrimes(sc.nextInt()));
+
+        /** Driver Code for Q80.numIslands
+         *
+         */
+//        System.out.println("Enter grid row size");
+//        int n = sc.nextInt();
+//        char grid[][] = new char[n][n];
+//        System.out.println("Enter grid");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                grid[iterator_i][iterator_j] = sc.next().charAt(0);
+//        System.out.println(obj.numIslands(grid));
+
+        /** Driver Code for Q81.findPeakElement
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.findPeakElement(input_arr));
+
+        /** Driver Code for Q82.fizzBuzz
+         *
+         */
+//          System.out.println("Enter n");
+//          List<String> list = obj.fizzBuzz(sc.nextInt());
+//          for(String lval:list)
+//              System.out.println(lval);
+
+        /** Driver Code for Q83.kthSmallest
+         *
+         */
+//        System.out.println("Enter n");
+//        int n = sc.nextInt(), input_arr[][] = new int[n][n];
+//        System.out.println("Enter matrix");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                input_arr[iterator_i][iterator_j] = sc.nextInt();
+//        System.out.println("Enter k");
+//        System.out.println(obj.kthSmallest(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q84.oddEvenList
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        input_list = obj.oddEvenList(input_list);
+//        while(input_list!=null)
+//        {
+//            System.out.print(output_list.val+" ");
+//            output_list = output_list.next;
+//        }
+
+        /** Driver Code for Q85.findDuplicate
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.findDuplicate(input_arr));
+
+        /** Driver Code for Q86.isAnagram
+         *
+         */
+//        System.out.println("Enter 2 strings");
+//        System.out.println(obj.isAnagram(sc.next(),sc.next()));
+
+        /** Driver Code for Q87.productExceptSelf
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        input_arr = obj.productExceptSelf(input_arr);
+//        for(int val:input_arr)
+//            System.out.print(val+" ");
+//        System.out.println();
+
+        /** Driver Code for Q88.trailingZeroes
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.trailingZeroes(sc.nextInt()));
     }
 }
