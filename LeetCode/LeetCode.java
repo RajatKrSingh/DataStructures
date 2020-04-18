@@ -3717,6 +3717,622 @@ public class LeetCode {
         return count;
     }
 
+    /*
+    89. PROBLEM DESCRIPTION (https://leetcode.com/problems/basic-calculator-ii/)
+        Implement a basic calculator to evaluate a simple expression string.
+
+        The expression string contains only non-negative integers, +, -, *, / operators and empty spaces . The integer division
+        should truncate toward zero.
+
+        Example 1:
+            Input: "3+2*2"
+            Output: 7
+
+        Example 2:
+            Input: " 3/2 "
+            Output: 1
+
+        Example 3:
+            Input: " 3+5 / 2 "
+            Output: 5
+    */
+    public int calculate_alt(String s) //Stack Approach
+    {
+        Stack<Integer> operator_stack = new Stack<>();
+        Stack<Character> operand_stack = new Stack<>();
+        int iterator_i = 0;
+        while(iterator_i<s.length())
+        {
+            char c = s.charAt(iterator_i);
+            if(c==' '||c=='\t') {
+                iterator_i++;
+                continue;
+            }
+            if(c>='0' && c<='9')
+            {
+                int next_num = 0;
+                while (iterator_i < s.length() && s.charAt(iterator_i) >= '0' && s.charAt(iterator_i) <= '9') {
+                    c = s.charAt(iterator_i);
+                    next_num = next_num * 10 + (int) (c - '0');
+                    iterator_i++;
+                }
+                operator_stack.push(next_num);
+            }
+            else //Operand
+            {
+                if(operand_stack.isEmpty() || isPriorityHigher(operand_stack.peek(),c))
+                    operand_stack.push(c);
+                else
+                {
+                    while(!operand_stack.isEmpty() && !isPriorityHigher(operand_stack.peek(),c))
+                    {
+                        int operator2 = operator_stack.pop();
+                        int operator1 = operator_stack.pop();
+                        char ch = operand_stack.pop();
+
+                        switch (ch) {
+                            case '+':
+                                operator_stack.push(operator1 + operator2);
+                                break;
+                            case '-':
+                                operator_stack.push(operator1 - operator2);
+                                break;
+                            case '*':
+                                operator_stack.push(operator1 * operator2);
+                                break;
+                            case '/':
+                                operator_stack.push(operator1 / operator2);
+                                break;
+                        }
+                    }
+                    operand_stack.push(c);
+                }
+                iterator_i++;
+            }
+        }
+        while(!operand_stack.empty()) {
+            int operator2 = operator_stack.pop();
+            int operator1 = operator_stack.pop();
+            char c = operand_stack.pop();
+            switch (c) {
+                case '+':
+                    operator_stack.push(operator1 + operator2);
+                    break;
+                case '-':
+                    operator_stack.push(operator1 - operator2);
+                    break;
+                case '*':
+                    operator_stack.push(operator1 * operator2);
+                    break;
+                case '/':
+                    operator_stack.push(operator1 / operator2);
+                    break;
+            }
+        }
+        return operator_stack.pop();
+    }
+
+    public static boolean isPriorityHigher(char stack_top,char current_operand)
+    {
+        if((stack_top=='+'||stack_top=='-')&&(current_operand=='*' || current_operand=='/'))
+            return true;
+        return false;
+    }
+
+    public int calculate(String s)
+    {
+        char sign = '+';
+        int result_till_now = 0, prev_add = 0,curr_num=0;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            char c = s.charAt(iterator_i);
+            if(Character.isDigit(c))
+                curr_num = curr_num * 10 + (int) (s.charAt(iterator_i) - '0');
+
+            if ("*/+-".contains(c+"")||iterator_i==s.length()-1)
+            {
+                switch (sign)
+                {
+                    case '+':
+                        prev_add = curr_num;
+                        break;
+                    case '-':
+                        prev_add = -curr_num;
+                        break;
+                    case '*':
+                        result_till_now -= prev_add;
+                        prev_add *= curr_num;
+                        break;
+                    case '/':
+                        result_till_now -= prev_add;
+                        prev_add /= curr_num;
+                }
+                sign = c;
+                curr_num = 0;
+                result_till_now += prev_add;
+            }
+        }
+        return result_till_now;
+    }
+
+    /*
+    90. PROBLEM DESCRIPTION (https://leetcode.com/problems/search-a-2d-matrix-ii/)
+        Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+        1. Integers in each row are sorted in ascending from left to right.
+        2. Integers in each column are sorted in ascending from top to bottom.
+
+        Example:
+        Consider the following matrix:
+        [
+            [1,   4,  7, 11, 15],
+            [2,   5,  8, 12, 19],
+            [3,   6,  9, 16, 22],
+            [10, 13, 14, 17, 24],
+            [18, 21, 23, 26, 30]
+        ]
+        Given target = 5, return true.
+        Given target = 20, return false.
+    */
+    public boolean searchMatrix(int[][] matrix, int target) //BST from top right position
+    {
+        if(matrix.length==0 )
+            return false;
+        int curr_row=0,curr_col = matrix[0].length-1;
+        while(curr_col>=0 && curr_row<matrix.length)
+        {
+            if(target<matrix[curr_row][curr_col])
+                curr_col--;
+            else if(target>matrix[curr_row][curr_col])
+                curr_row++;
+            else
+                return true;
+        }
+        return false;
+    }
+
+    /*
+    91. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-node-in-a-linked-list/)
+        Write a function to delete a node (except the tail) in a singly linked list, given only access to that node.
+
+        Example 1:
+        Input: head = [4,5,1,9], node = 5
+        Output: [4,1,9]
+        Explanation: You are given the second node with value 5, the linked list should become 4 -> 1 -> 9 after calling your function.
+    */
+    public void deleteNode(ListNode node)
+    {
+        node.val = node.next.val;
+        node.next = node.next.next;
+    }
+
+    /*
+    92. PROBLEM DESCRIPTION (https://leetcode.com/problems/course-schedule/)
+        There are a total of numCourses courses you have to take, labeled from 0 to numCourses-1.
+        Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as
+        a pair: [0,1]
+        Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+        Example 1:
+        Input: numCourses = 2, prerequisites = [[1,0]]
+        Output: true
+        Explanation: There are a total of 2 courses to take.
+             To take course 1 you should have finished course 0. So it is possible.
+
+        Example 2:
+        Input: numCourses = 2, prerequisites = [[1,0],[0,1]]
+        Output: false
+        Explanation: There are a total of 2 courses to take.
+             To take course 1 you should have finished course 0, and to take course 0 you should
+             also have finished course 1. So it is impossible.
+    */
+    public boolean canFinish_alt(int numCourses, int[][] prerequisites) //Topological Sorting
+    {
+        int adj_matrix[][] = new int[numCourses][numCourses];
+        int in_degree[] = new int[numCourses];
+        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
+        {
+            adj_matrix[prerequisites[iterator_i][1]][prerequisites[iterator_i][0]] = 1;
+            in_degree[prerequisites[iterator_i][0]]++;
+        }
+        Queue bfs_q = new LinkedList();
+        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+            if(in_degree[iterator_i]==0)
+                bfs_q.add(iterator_i);
+
+        int count_visited = 0;
+        while(!bfs_q.isEmpty())
+        {
+            count_visited++;
+            int current_vertex = (int)bfs_q.poll();
+            for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+            {
+                if(adj_matrix[current_vertex][iterator_i]==1)
+                {
+                    if(in_degree[iterator_i]==1)
+                        bfs_q.add(iterator_i);
+                    else
+                        in_degree[iterator_i]--;
+                }
+            }
+        }
+        return count_visited==numCourses;
+
+    }
+
+    public boolean canFinish_dfs(int numCourses, int[][] prerequisites) // Cycle Detection
+    {
+        int visited[] = new int[numCourses];
+        int adj_matrix[][] = new int[numCourses][numCourses];
+        boolean checked_for_cycles[] = new boolean[numCourses];
+        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
+            adj_matrix[prerequisites[iterator_i][1]][prerequisites[iterator_i][0]] = 1;
+
+        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+        {
+            if(detectCyclefromvertex(adj_matrix,visited,iterator_i,checked_for_cycles))
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean detectCyclefromvertex(int[][] adj_matrix, int visited[],int current_vertex, boolean checked_for_cycles[])
+    {
+        if(!checked_for_cycles[current_vertex])
+        {
+            if (visited[current_vertex] == 1)
+                return true;
+            visited[current_vertex] = 1;
+            for(int iterator_i=0;iterator_i<visited.length;iterator_i++)
+            {
+                if (adj_matrix[current_vertex][iterator_i] == 1)
+                {
+                    if (detectCyclefromvertex(adj_matrix, visited, iterator_i, checked_for_cycles))
+                        return true;
+                }
+            }
+            checked_for_cycles[current_vertex] = true;
+        }
+        return false;
+    }
+
+    public boolean canFinish(int numCourses, int[][] prerequisites) // Cycle Detection Adjacency list
+    {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        int visited[] = new int[numCourses];
+        boolean checked_for_cycles[] = new boolean[numCourses];
+        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+            list.add(new ArrayList<>());
+        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
+            list.get(prerequisites[iterator_i][1]).add(prerequisites[iterator_i][0]);
+
+        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+        {
+            if(detectCyclefromvertex_list(list,visited,iterator_i,checked_for_cycles))
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean detectCyclefromvertex_list(List<List<Integer>> adj_list, int visited[],int current_vertex, boolean checked_for_cycles[])
+    {
+        if(!checked_for_cycles[current_vertex])
+        {
+            if (visited[current_vertex] == 1)
+                return true;
+            visited[current_vertex] = 1;
+            for(int courseId: adj_list.get(current_vertex))
+            {
+                if (detectCyclefromvertex_list(adj_list, visited, courseId, checked_for_cycles))
+                    return true;
+            }
+            checked_for_cycles[current_vertex] = true;
+        }
+        return false;
+    }
+
+    /*
+    93. PROBLEM DESCRIPTION (https://leetcode.com/problems/surrounded-regions/)
+        Given a 2D board containing 'X' and 'O' (the letter O), capture all regions surrounded by 'X'.
+
+        A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+        Example:
+            X X X X
+            X O O X
+            X X O X
+            X O X X
+
+        After running your function, the board should be:
+            X X X X
+            X X X X
+            X X X X
+            X O X X
+
+        Explanation:
+            Surrounded regions shouldn’t be on the border, which means that any 'O' on the border of the board are not
+            flipped to 'X'. Any 'O' that is not on the border and it is not connected to an 'O' on the border will be flipped to 'X'.
+            Two cells are connected if they are adjacent cells connected horizontally or vertically.
+    */
+    public void solve(char[][] board)
+    {
+        if(board.length == 0)
+            return;
+        for (int iterator_i = 0; iterator_i < board[0].length; iterator_i++)
+            if(board[0][iterator_i]=='O')
+                solveDfs(board, 0, iterator_i);
+        for (int iterator_i = 0; iterator_i < board[0].length; iterator_i++)
+            if(board[board.length-1][iterator_i]=='O')
+                solveDfs(board, board.length-1, iterator_i);
+        for (int iterator_i = 1; iterator_i < board.length-1; iterator_i++)
+            if(board[iterator_i][0]=='O')
+                solveDfs(board, iterator_i,0);
+        for (int iterator_i = 1; iterator_i < board.length-1; iterator_i++)
+            if(board[iterator_i][board[0].length-1]=='O')
+                solveDfs(board, iterator_i,board[0].length-1);
+
+        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
+        {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++) {
+                if (board[iterator_i][iterator_j] == 'Y')
+                    board[iterator_i][iterator_j] = 'O';
+                else
+                    board[iterator_i][iterator_j] = 'X';
+            }
+        }
+    }
+
+    public static void solveDfs(char board[][],int x_pos,int y_pos)
+    {
+        board[x_pos][y_pos] = 'Y';
+        if(x_pos+1<board.length-1 && board[x_pos+1][y_pos]=='O')
+            solveDfs(board,x_pos+1,y_pos);
+        if(x_pos-1>0 && board[x_pos-1][y_pos]=='O')
+            solveDfs(board,x_pos-1,y_pos);
+        if(y_pos+1<board[0].length-1 && board[x_pos][y_pos+1]=='O')
+            solveDfs(board,x_pos,y_pos+1);
+        if(y_pos-1>0 && board[x_pos][y_pos-1]=='O')
+            solveDfs(board,x_pos,y_pos-1);
+    }
+
+    /*
+    94. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-1-bits/)
+        Write a function that takes an unsigned integer and return the number of '1' bits it has (also known as the Hamming weight).
+
+        Example 1:
+        Input: 00000000000000000000000000001011
+        Output: 3
+        Explanation: The input binary string 00000000000000000000000000001011 has a total of three '1' bits.
+    */
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n)
+    {
+        int count_ones =0;
+        while(n!=0)
+        {
+            count_ones++;
+            n = n & (n-1);
+        }
+        return count_ones;
+    }
+
+    /*
+    95. PROBLEM DESCRIPTION (https://leetcode.com/problems/excel-sheet-column-number/)
+        Given a column title as appear in an Excel sheet, return its corresponding column number.
+
+        For example:
+            A -> 1
+            B -> 2
+            C -> 3
+            ...
+            Z -> 26
+            AA -> 27
+            AB -> 28
+            ...
+    */
+    public int titleToNumber(String s)
+    {
+        int final_val=0;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+            final_val += Math.pow(26,s.length()-1-iterator_i)*(int)(s.charAt(iterator_i)-'A'+1);
+        return final_val;
+    }
+
+    /*
+    96. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-product-subarray/)
+        Given an integer array nums, find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+        Example 1:
+        Input: [2,3,-2,4]
+        Output: 6
+        Explanation: [2,3] has the largest product 6.
+    */
+    public int maxProduct_complicated(int[] nums)
+    {
+        int max_value_till_now=Integer.MIN_VALUE,curr_negative_till_now=Integer.MAX_VALUE,curr_positive_till_now = Integer.MIN_VALUE;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums[iterator_i]>0 )
+            {
+                curr_positive_till_now = (curr_positive_till_now<0)?nums[iterator_i]:curr_positive_till_now*nums[iterator_i];
+                curr_negative_till_now = (curr_negative_till_now<0)?curr_negative_till_now*nums[iterator_i]:curr_negative_till_now;
+            }
+            else if(nums[iterator_i]<0)
+            {
+                int temp = (curr_positive_till_now<0)?nums[iterator_i]:curr_positive_till_now*nums[iterator_i];
+                if(curr_negative_till_now<0)
+                    curr_positive_till_now = curr_negative_till_now*nums[iterator_i];
+                else
+                    curr_positive_till_now = Integer.MIN_VALUE;
+                curr_negative_till_now = temp;
+            }
+            else
+            {
+                curr_positive_till_now = Integer.MIN_VALUE;
+                curr_negative_till_now = Integer.MAX_VALUE;
+                max_value_till_now = Math.max(max_value_till_now,0);
+            }
+            max_value_till_now = Math.max(max_value_till_now,curr_positive_till_now);
+            if(curr_negative_till_now<0)
+                max_value_till_now = Math.max(max_value_till_now,curr_negative_till_now);
+
+        }
+        return max_value_till_now;
+    }
+
+    public int maxProduct_simplified(int[] nums)
+    {
+        int final_max = nums[0], curr_positive=nums[0],curr_negative = nums[0],temp;
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums[iterator_i]<0)
+            {
+                temp = curr_negative;
+                curr_negative = curr_positive;
+                curr_positive = temp;
+            }
+            curr_positive = Math.max(curr_positive*nums[iterator_i],nums[iterator_i]);
+            curr_negative = Math.min(curr_negative*nums[iterator_i],nums[iterator_i]);
+
+            final_max = Math.max(final_max,curr_positive);
+        }
+        return final_max;
+    }
+
+    public int maxProduct(int[] nums) //Do passes from front to end and end to front
+    {
+        int final_max = nums[0],current_prod=nums[0];
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            current_prod = current_prod*nums[iterator_i];
+            final_max = Math.max(final_max,current_prod);
+            if(current_prod==0)
+                current_prod = 1;
+        }
+        current_prod =1;
+        for(int iterator_i=nums.length-1;iterator_i>=0;iterator_i--)
+        {
+            current_prod = current_prod*nums[iterator_i];
+            final_max = Math.max(final_max,current_prod);
+            if(current_prod==0)
+                current_prod = 1;
+        }
+        return final_max;
+    }
+
+    /*
+    97. PROBLEM DESCRIPTION (https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)
+        Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+        For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees
+        of every node never differ by more than 1.
+
+        Example:
+        Given the sorted array: [-10,-3,0,5,9],
+        One possible answer is: [0,-3,9,-10,null,5], which represents the following height balanced BST:
+
+              0
+             / \
+           -3   9
+           /   /
+         -10  5
+    */
+    public TreeNode sortedArrayToBST(int[] nums) {
+
+        return sortedArrayToBSTHelper(nums,0,nums.length-1);
+    }
+
+    public TreeNode sortedArrayToBSTHelper(int nums[],int lb,int ub)
+    {
+        int mid = lb + (ub-lb)/2;
+        TreeNode new_node = new TreeNode(nums[mid]);
+        if(lb<mid)
+            new_node.left = sortedArrayToBSTHelper(nums,lb,mid-1);
+        if(mid<ub)
+            new_node.right = sortedArrayToBSTHelper(nums,mid+1,ub);
+
+        return new_node;
+    }
+
+    /*
+    98. PROBLEM DESCRIPTION (https://leetcode.com/problems/middle-of-the-linked-list/)
+        Given a non-empty, singly linked list with head node head, return a middle node of linked list.
+        If there are two middle nodes, return the second middle node.
+
+        Example 1:
+        Input: [1,2,3,4,5]
+        Output: Node 3 from this list (Serialization: [3,4,5])
+        The returned node has value 3.  (The judge's serialization of this node is [3,4,5]).
+
+        Example 2:
+        Input: [1,2,3,4,5,6]
+        Output: Node 4 from this list (Serialization: [4,5,6])
+        Since the list has two middle nodes with values 3 and 4, we return the second one.
+    */
+    public ListNode middleNode(ListNode head)
+    {
+        ListNode slow_ptr = head, fast_ptr = head;
+        while(fast_ptr!=null && fast_ptr.next!=null)
+        {
+            slow_ptr = slow_ptr.next;
+            fast_ptr = fast_ptr.next.next;
+        }
+        return slow_ptr;
+    }
+
+
+    /*
+    99. PROBLEM DESCRIPTION (https://leetcode.com/problems/move-zeroes/)
+        Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+
+        Example:
+            Input: [0,1,0,3,12]
+            Output: [1,3,12,0,0]
+    */
+    public void moveZeroes(int[] nums)
+    {
+        int zero_ptr=0,scan_ptr=0;
+        while(scan_ptr<nums.length)
+        {
+            if(nums[scan_ptr]!=0)
+                nums[zero_ptr++] = nums[scan_ptr];
+            scan_ptr++;
+        }
+        while(zero_ptr<nums.length)
+            nums[zero_ptr++] = 0;
+    }
+
+    /*
+    100. PROBLEM DESCRIPTION (https://leetcode.com/problems/contiguous-array/)
+        Given a binary array, find the maximum length of a contiguous subarray with equal number of 0 and 1.
+
+        Example 1:
+        Input: [0,1]
+        Output: 2
+        Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
+
+        Example 2:
+        Input: [0,1,0]
+        Output: 2
+        Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+
+        Note: The length of the given binary array will not exceed 50,000.
+    */
+    public int findMaxLength(int[] nums)
+    {
+        HashMap<Integer,Integer> hmap=new HashMap<Integer, Integer>();
+        hmap.put(0,-1);
+        int count_zero=0,max_length=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            count_zero += (nums[iterator_i]==0)?1:-1;
+            if(hmap.containsKey(count_zero))
+                max_length = Math.max(max_length,iterator_i-hmap.get(count_zero));
+            else
+                hmap.put(count_zero,iterator_i);
+        }
+        return max_length;
+    }
+
     public static void main(String args[]) throws Exception
     {
         Scanner sc = new Scanner(System.in);
@@ -4496,5 +5112,104 @@ public class LeetCode {
          */
 //        System.out.println("Enter n");
 //        System.out.println(obj.trailingZeroes(sc.nextInt()));
+
+        /** Driver Code for Q89.calculate
+         *
+         */
+//        System.out.println("Enter expression");
+//        System.out.println(obj.calculate(sc.nextLine()));
+
+        /** Driver Code for Q90.searchMatrix
+         *
+         */
+//        System.out.println("Enter n amd m");
+//        int n = sc.nextInt(),m=sc.nextInt();
+//        int input_matrix[][] = new int[n][m];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                input_matrix[iterator_i][iterator_j] = sc.nextInt();
+//
+//        System.out.println("Enter target");
+//        obj.searchMatrix(input_matrix,sc.nextInt());
+
+        /** No Driver Code for Q91.deleteNode
+         *
+         */
+
+        /** Driver Code for Q92.canFinish
+         *
+         */
+//        System.out.println("Enter number of pairs");
+//        int n = sc.nextInt();
+//        int prerequisites[][] = new int[n][2];
+//        System.out.println("Enter prerequisites");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            prerequisites[iterator_i][0] = sc.nextInt();
+//            prerequisites[iterator_i][1] = sc.nextInt();
+//        }
+//        System.out.println("Enter number of courses");
+//        System.out.println(obj.canFinish(sc.nextInt(),prerequisites));
+
+        /** Driver Code for Q93.canFinish
+         *
+         */
+//        System.out.println("Enter n and m");
+//        int n = sc.nextInt(), m =sc.nextInt();
+//        char board[][] = new char[n][m];
+//        System.out.println("Enter board");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.next().charAt(0);
+//        obj.solve(board);
+//
+//        System.out.println("Solved Board:");
+//        for(int iterator_i=0;iterator_i<board.length;iterator_i++) {
+//            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++)
+//                System.out.print(board[iterator_i][iterator_j]);
+//            System.out.println();
+//        }
+
+        /** Driver Code for Q94.hammingWeight
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.hammingWeight(sc.nextInt()));
+
+        /** Driver Code for Q95.titleToNumber
+         *
+         */
+//        System.out.println("Enter column title");
+//        System.out.println(obj.titleToNumber(sc.next()));
+
+        /** Driver Code for Q96.maxProduct
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.maxProduct(input_arr));
+
+        /** Driver Code for Q97.sortedArrayToBST
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        TreeNode bst = obj.sortedArrayToBST(input_arr);
+
+        /** Driver Code for Q98.middleNode
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        obj.middleNode(input_list);
+
+        /** Driver Code for Q99.moveZeroes
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.moveZeroes(input_arr);
+
+        /** Driver Code for Q99.findMaxLength
+         *
+         */
+        int input_arr[] = obj.create_array_int(sc);
+        System.out.println(obj.findMaxLength(input_arr));
     }
 }
