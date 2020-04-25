@@ -1,8 +1,5 @@
 package LeetCode;
-import sun.reflect.generics.tree.Tree;
 
-import javax.lang.model.element.Element;
-import java.util.stream.Collectors;
 import java.util.*;
 
 public class LeetCode {
@@ -4331,5 +4328,492 @@ public class LeetCode {
                 hmap.put(count_zero,iterator_i);
         }
         return max_length;
+    }
+
+    /*
+    101. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-queens/)
+        Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+        Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate
+        a queen and an empty space respectively.
+    */
+    public List<List<String>> solveNQueens_alt(int n)
+    {
+        List<List<String>> list = new ArrayList<List<String>>();
+        solveQueensHelper_alt(list,0,new ArrayList<Integer>(),n);
+        return list;
+    }
+
+    public List<List<String>> solveNQueens(int n)
+    {
+        List<List<String>> list = new ArrayList<List<String>>();
+        boolean visited_col[] = new boolean[n];
+        boolean visited_diag1[] = new boolean[2*n-1];
+        boolean visited_diag2[] = new boolean[2*n-1];
+        solveQueensHelper(list,new ArrayList<Integer>(),n,visited_col,visited_diag1,visited_diag2);
+        return list;
+    }
+
+    public List<List<String>> solveNQueens_dp(int n)
+    {
+        List<List<String>> list = new ArrayList<List<String>>();
+        HashMap<TreeSet<String>, NQueensHashval> hmap = new HashMap<>();
+        hmap.put(new TreeSet<>(),new NQueensHashval(1));
+        int row_count=0;
+        while(row_count<n)
+        {
+            HashMap<TreeSet<String>,NQueensHashval> newmap = new HashMap<>();
+            for (TreeSet hset : hmap.keySet()) //Iterate over sets and if intersection is 0 only then do next steps otherwise invalid
+            {
+                for(int iterator_i=0;iterator_i<n;iterator_i++)  //Column Values for Current Row
+                {
+                    if(hset.contains("c_"+iterator_i) || hset.contains("d1_"+(n+row_count-iterator_i-1)) || hset.contains("d2_"+(row_count+iterator_i)))
+                        continue;
+                    // Create new set using contained set
+                    TreeSet current_set = (TreeSet)hset.clone();
+                    current_set.add("c_"+iterator_i);
+                    current_set.add("d1_"+(n+row_count-iterator_i-1));
+                    current_set.add("d2_"+(row_count+iterator_i));
+
+                    if(newmap.containsKey(current_set))
+                    {
+                        LinkedHashSet[] prev_set = (LinkedHashSet[])hmap.get(hset).queen_configuration;
+                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1,hmap.get(hset).val)];
+                        for(int iterator_j=0;iterator_j<Math.max(1,hmap.get(hset).val);iterator_j++)
+                        {
+                            new_set[iterator_j] = (LinkedHashSet) prev_set[iterator_j].clone();
+                            new_set[iterator_j].add(iterator_i);
+                        }
+                        NQueensHashval newval = newmap.get(current_set);
+                        LinkedHashSet<Integer>[] queen_new_configuration = new LinkedHashSet[Math.max(1,newval.val+prev_set.length)];
+                        for(int iterator_j=0;iterator_j<Math.max(1,newval.val);iterator_j++)
+                            queen_new_configuration[iterator_j] = newval.queen_configuration[iterator_j];
+                        for(int iterator_j=Math.max(1,newval.val);iterator_j<Math.max(1,newval.val+prev_set.length);iterator_j++)
+                            queen_new_configuration[iterator_j] = new_set[iterator_j-Math.max(1,newval.val)];
+                        newval.queen_configuration = queen_new_configuration;
+                        newval.val = newval.val+prev_set.length;
+                        newmap.put(current_set,newval);
+                    }
+                    else
+                    {
+                        LinkedHashSet[] prev_set = (LinkedHashSet[])hmap.get(hset).queen_configuration;
+                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1,hmap.get(hset).val)];
+                        for(int iterator_j=0;iterator_j<Math.max(1,hmap.get(hset).val);iterator_j++)
+                        {
+                            new_set[iterator_j] = (LinkedHashSet) prev_set[iterator_j].clone();
+                            new_set[iterator_j].add(iterator_i);
+                        }
+                        NQueensHashval newval = new NQueensHashval(hmap.get(hset).val);
+                        newval.queen_configuration = new_set;
+
+                        newmap.put(current_set, newval);
+                    }
+                }
+            }
+            hmap = newmap;
+            row_count++;
+        }
+        for(NQueensHashval allval:hmap.values())
+        {
+            for(LinkedHashSet curr_set: allval.queen_configuration)
+            {
+                List<String> chess_board_config = new ArrayList<>();
+                for(Object col_placed :curr_set)
+                {
+                    String current_row="";
+                    for(int iterator_i=0;iterator_i<n;iterator_i++)
+                    {
+                        if(iterator_i==(Integer)(col_placed))
+                            current_row +='Q';
+                        else
+                            current_row += '.';
+                    }
+                    chess_board_config.add(current_row);
+                }
+                list.add(chess_board_config);
+            }
+        }
+        return list;
+    }
+
+    public static boolean isValidQueen_alt(List<Integer> current_queen_placement,int col)
+    {
+        int current_row = 1, placement_row = current_queen_placement.size()+1;
+        for(int queen_col_pos:current_queen_placement)
+        {
+            if(col == queen_col_pos || queen_col_pos+placement_row-current_row==col || queen_col_pos-placement_row+current_row==col)
+                return false;
+            current_row++;
+        }
+        return true;
+    }
+
+    public static void solveQueensHelper_alt(List<List<String>> list,int row_num,List<Integer> current_queen_placement,int n)
+    {
+        if(row_num == n)
+        {
+            List<String> newlist = new ArrayList<>();
+            for(int queen_pos:current_queen_placement)
+            {
+                String current_row="";
+                for(int iterator_i=0;iterator_i<n;iterator_i++)
+                {
+                    if(iterator_i!=queen_pos)
+                        current_row += '.';
+                    else
+                        current_row += 'Q';
+                }
+                newlist.add(current_row);
+            }
+            list.add(newlist);
+            return ;
+        }
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            if(isValidQueen_alt(current_queen_placement,iterator_i))
+            {
+                current_queen_placement.add(iterator_i);
+                solveQueensHelper_alt(list, row_num + 1,current_queen_placement,n);
+                current_queen_placement.remove(current_queen_placement.size()-1);
+            }
+        }
+    }
+
+    public static void solveQueensHelper(List<List<String>> list,List<Integer> current_queen_placement,int n,boolean visited_col[],boolean visited_diag1[],boolean visited_diag2[])
+    {
+        if(current_queen_placement.size() == n)
+        {
+            List<String> newlist = new ArrayList<>();
+            for(int queen_pos:current_queen_placement)
+            {
+                System.out.print(queen_pos+" ");
+                String current_row="";
+                for(int iterator_i=0;iterator_i<n;iterator_i++)
+                {
+                    if(iterator_i!=queen_pos)
+                        current_row += '.';
+                    else
+                        current_row += 'Q';
+                }
+                newlist.add(current_row);
+            }
+            System.out.println();
+            list.add(newlist);
+            return ;
+        }
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            if(visited_col[iterator_i] || visited_diag1[n+current_queen_placement.size()-iterator_i-1] || visited_diag2[current_queen_placement.size()+iterator_i] )
+                continue;
+            else
+            {
+                visited_col[iterator_i] = true;
+                visited_diag1[n+current_queen_placement.size()-iterator_i-1] = true;
+                visited_diag2[current_queen_placement.size()+iterator_i] = true;
+                current_queen_placement.add(iterator_i);
+                solveQueensHelper(list, current_queen_placement,n,visited_col,visited_diag1,visited_diag2);
+                current_queen_placement.remove(current_queen_placement.size()-1);
+                visited_col[iterator_i] = false;
+                visited_diag1[n+current_queen_placement.size()-iterator_i-1] = false;
+                visited_diag2[current_queen_placement.size()+iterator_i] = false;
+            }
+        }
+    }
+
+    /*
+    102. PROBLEM DESCRIPTION (https://leetcode.com/problems/backspace-string-compare/)
+        Given two strings S and T, return if they are equal when both are typed into empty text editors. # means a backspace character.
+
+        Note that after backspacing an empty text, the text will continue empty.
+
+        Example 1:
+        Input: S = "ab#c", T = "ad#c"
+        Output: true
+        Explanation: Both S and T become "ac".
+
+        Example 2:
+        Input: S = "ab##", T = "c#d#"
+        Output: true
+        Explanation: Both S and T become "".
+    */
+    public boolean backspaceCompare_space(String S, String T)
+    {
+        String final_string1 = "",final_string2="";
+        int count_del =0;
+        for(int iterator_i=S.length()-1;iterator_i>=0;iterator_i--)
+        {
+            if(S.charAt(iterator_i)=='#')
+            {
+                count_del++;
+                continue;
+            }
+            if(count_del>0)
+            {
+                count_del--;
+                continue;
+            }
+            final_string1 = S.charAt(iterator_i)+final_string1;
+        }
+        count_del =0;
+        for(int iterator_i=T.length()-1;iterator_i>=0;iterator_i--)
+        {
+            if(T.charAt(iterator_i)=='#')
+            {
+                count_del++;
+                continue;
+            }
+            if(count_del>0)
+            {
+                count_del--;
+                continue;
+            }
+            final_string2 = T.charAt(iterator_i)+final_string2;
+        }
+        return final_string1.compareTo(final_string2)==0?true:false;
+    }
+
+    public boolean backspaceCompare(String S, String T) {
+        int i = S.length() - 1, j = T.length() - 1;
+        int skipS = 0, skipT = 0;
+
+        while (i >= 0 || j >= 0)
+        {
+            while (i >= 0)
+            {
+                if (S.charAt(i) == '#')
+                {
+                    skipS++;
+                    i--;
+                }
+                else if (skipS > 0)
+                {
+                    skipS--;
+                    i--;
+                }
+                else break;
+            }
+            while (j >= 0)
+            {
+                if (T.charAt(j) == '#')
+                {
+                    skipT++;
+                    j--;
+                }
+                else if (skipT > 0)
+                {
+                    skipT--;
+                    j--;
+                }
+                else break;
+            }
+
+            if (i >= 0 && j >= 0 && S.charAt(i) != T.charAt(j))
+                return false;
+
+            if ((i >= 0) != (j >= 0))
+                return false;
+            i--; j--;
+        }
+        return true;
+    }
+
+    /*
+    103. PROBLEM DESCRIPTION (https://leetcode.com/problems/last-stone-weight/)
+        We have a collection of stones, each stone has a positive integer weight.
+
+        Each turn, we choose the two heaviest stones and smash them together.  Suppose the stones have weights x and y with x <= y.
+        The result of this smash is:
+        1. If x == y, both stones are totally destroyed;
+        2. If x != y, the stone of weight x is totally destroyed, and the stone of weight y has new weight y-x.
+
+        At the end, there is at most 1 stone left.  Return the weight of this stone (or 0 if there are no stones left.)
+
+        Example 1:
+        Input: [2,7,4,1,8,1]
+        Output: 1
+
+        Explanation:
+        We combine 7 and 8 to get 1 so the array converts to [2,4,1,1,1] then,
+        we combine 2 and 4 to get 2 so the array converts to [2,1,1,1] then,
+        we combine 2 and 1 to get 1 so the array converts to [1,1,1] then,
+        we combine 1 and 1 to get 0 so the array converts to [1] then that's the value of last stone.
+
+
+        Note:
+            1 <= stones.length <= 30
+            1 <= stones[i] <= 1000
+    */
+    public int lastStoneWeight_alt(int[] stones)
+    {
+        PriorityQueue queue = new PriorityQueue(Collections.reverseOrder());
+        for(int stone_val:stones)
+            queue.add(stone_val);
+
+        while(queue.size()>1)
+            queue.add((int)queue.poll()-(int)queue.poll());
+
+        return (int)queue.poll();
+    }
+
+    public int lastStoneWeight_bucket(int[] stones) //BucketSort
+    {
+        int bucket[] = new int[1001],i_val=Integer.MIN_VALUE;
+        for(int stoneval:stones)
+        {
+            bucket[stoneval]++;
+            i_val = Math.max(i_val, stoneval);
+        }
+        while(i_val>0)
+        {
+            if(bucket[i_val]==0)
+            {
+                i_val--;
+                continue;
+            }
+            bucket[i_val] = bucket[i_val]%2;
+            if(bucket[i_val]!=0)
+            {
+                int j_val = i_val-1;
+                while(j_val>0 && bucket[j_val]==0)
+                    if(bucket[j_val]==0)
+                        j_val--;
+                if(j_val==0)
+                    return i_val;
+                bucket[i_val-j_val]++;
+                bucket[i_val]--;
+                bucket[j_val]--;
+            }
+            i_val--;
+        }
+        return bucket[i_val];
+    }
+
+    public int lastStoneWeight(int[] stones) //Plain Sorting
+    {
+        Arrays.sort(stones);
+        for(int i=stones.length-1; i>0; i--) {
+            stones[i-1] = stones[i] - stones[i-1];
+            Arrays.sort(stones);
+        }
+        return stones[0];
+    }
+
+    /*
+    105. PROBLEM DESCRIPTION (http://leetcode.com/problems/convert-bst-to-greater-tree/)
+        Given a Binary Search Tree (BST), convert it to a Greater Tree such that every key of the original BST is changed to the original key plus sum of all keys greater than the original key in BST.
+
+        Example:
+        Input: The root of a Binary Search Tree like this:
+              5
+            /   \
+           2     13
+
+        Output: The root of a Greater Tree like this:
+             18
+            /   \
+          20     13
+    */
+    int rootval = 0;
+    public TreeNode convertBST_rcur(TreeNode root) //Recursive
+    {
+        if(root==null)
+            return null;
+        convertBST(root.right);
+        root.val += rootval;
+        rootval = root.val;
+        convertBST(root.left);
+        return root;
+    }
+
+    public TreeNode convertBST_iter(TreeNode root) //Iterative
+    {
+        TreeNode node = root;
+        int sum_till_now = 0;
+        Stack<TreeNode> stck = new Stack();
+
+        while(!stck.isEmpty() || node!=null)
+        {
+            while(node!=null)
+            {
+                stck.push(node);
+                node = node.right;
+            }
+
+            node = stck.pop();
+            sum_till_now += node.val;
+            node.val = sum_till_now;
+
+            node = node.left;
+        }
+        return root;
+    }
+
+    public TreeNode getSuccessor(TreeNode root) // Reached only if right is present
+    {
+        TreeNode successor = root.right;
+        while(successor.left!=null && successor.left!=root)
+            successor = successor.left;
+        return successor;
+    }
+
+    public TreeNode convertBST(TreeNode root) //Morris
+    {
+        TreeNode node = root;
+        int sum_till_now = 0;
+
+        while(node!=null)
+        {
+            if(node.right==null)
+            {
+                node.val += sum_till_now;
+                sum_till_now = node.val;
+                node = node.left;
+            }
+            else
+            {
+                TreeNode successor = getSuccessor(node);
+                if(successor.left==null) //First Visit Attach Node
+                {
+                    successor.left = node;
+                    node = node.right;
+                }
+                else //Modify Node
+                {
+                    successor.left = null;
+                    node.val += sum_till_now;
+                    sum_till_now = node.val;
+                    node = node.left;
+                }
+            }
+        }
+        return root;
+    }
+
+    /*
+    106. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+        Given a binary tree, find its minimum depth.
+
+        The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+        Given binary tree [3,9,20,null,null,15,7],
+
+            3
+           / \
+          9  20
+            /  \
+           15   7
+        return its minimum depth = 2.
+    */
+    public int minDepth(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        if(root.left==null && root.right==null)
+            return 0;
+        if(root.right==null)
+            return minDepth(root.left)+1;
+        if(root.left==null)
+            return minDepth(root.right)+1;
+
+        return Math.min(minDepth(root.left),minDepth(root.right)) + 1;
     }
 }

@@ -1,6 +1,7 @@
 package LeetCode;
 
 import java.util.Scanner;
+import static LeetCode.LeetCode.create_binary_tree;
 
 public class Runner {
     public static void main(String args[]) throws Exception
@@ -876,10 +877,53 @@ public class Runner {
 //        int input_arr[] = obj.create_array_int(sc);
 //        obj.moveZeroes(input_arr);
 
-        /** Driver Code for Q99.findMaxLength
+        /** Driver Code for Q100.findMaxLength
          *
          */
 //        int input_arr[] = obj.create_array_int(sc);
 //        System.out.println(obj.findMaxLength(input_arr));
+
+        /** Driver Code for Q101.solveNQueens
+         *
+         */
+//        System.out.println("Enter n");
+//        obj.solveNQueens_dp(sc.nextInt());
+
+        /** Driver Code for Q102.backspaceCompare
+         *
+         */
+//        System.out.println("Enter 2 strings");
+//        obj.backspaceCompare(sc.next(),sc.next());
+
+        /** Driver Code for Q103.lastStoneWeight
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.lastStoneWeight(input_arr));
+
+        /** Driver Code for Q104.MinStack
+         *
+         */
+//        MinStack minStack = new MinStack(); // Can also be done using ListNode with min val stored at each node
+//        minStack.push(-2);
+//        minStack.push(0);
+//        minStack.push(-3);
+//        System.out.println(minStack.getMin()); // return -3
+//        minStack.pop();
+//        System.out.println(minStack.top());    // return 0
+//        System.out.println(minStack.getMin()); // return -2
+
+        /** Driver Code for Q105.convertBST
+         *
+         */
+//        TreeNode input_bst = create_binary_tree(null,sc);
+//        obj.convertBST(input_bst);
+
+        /** Driver Code for Q106.minDepth
+         *
+         */
+        TreeNode input_tree = create_binary_tree(null,sc);
+        System.out.println(obj.minDepth(input_tree));
+
     }
 }
