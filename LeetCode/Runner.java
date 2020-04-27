@@ -2,6 +2,7 @@ package LeetCode;
 
 import java.util.Scanner;
 import static LeetCode.LeetCode.create_binary_tree;
+import static LeetCode.LeetCode.create_linked_list;
 
 public class Runner {
     public static void main(String args[]) throws Exception
@@ -922,8 +923,85 @@ public class Runner {
         /** Driver Code for Q106.minDepth
          *
          */
-        TreeNode input_tree = create_binary_tree(null,sc);
-        System.out.println(obj.minDepth(input_tree));
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println(obj.minDepth(input_tree));
+
+        /** Driver Code for Q107.reorderList
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        obj.reorderList(input_list);
+//        System.out.println("1");
+
+        /** Driver Code for Q108.bstFromPreorder
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.bstFromPreorder(input_arr);
+
+        /** Driver Code for Q109.isSubsequence
+         *
+         */
+//        System.out.println("Enter strings s and t");
+//        obj.isSubsequence(sc.nextLine(),sc.nextLine());
+
+        /** Driver Code for Q110.detectCapitalUse
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println(obj.detectCapitalUse(sc.next()));
+
+        /** Driver Code for Q111.sortList
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        input_list = obj.sortList(input_list);
+
+        /** Driver Code for Q112.generate
+         *
+         */
+//        System.out.println("Enter n");
+//        obj.generate(sc.nextInt());
+
+        /** Driver Code for Q113.rob2
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.rob2(input_arr));
+
+        /** Driver Code for Q114.flipAndInvertImage
+         *
+         */
+//        System.out.println("Enter size of 2d matrix");
+//        int n = sc.nextInt(),img[][] = new int[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                img[iterator_i][iterator_j] = sc.nextInt();
+//        obj.flipAndInvertImage(img);
+
+        /** Driver Code for Q115.lexicalOrder
+         *
+         */
+//        System.out.println("Enter n");
+//        obj.lexicalOrder(sc.nextInt());
+
+        /** Driver Code for Q116.maximalSquare
+         *
+         */
+//        System.out.println("Enter size of 2d matrix");
+//        int n = sc.nextInt();
+//        char matrix[][] = new char[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                matrix[iterator_i][iterator_j] = sc.next().charAt(0);
+//        System.out.println(obj.maximalSquare(matrix));
+
+        /** Driver Code for Q117.numJewelsInStones
+         *
+         */
+        System.out.println("Enter jewel and rocks");
+        System.out.println(obj.numJewelsInStones(sc.next(),sc.next()));
+
 
     }
 }

@@ -1,5 +1,7 @@
 package LeetCode;
 
+import sun.reflect.generics.tree.Tree;
+
 import java.util.*;
 
 public class LeetCode {
@@ -4816,4 +4818,543 @@ public class LeetCode {
 
         return Math.min(minDepth(root.left),minDepth(root.right)) + 1;
     }
+
+    /*
+    107. PROBLEM DESCRIPTION (https://leetcode.com/problems/reorder-list/)
+        Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+        reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+        You may not modify the values in the list's nodes, only nodes itself may be changed.
+        Example 1:
+        Given 1->2->3->4, reorder it to 1->4->2->3.
+
+        Example 2:
+        Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
+    */
+    public void reorderList(ListNode head)
+    {
+        if(head==null || head.next==null)
+            return;
+        ListNode slow_ptr = head,fast_ptr = head;
+        while(fast_ptr!=null && fast_ptr.next!=null)
+        {
+            slow_ptr = slow_ptr.next;
+            fast_ptr = fast_ptr.next.next;
+        }
+        fast_ptr = slow_ptr; //Midway
+
+        //Reverse Lisked list from slow_ptr
+        ListNode prev_ptr = slow_ptr;
+        slow_ptr = slow_ptr.next;
+        prev_ptr.next = null;
+        prev_ptr = null;
+        ListNode next_node ;
+        while(slow_ptr!=null)
+        {
+            next_node = slow_ptr.next;
+            slow_ptr.next = prev_ptr;
+            prev_ptr = slow_ptr;
+            slow_ptr = next_node;
+        }
+
+        while(prev_ptr!=null)
+        {
+            next_node = prev_ptr.next;
+            prev_ptr.next = head.next;
+            head.next = prev_ptr;
+            head = prev_ptr.next;
+            prev_ptr = next_node;
+        }
+    }
+
+    /*
+    108. PROBLEM DESCRIPTION (https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/)
+        Return the root node of a binary search tree that matches the given preorder traversal.
+
+        Example 1:
+        Input: [8,5,1,7,10,12]
+        Output: [8,5,10,1,7,null,12]
+             8
+           /   \
+          5    10
+        /  \     \
+       1    7     12
+    */
+    public TreeNode bstFromPreorder_iter(int[] preorder) //Stack Approach
+    {
+        Stack<TreeNode> stck = new Stack();
+        stck.push(new TreeNode(preorder[0]));
+        for(int iterator_i=1;iterator_i<preorder.length;iterator_i++)
+        {
+            TreeNode current_node = new TreeNode(preorder[iterator_i]);
+            if(preorder[iterator_i]<stck.peek().val)
+                stck.peek().left = current_node;
+            else
+            {
+                TreeNode parent = stck.peek();
+                while(!stck.isEmpty() && stck.peek().val<current_node.val)
+                    parent = stck.pop();
+                parent.right = current_node;
+            }
+            stck.push(current_node);
+        }
+        return null;
+    }
+
+    int current_item=0;
+    public TreeNode bstFromPreorder(int[] preorder)
+    {
+        return bstFromPreorder_helper(preorder,Integer.MAX_VALUE);
+    }
+
+    public TreeNode bstFromPreorder_helper(int[] preorder,int current_bound)
+    {
+        if(current_item==preorder.length || preorder[current_item]>current_bound)
+            return null;
+        TreeNode root = new TreeNode(preorder[current_item++]);
+        root.left = bstFromPreorder_helper(preorder,root.val);
+        root.right = bstFromPreorder_helper(preorder,current_bound);
+        return root;
+    }
+
+    /*
+    109. PROBLEM DESCRIPTION (https://leetcode.com/problems/is-subsequence/)
+        Given a string s and a string t, check if s is subsequence of t.
+
+        You may assume that there is only lower case English letters in both s and t. t is potentially a very long
+        (length ~= 500,000) string, and s is a short string (<=100).
+
+        A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the
+        characters without disturbing the relative positions of the remaining characters. (ie, "ace" is a subsequence of "abcde" while
+        "aec" is not).
+
+        Example 1:
+        s = "abc", t = "ahbgdc"
+        Return true.
+
+        Example 2:
+        s = "axc", t = "ahbgdc"
+
+        Return false.
+    */
+    public boolean isSubsequence_full(String s, String t)
+    {
+        List<Integer> list_character[] = new ArrayList[256]; //ASCII set
+        for(int iterator_i=0;iterator_i<t.length();iterator_i++)
+        {
+            if(list_character[t.charAt(iterator_i)]==null)
+                list_character[t.charAt(iterator_i)] = new ArrayList<>();
+            list_character[t.charAt(iterator_i)].add(iterator_i);
+        }
+
+        int current_seeked_position = 0;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            if(current_seeked_position==t.length() || list_character[s.charAt(iterator_i)]==null)
+                return false;
+            int current_position_found = Collections.binarySearch(list_character[s.charAt(iterator_i)],current_seeked_position);
+            if(current_position_found<0) // Pos not found . get index of position just greater that it
+                current_position_found = -current_position_found - 1;
+            if(current_position_found == list_character[s.charAt(iterator_i)].size())// Not present in string anymore
+                return false;
+            current_seeked_position = list_character[s.charAt(iterator_i)].get(current_position_found) +1;
+            System.out.println("cpos:"+current_position_found+" seek:"+current_seeked_position);
+        }
+        return true;
+    }
+
+    public boolean isSubsequence(String s, String t)
+    {
+        int seek_val =0,next_occurence_pos;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            next_occurence_pos = t.indexOf(s.charAt(iterator_i),seek_val);
+            if(next_occurence_pos<0)
+                return false;
+            seek_val = next_occurence_pos+1;
+        }
+        return true;
+    }
+
+    /*
+    110. PROBLEM DESCRIPTION (https://leetcode.com/problems/detect-capital/)
+        Given a word, you need to judge whether the usage of capitals in it is right or not.
+
+        We define the usage of capitals in a word to be right when one of the following cases holds:
+        1. All letters in this word are capitals, like "USA".
+        2. All letters in this word are not capitals, like "leetcode".
+        3. Only the first letter in this word is capital, like "Google".
+        4. Otherwise, we define that this word doesn't use capitals in a right way.
+
+        Example 1:
+        Input: "USA"
+        Output: True
+
+        Example 2:
+        Input: "FlaG"
+        Output: False
+    */
+    public boolean detectCapitalUse(String word)
+    {
+        if(word.length()<2)
+            return true;
+        boolean allcaps =false;
+        if(Character.isUpperCase(word.charAt(0)) && Character.isUpperCase(word.charAt(1)))
+            allcaps = true;
+        else if(Character.isLowerCase(word.charAt(0)))
+        {
+            if(Character.isUpperCase(word.charAt(1)))
+                return false;
+        }
+        for(int iterator_i=2;iterator_i<word.length();iterator_i++)
+        {
+            if(!allcaps && Character.isUpperCase(word.charAt(iterator_i)))
+                return false;
+            if(allcaps && Character.isLowerCase(word.charAt(iterator_i)))
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    111. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-list/)
+        Sort a linked list in O(n log n) time using constant space complexity.
+
+        Example 1:
+        Input: 4->2->1->3
+        Output: 1->2->3->4
+
+        Example 2:
+        Input: -1->5->3->4->0
+        Output: -1->0->3->4->5
+    */
+    public ListNode sortList_msort(ListNode head) //Recursive Merge Sort
+    {
+        if(head==null || head.next==null)
+            return head;
+        ListNode slow_ptr=head,fast_ptr=head,prev_ptr=slow_ptr;
+        while(fast_ptr!=null && fast_ptr.next!=null)
+        {
+            prev_ptr = slow_ptr;
+            slow_ptr = slow_ptr.next;
+            fast_ptr = fast_ptr.next.next;
+        }
+        prev_ptr.next = null;
+        ListNode left_sorted = sortList(head);
+        ListNode right_sorted = sortList(slow_ptr);
+
+        return sortList_merge(left_sorted,right_sorted);
+
+    }
+
+    public ListNode sortList_merge(ListNode left_sorted,ListNode right_sorted)
+    {
+        ListNode prev_list=null,temp,root;
+        if(left_sorted.val==-85 && right_sorted.val==-85)
+            System.out.println(left_sorted.val+":"+right_sorted.val);
+        if(left_sorted.val>right_sorted.val) //Boundary Condtion Swap for first item
+        {
+            temp = right_sorted;
+            right_sorted = left_sorted;
+            left_sorted = temp;
+        }
+        root = left_sorted;
+        while(left_sorted!=null && right_sorted!=null)
+        {
+            if(left_sorted.val<=right_sorted.val)
+            {
+                prev_list = left_sorted;
+                left_sorted = left_sorted.next;
+            }
+            else
+            {
+                temp = right_sorted.next;
+                right_sorted.next = left_sorted;
+                prev_list.next = right_sorted;
+                right_sorted = temp;
+                prev_list = prev_list.next;
+            }
+        }
+        if(left_sorted==null)
+            prev_list.next = right_sorted;
+        return root;
+    }
+
+    public ListNode sortList(ListNode head) //Recursive PartitionSort Important: Duplicate value handling .. can be clubbed along with pivot
+    {                                       // Causes huge performance issue otherwise
+        if(head==null || head.next==null)
+            return head;
+        ListNode pivot = head, left = new ListNode(0), right = new ListNode(0),
+                left_iter = left,right_iter= right,head1 = head;
+        head = head.next;
+        while(head!=null)
+        {
+            if(head.val<pivot.val)
+            {
+                left_iter.next = head;
+                left_iter = left_iter.next;
+            }
+            else if(head.val>pivot.val)
+            {
+                right_iter.next = head;
+                right_iter = right_iter.next;
+            }
+            else
+            {
+                pivot.next = head;
+                pivot = pivot.next;
+            }
+            head = head.next;
+        }
+        left_iter.next = null;
+        right_iter.next = null;
+        pivot.next = null;
+        left.next = sortList(left.next);
+        right.next = sortList(right.next);
+        left_iter = left;
+        while(left.next!=null)
+            left = left.next;
+
+        left.next = head1;
+        pivot.next = right.next;
+        return left_iter.next;
+    }
+
+    /*
+    112. PROBLEM DESCRIPTION (https://leetcode.com/problems/pascals-triangle/)
+        Given a non-negative integer numRows, generate the first numRows of Pascal's triangle.
+
+        Example:
+        Input: 5
+        Output:
+        [
+             [1],
+            [1,1],
+           [1,2,1],
+          [1,3,3,1],
+         [1,4,6,4,1]
+        ]
+    */
+    public List<List<Integer>> generate(int numRows)
+    {
+        List<List<Integer>> final_list = new ArrayList<>();
+        if(numRows==0)
+            return final_list;
+        List<Integer> prev_list = new ArrayList<>(),curr_list;
+        prev_list.add(1);
+        final_list.add(prev_list);
+        for(int iterator_i=1;iterator_i<numRows;iterator_i++)
+        {
+            curr_list = new ArrayList<>();
+            curr_list.add(final_list.get(final_list.size()-1).get(0));
+            for(int iterator_prev=1; iterator_prev<final_list.get(final_list.size()-1).size();iterator_prev++)
+                curr_list.add(final_list.get(final_list.size()-1).get(iterator_prev-1)+final_list.get(final_list.size()-1).get(iterator_prev));
+            curr_list.add(final_list.get(final_list.size()-1).get(final_list.get(final_list.size()-1).size()-1));
+            final_list.add(curr_list);
+        }
+        return final_list;
+    }
+
+    /*
+    113. PROBLEM DESCRIPTION (https://leetcode.com/problems/house-robber-ii/)
+        You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All
+        houses at this place are arranged in a circle. That means the first house is the neighbor of the last one. Meanwhile, adjacent
+        houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the
+        same night.
+
+        Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you
+        can rob tonight without alerting the police.
+
+        Example 1:
+        Input: [2,3,2]
+        Output: 3
+        Explanation: You cannot rob house 1 (money = 2) and then rob house 3 (money = 2),
+             because they are adjacent houses.
+
+        Example 2:
+        Input: [1,2,3,1]
+        Output: 4
+        Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
+             Total amount you can rob = 1 + 3 = 4.
+    */
+    public int rob2(int[] nums) {
+        if(nums.length==0)
+            return 0;
+        if(nums.length==1)
+            return nums[0];
+        return Math.max(rob2_helper(nums,0,nums.length-2),rob2_helper(nums,1,nums.length-1));
+    }
+
+    public int rob2_helper(int[] nums, int start_index, int end_index)
+    {
+        if(start_index>=end_index)
+            return nums[start_index];
+        int dp_max_till_non_adjacent = nums[start_index++];
+        if(start_index==end_index)
+            return Math.max(nums[start_index],dp_max_till_non_adjacent);
+        int dp_max_till_now_prev = Math.max(nums[start_index++],dp_max_till_non_adjacent);
+        for(int iterator_i=start_index;iterator_i<=end_index;iterator_i++)
+        {
+            int current_max = Math.max(dp_max_till_non_adjacent+nums[iterator_i],dp_max_till_now_prev);
+            dp_max_till_non_adjacent = dp_max_till_now_prev;
+            dp_max_till_now_prev = current_max;
+        }
+        return dp_max_till_now_prev;
+    }
+
+    /*
+    114. PROBLEM DESCRIPTION (https://leetcode.com/problems/flipping-an-image/)
+        Given a binary matrix A, we want to flip the image horizontally, then invert it, and return the resulting image.
+
+        To flip an image horizontally means that each row of the image is reversed.  For example, flipping [1, 1, 0]
+        horizontally results in [0, 1, 1].
+        To invert an image means that each 0 is replaced by 1, and each 1 is replaced by 0. For example, inverting [0, 1, 1] results
+        in [1, 0, 0].
+
+        Example 1:
+        Input: [[1,1,0],[1,0,1],[0,0,0]]
+        Output: [[1,0,0],[0,1,0],[1,1,1]]
+        Explanation: First reverse each row: [[0,1,1],[1,0,1],[0,0,0]].
+        Then, invert the image: [[1,0,0],[0,1,0],[1,1,1]]
+
+        Example 2:
+        Input: [[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]]
+        Output: [[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]
+        Explanation: First reverse each row: [[0,0,1,1],[1,0,0,1],[1,1,1,0],[0,1,0,1]].
+        Then invert the image: [[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]
+    */
+    public int[][] flipAndInvertImage(int[][] A) // Also can be done vai xor if symmetric elements found. No change required in case dissimilar values found
+    {
+        for(int iterator_i=0;iterator_i<A.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<A[0].length/2;iterator_j++)
+            {
+                int temp = A[iterator_i][A[0].length-1-iterator_j];
+                A[iterator_i][A[0].length-1-iterator_j] = (A[iterator_i][iterator_j]==0)?1:0;
+                A[iterator_i][iterator_j] = (temp==0)?1:0;
+            }
+            if(A[0].length %2 !=0 )
+                A[iterator_i][A[0].length /2] = (A[iterator_i][A[0].length /2]==1)?0:1;
+        }
+        return A;
+    }
+
+    /*
+    115. PROBLEM DESCRIPTION (https://leetcode.com/problems/lexicographical-numbers/)
+        Given an integer n, return 1 - n in lexicographical order.
+        For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+        Please optimize your algorithm to use less time and space. The input size may be as large as 5,000,000.
+    */
+    public List<Integer> lexicalOrder_rcur(int n) //Recursive DFS
+    {
+        List<Integer> list = new ArrayList<>();
+        for(int iterator_i=1;iterator_i<10;iterator_i++)
+            lexicalOrderHelper(iterator_i,n,list);
+        return null;
+    }
+
+    public void lexicalOrderHelper(int current_val,int n,List<Integer> list)
+    {
+        if(current_val>n)
+            return;
+        list.add(current_val);
+        for(int iterator_i = 0;iterator_i<10;iterator_i++)
+        {
+            if(current_val*10+iterator_i>n)
+                return;
+            lexicalOrderHelper(current_val*10+iterator_i,n,list);
+        }
+    }
+
+    public List<Integer> lexicalOrder(int n)
+    {
+        List<Integer> list = new ArrayList<>();
+        int current_val=1;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            list.add(current_val);
+            if(current_val*10<=n)
+                current_val *= 10;
+            else if(current_val%10!=9 && current_val+1<=n)
+                current_val++;
+            else
+            {
+                while((current_val/10)%10==9)
+                    current_val /= 10;
+                current_val++;
+            }
+        }
+        return list;
+    }
+
+    /*
+    116. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximal-square/)
+        Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+
+        Example:
+        Input:
+            1 0 1 0 0
+            1 0 1 1 1
+            1 1 1 1 1
+            1 0 0 1 0
+
+        Output: 4
+    */
+    public int maximalSquare(char[][] matrix)
+    {
+        if(matrix.length==0)
+            return 0;
+        int max_len= Integer.MIN_VALUE;
+        char dp_prev[] = matrix[0],dp_curr[] = new char[matrix[0].length];
+        for(int iterator_i=0;iterator_i<dp_prev.length;iterator_i++)
+            max_len = Math.max(dp_prev[iterator_i]-'0',max_len);
+        for(int iterator_i=1;iterator_i<matrix.length;iterator_i++)
+        {
+            dp_curr = matrix[iterator_i];
+            max_len = Math.max(dp_curr[0]-'0',max_len);
+            for(int iterator_j=1;iterator_j<matrix[0].length;iterator_j++)
+            {
+                dp_curr[iterator_j] = dp_curr[iterator_j] == '1' ? ((char) (Math.min((int) dp_prev[iterator_j - 1], Math.min((int) dp_prev[iterator_j], (int) dp_curr[iterator_j - 1])) + 1)) : '0';
+                max_len = Math.max(dp_curr[iterator_j]-'0',max_len);
+            }
+            dp_prev = dp_curr;
+        }
+        return max_len*max_len;
+    }
+
+    /*
+    117. PROBLEM DESCRIPTION (https://leetcode.com/problems/jewels-and-stones/)
+        You're given strings J representing the types of stones that are jewels, and S representing the stones you have.
+        Each character in S is a type of stone you have.  You want to know how many of the stones you have are also jewels.
+
+        The letters in J are guaranteed distinct, and all characters in J and S are letters. Letters are case sensitive, so "a" is
+        considered a different type of stone from "A".
+
+        Example 1:
+        Input: J = "aA", S = "aAAbbbb"
+        Output: 3
+
+        Example 2:
+        Input: J = "z", S = "ZZ"
+        Output: 0
+
+        Note:
+        S and J will consist of letters and have length at most 50.
+        The characters in J are distinct.
+    */
+    public int numJewelsInStones(String J, String S)
+    {
+        HashSet jewel_set = new HashSet();
+        for(char c:J.toCharArray())
+            jewel_set.add(c);
+        int count = 0;
+        for(char c:S.toCharArray())
+        {
+            if(jewel_set.contains(c))
+                count++;
+        }
+        return count;
+        //return S.replaceAll("[^"+J+"]","").length();
+    }
+
 }
