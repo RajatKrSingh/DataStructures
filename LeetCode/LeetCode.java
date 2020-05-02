@@ -5357,4 +5357,830 @@ public class LeetCode {
         //return S.replaceAll("[^"+J+"]","").length();
     }
 
+    /*
+    118. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/)
+        There are a number of spherical balloons spread in two-dimensional space. For each balloon, provided input is the start and
+        end coordinates of the horizontal diameter. Since it's horizontal, y-coordinates don't matter and hence the x-coordinates of start
+        and end of the diameter suffice. Start is always smaller than end. There will be at most 104 balloons.
+
+        An arrow can be shot up exactly vertically from different points along the x-axis. A balloon with xstart and xend bursts by an
+        arrow shot at x if xstart ≤ x ≤ xend. There is no limit to the number of arrows that can be shot. An arrow once shot keeps travelling
+        up infinitely. The problem is to find the minimum number of arrows that must be shot to burst all balloons.
+
+        Example:
+        Input:
+        [[10,16], [2,8], [1,6], [7,12]]
+        Output:
+        2
+
+        Explanation:
+        One way is to shoot one arrow for example at x = 6 (bursting the balloons [2,8] and [1,6]) and another arrow at x = 11 (bursting the other two balloons).
+    */
+    public int findMinArrowShots_alt(int[][] points) //Sort using start value
+    {
+        //Arrays.sort(points,(a,b)->a[0]-b[0]);
+        Arrays.sort(points, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0] - o2[0];
+            }
+        });
+        int min_end = Integer.MAX_VALUE,count_arrows=0;
+        for(int iterator_i=0;iterator_i<points.length;iterator_i++)
+        {
+            if(points[iterator_i][0]<=min_end)
+                min_end = Math.min(min_end,points[iterator_i][1]);
+            else
+            {
+                count_arrows++;
+                min_end = points[iterator_i][1];
+            }
+        }
+        return count_arrows + ((points.length==0)?0:1);
+    }
+
+    public int findMinArrowShots(int[][] points) //Sort using start value
+    {
+        if(points.length<2)
+            return points.length;
+        Arrays.sort(points,(a,b)->a[1]-b[1]);
+        int count_arrows=1,current_max_end= points[0][1];
+        for(int iterator_i=1;iterator_i<points.length;iterator_i++)
+        {
+            if(points[iterator_i][0] > current_max_end )
+            {
+                count_arrows++;
+                current_max_end = points[iterator_i][1];
+            }
+        }
+        return count_arrows ;
+    }
+
+    /*
+    119. PROBLEM DESCRIPTION (https://leetcode.com/problems/132-pattern/)
+        Given a sequence of n integers a1, a2, ..., an, a 132 pattern is a subsequence ai, aj, ak such that i < j < k and ai < ak < aj. Design an algorithm that takes a list of n numbers as input and checks whether there is a 132 pattern in the list.
+
+        Note: n will be less than 15,000.
+        Example 1:
+        Input: [1, 2, 3, 4]
+        Output: False
+        Explanation: There is no 132 pattern in the sequence.
+
+        Example 2:
+        Input: [3, 1, 4, 2]
+        Output: True
+        Explanation: There is a 132 pattern in the sequence: [1, 4, 2].
+
+        Example 3:
+        Input: [-1, 3, 2, 0]
+        Output: True
+        Explanation: There are three 132 patterns in the sequence: [-1, 3, 2], [-1, 3, 0] and [-1, 2, 0].
+    */
+    public boolean find132pattern_alt(int[] nums) // Time O(n^2) Space O(1)
+    {
+        if(nums.length<3)
+            return false;
+        int min_i = nums[0];
+        for(int iterator_j=1;iterator_j<nums.length-1;iterator_j++)
+        {
+            if(min_i>=nums[iterator_j])
+            {
+                min_i = nums[iterator_j];
+            }
+            else
+            {
+                for(int iterator_k=iterator_j+1;iterator_k<nums.length;iterator_k++)
+                {
+                    if(nums[iterator_k]>min_i && nums[iterator_k]<nums[iterator_j])
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean find132pattern(int[] nums) // Time O(n) Space O(n) Set approach to store possible k values
+    {
+        if(nums.length<3)
+            return false;
+        int min_i_arr[] = new int[nums.length];
+        min_i_arr[0] = nums[0];
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+            min_i_arr[iterator_i] = Math.min(min_i_arr[iterator_i-1],nums[iterator_i]);
+        Stack<Integer> stck_k = new Stack();
+
+        for(int iterator_j=nums.length-1;iterator_j>=0;iterator_j--)
+        {
+            if(nums[iterator_j]>min_i_arr[iterator_j])
+            {
+                while(!stck_k.isEmpty() && stck_k.peek()<= min_i_arr[iterator_j])
+                    stck_k.pop();
+                if(!stck_k.isEmpty() && stck_k.peek()<nums[iterator_j])
+                    return true;
+                stck_k.push(nums[iterator_j]);
+            }
+        }
+        return false;
+    }
+
+    /*
+    120. PROBLEM DESCRIPTION (https://leetcode.com/problems/lemonade-change/)
+        At a lemonade stand, each lemonade costs $5.
+
+        Customers are standing in a queue to buy from you, and order one at a time (in the order specified by bills).
+        Each customer will only buy one lemonade and pay with either a $5, $10, or $20 bill.  You must provide the correct change to
+        each customer, so that the net transaction is that the customer pays $5.
+
+        Note that you don't have any change in hand at first.
+
+        Return true if and only if you can provide every customer with correct change.
+
+        Example 1:
+        Input: [5,5,5,10,20]
+        Output: true
+        Explanation:
+            From the first 3 customers, we collect three $5 bills in order.
+            From the fourth customer, we collect a $10 bill and give back a $5.
+            From the fifth customer, we give a $10 bill and a $5 bill.
+            Since all customers got correct change, we output true.
+
+        Example 2:
+        Input: [5,5,10,10,20]
+        Output: false
+        Explanation:
+        From the first two customers in order, we collect two $5 bills.
+        For the next two customers in order, we collect a $10 bill and give back a $5 bill.
+        For the last customer, we can't give change of $15 back because we only have two $10 bills.
+        Since not every customer received correct change, the answer is false.
+
+        Note:
+            0 <= bills.length <= 10000
+            bills[i] will be either 5, 10, or 20.
+    */
+    public boolean lemonadeChange(int[] bills)
+    {
+        int five_counter=0,ten_counter=0;
+        for(int iterator_i=0;iterator_i<bills.length;iterator_i++)
+        {
+            if(bills[iterator_i]==5)
+                five_counter++;
+            else if(bills[iterator_i]==10)
+            {
+                if(five_counter<1)
+                    return false;
+                ten_counter++;
+                five_counter--;
+            }
+            else if(bills[iterator_i]==20)
+            {
+                if(ten_counter>0 && five_counter>0)
+                {
+                    ten_counter--;
+                    five_counter--;
+                }
+                else if(five_counter>=3)
+                    five_counter -= 3;
+                else
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+    121. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-parenthesis-string/)
+        Given a string containing only three types of characters: '(', ')' and '*', write a function to check whether this string is
+        valid. We define the validity of a string by these rules:
+
+        Any left parenthesis '(' must have a corresponding right parenthesis ')'.
+        Any right parenthesis ')' must have a corresponding left parenthesis '('.
+        Left parenthesis '(' must go before the corresponding right parenthesis ')'.
+        '*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string.
+        An empty string is also valid.
+
+        Example 1:
+        Input: "()"
+        Output: True
+
+        Example 2:
+        Input: "(*)"
+        Output: True
+
+        Example 3:
+        Input: "(*))"
+        Output: True
+
+        Note:
+        The string size will be in the range [1, 100].
+    */
+    public boolean checkValidString_alt(String s) //Greedy Approach
+    {
+        int min_valid_open_brackets=0,maximum_closed_brackets=0;
+        for(char c: s.toCharArray())
+        {
+            if(c == '(')
+                min_valid_open_brackets++;
+            else
+                min_valid_open_brackets--;
+
+            if(c==')')
+                maximum_closed_brackets--;
+            else
+                maximum_closed_brackets++;
+
+            if(maximum_closed_brackets<0)
+                return false;
+            min_valid_open_brackets = Math.max(min_valid_open_brackets,0);
+        }
+        return min_valid_open_brackets==0;
+    }
+
+    public boolean checkValidString(String s) //Dynamic Approach
+    {
+        boolean dp[][] = new boolean[s.length()][s.length()];
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            if(s.charAt(iterator_i)=='*')
+                dp[iterator_i][iterator_i] = true;
+        }
+
+        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
+        {
+            int iterator_j = 0;
+            while(iterator_j+iterator_i<s.length())
+            {
+                if(s.charAt(iterator_j)=='*' && dp[iterator_j+1][iterator_j+iterator_i]==true)
+                    dp[iterator_j][iterator_j+iterator_i] = true;
+                else if(s.charAt(iterator_j)=='(' || s.charAt(iterator_j)=='*')
+                {
+                    for(int iterator_k = iterator_j+1;iterator_k<=iterator_j+iterator_i;iterator_k++)
+                    {
+                        if((s.charAt(iterator_k)==')' || s.charAt(iterator_k)=='*') // midpointcheck
+                        && (iterator_k == iterator_j+1 || dp[iterator_j][iterator_k]==true) //less than midpoint valid
+                        && (iterator_k == iterator_j+iterator_i || dp[iterator_k+1][iterator_j+iterator_i]==true))
+                            dp[iterator_j][iterator_j+iterator_i] = true;
+                    }
+                }
+                iterator_j++;
+            }
+        }
+        return dp[0][s.length()-1];
+    }
+
+    /*
+    122. PROBLEM DESCRIPTION (https://leetcode.com/problems/arranging-coins/)
+        You have a total of n coins that you want to form in a staircase shape, where every k-th row must have exactly k coins.
+        Given n, find the total number of full staircase rows that can be formed.
+        n is a non-negative integer and fits within the range of a 32-bit signed integer.
+
+        Example 1:
+        n = 5
+        The coins can form the following rows:
+        ¤
+        ¤ ¤
+        ¤ ¤
+        Because the 3rd row is incomplete, we return 2.
+
+        Example 2:
+        n = 8
+        The coins can form the following rows:
+        ¤
+        ¤ ¤
+        ¤ ¤ ¤
+        ¤ ¤
+        Because the 4th row is incomplete, we return 3.
+    */
+    public int arrangeCoins(int n)
+    {
+        int lb = 0, ub = n,mid=0;
+        while(lb<ub)
+        {
+            mid = lb + (int)Math.ceil((ub-lb)/2.0);
+            if(mid/2.0*(mid+1)<=n)
+                lb = mid;
+            else
+                ub = mid-1;
+        }
+        return lb;
+    }
+
+    /*
+    123. PROBLEM DESCRIPTION (https://leetcode.com/problems/minesweeper/)
+        You are given a 2D char matrix representing the game board. 'M' represents an unrevealed mine, 'E' represents an unrevealed
+        empty square, 'B' represents a revealed blank square that has no adjacent (above, below, left, right, and all 4 diagonals) mines,
+        digit ('1' to '8') represents how many mines are adjacent to this revealed square, and finally 'X' represents a revealed mine.
+
+        Now given the next click position (row and column indices) among all the unrevealed squares ('M' or 'E'), return the board after
+        revealing this position according to the following rules:
+        1. If a mine ('M') is revealed, then the game is over - change it to 'X'.
+        2. If an empty square ('E') with no adjacent mines is revealed, then change it to revealed blank ('B') and all of its adjacent unrevealed squares should be revealed recursively.
+        3. If an empty square ('E') with at least one adjacent mine is revealed, then change it to a digit ('1' to '8') representing the number of adjacent mines.
+        4. Return the board when no more squares will be revealed.
+
+        Example 1:
+        Input:
+        [['E', 'E', 'E', 'E', 'E'],
+         ['E', 'E', 'M', 'E', 'E'],
+         ['E', 'E', 'E', 'E', 'E'],
+         ['E', 'E', 'E', 'E', 'E']]
+        Click : [3,0]
+        Output:
+        [['B', '1', 'E', '1', 'B'],
+         ['B', '1', 'M', '1', 'B'],
+         ['B', '1', '1', '1', 'B'],
+         ['B', 'B', 'B', 'B', 'B']]
+
+        Example 2:
+        Input:
+        [['B', '1', 'E', '1', 'B'],
+         ['B', '1', 'M', '1', 'B'],
+         ['B', '1', '1', '1', 'B'],
+         ['B', 'B', 'B', 'B', 'B']]
+        Click : [1,2]
+        Output:
+        [['B', '1', 'E', '1', 'B'],
+         ['B', '1', 'X', '1', 'B'],
+         ['B', '1', '1', '1', 'B'],
+         ['B', 'B', 'B', 'B', 'B']]
+    */
+    public char[][] updateBoard(char[][] board, int[] click)
+    {
+        if(board[click[0]][click[1]] == 'M' || board[click[0]][click[1]] == 'X') {
+            board[click[0]][click[1]] = 'X';
+            return board;
+        }
+        if(!checkAdjacentMines(board,click))
+        {
+            for(int iterator_i=-1;iterator_i<2;iterator_i++)
+            {
+                for(int iterator_j=-1;iterator_j<2;iterator_j++)
+                {
+                    int row = click[0]+iterator_i, col = click[1]+iterator_j;
+                    if(row>-1 && row<board.length && col>-1 && col<board[0].length && board[row][col]=='E')
+                        updateBoard(board,new int[]{row,col});
+                }
+            }
+        }
+        return board;
+    }
+
+    public boolean checkAdjacentMines(char board[][], int click[])
+    {
+        int count_mines = 0;
+        for(int iterator_i=-1;iterator_i<2;iterator_i++)
+        {
+            for(int iterator_j=-1;iterator_j<2;iterator_j++)
+            {
+                int row = click[0]+iterator_i, col = click[1]+iterator_j;
+                if(row>-1 && row<board.length && col>-1 && col<board[0].length && board[row][col]=='M')
+                    count_mines++;
+            }
+        }
+        if(count_mines>0) {
+            board[click[0]][click[1]] = (char) (count_mines + '0');
+            return true;
+        }
+        board[click[0]][click[1]] = 'B';
+        return false;
+    }
+
+    /*
+    124. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-perfect-square/)
+        Given a positive integer num, write a function which returns True if num is a perfect square else False.
+
+        Note: Do not use any built-in library function such as sqrt.
+
+        Example 1:
+        Input: 16
+        Output: true
+
+        Example 2:
+        Input: 14
+        Output: false
+    */
+    public boolean isPerfectSquare(int num)
+    {
+        if(num==0)
+            return true;
+        int lb = 0, ub = num;
+        while(lb<=ub)
+        {
+            int mid = lb + (ub-lb)/2;
+            if(1.0*mid == 1.0*num/mid)
+                return true;
+            else if(1.0*mid < 1.0*num/mid)
+                lb = mid+1;
+            else
+                ub = mid-1;
+        }
+        return false;
+    }
+
+    /*
+    125. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-queens-ii/)
+        The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+        Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+        Input: 4
+        Output: 2
+    */
+    public int totalNQueens(int n)
+    {
+        boolean visited_col[] = new boolean[n];
+        boolean visited_diag1[] = new boolean[2*n-1];
+        boolean visited_diag2[] = new boolean[2*n-1];
+        return totalNQueensHelper(n,visited_col,visited_diag1,visited_diag2,0);
+    }
+
+    public int totalNQueensHelper(int n,boolean[] visited_col,boolean[] visited_diag1,boolean[] visited_diag2,int current_row)
+    {
+        int count_states = 0;
+        if(current_row == n)
+            return 1;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            if(visited_col[iterator_i] || visited_diag1[n+current_row-1-iterator_i] || visited_diag2[current_row+iterator_i])
+                continue;
+            else
+            {
+                visited_col[iterator_i] = true;
+                visited_diag1[n+current_row-1-iterator_i] = true;
+                visited_diag2[current_row+iterator_i] = true;
+                count_states += totalNQueensHelper(n,visited_col,visited_diag1,visited_diag2,current_row+1);
+                visited_col[iterator_i] = false;
+                visited_diag1[n+current_row-1-iterator_i] = false;
+                visited_diag2[current_row+iterator_i] = false;
+            }
+        }
+        return count_states;
+    }
+
+    /*
+    126. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list/)
+        Given a sorted linked list, delete all duplicates such that each element appear only once.
+
+        Example 1:
+        Input: 1->1->2
+        Output: 1->2
+
+        Example 2:
+        Input: 1->1->2->3->3
+        Output: 1->2->3
+    */
+    public ListNode deleteDuplicates(ListNode head)
+    {
+        ListNode curr_unique,final_head=head;
+        while(head!=null)
+        {
+            curr_unique = head;
+            while(head!=null && head.val == curr_unique.val)
+                head = head.next;
+            curr_unique.next = head;
+        }
+        return final_head;
+    }
+
+    /*
+    127. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/)
+        Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+
+        Return the linked list sorted as well.
+
+        Example 1:
+        Input: 1->2->3->3->4->4->5
+        Output: 1->2->5
+
+        Example 2:
+        Input: 1->1->1->2->3
+        Output: 2->3
+    */
+    public ListNode deleteDuplicates2(ListNode head)
+    {
+        if(head==null)
+            return head;
+        ListNode final_head=null,curr_unique=head,prev_unique=null;
+        while(head!=null)
+        {
+            while(head!=null && head.val==curr_unique.val)
+            {
+                head = head.next;
+            }
+            if(curr_unique.next!=head)
+                curr_unique = head;
+            else
+            {
+                if(prev_unique==null)
+                {
+                    final_head = curr_unique;
+                    prev_unique = curr_unique;
+                }
+                else
+                {
+                    prev_unique.next = curr_unique;
+                    prev_unique = prev_unique.next;
+                }
+            }
+        }
+        if(prev_unique!=null)
+            prev_unique.next = null;
+        return final_head;
+    }
+
+    /*
+    128. PROBLEM DESCRIPTION (https://leetcode.com/problems/partition-list/)
+        Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+        You should preserve the original relative order of the nodes in each of the two partitions.
+
+        Example:
+        Input: head = 1->4->3->2->5->2, x = 3
+        Output: 1->2->2->4->3->5
+    */
+    public ListNode partition(ListNode head, int x)
+    {
+        ListNode header = new ListNode(0),partition_less_node = header,partition_greater_node= header;
+        while(head!=null)
+        {
+            if(head.val<x)
+            {
+                ListNode next_head = head.next,partion_less_next = partition_less_node.next;
+                if(partition_greater_node==partition_less_node)
+                    partition_greater_node = head;
+
+                partition_less_node.next = head;
+                partition_less_node = head;
+                partition_less_node.next = partion_less_next;
+                head = next_head;
+            }
+            else
+            {
+                partition_greater_node.next = head;
+                partition_greater_node = head;
+                head = head.next;
+                partition_greater_node.next = null;
+            }
+        }
+        return header.next;
+    }
+
+    /*
+    129. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximal-rectangle/)
+        Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+        Example:
+        Input:
+        [
+          ["1","0","1","0","0"],
+          ["1","0","1","1","1"],
+          ["1","1","1","1","1"],
+          ["1","0","0","1","0"]
+        ]
+        Output: 6
+    */
+    public int maximalRectangle(char[][] matrix)
+    {
+        if(matrix.length==0)
+            return 0;
+        int left_boundary[] = new int[matrix[0].length], right_boundary[] = new int[matrix[0].length],height_till_row[] = new int[matrix[0].length],max_area = Integer.MIN_VALUE;
+        Arrays.fill(right_boundary,matrix[0].length);
+
+        for(int iterator_row=0;iterator_row<matrix.length;iterator_row++)
+        {
+            int curr_left_count = 0, curr_right_count = matrix[0].length;
+            for(int iterator_j = 0;iterator_j<matrix[0].length;iterator_j++)
+            {
+                //Left Boundary for Row iterator_row. Get rightmost boundary if 1 present in prev rows
+                if(matrix[iterator_row][iterator_j]=='1')
+                    left_boundary[iterator_j] = Math.max(left_boundary[iterator_j],curr_left_count);
+                else
+                {
+                    left_boundary[iterator_j] = 0;
+                    curr_left_count = iterator_j+1;
+                }
+
+                // Right Boundary Minimal if connected across previous rows
+                if(matrix[iterator_row][matrix[0].length-1-iterator_j] == '1')
+                    right_boundary[matrix[0].length-1-iterator_j] = Math.min(right_boundary[matrix[0].length-1-iterator_j],curr_right_count);
+                else
+                {
+                    right_boundary[matrix[0].length-1-iterator_j] = matrix[0].length;
+                    curr_right_count = matrix[0].length - 1 - iterator_j;
+                }
+
+            }
+            //Compute height for current row. Also update max area if encountered
+            for(int iterator_j=0;iterator_j<matrix[0].length;iterator_j++)
+            {
+                if (matrix[iterator_row][iterator_j] == '1')
+                    height_till_row[iterator_j]++;
+                else
+                    height_till_row[iterator_j] = 0;
+
+                max_area = Math.max(max_area, (right_boundary[iterator_j] - left_boundary[iterator_j]) * height_till_row[iterator_j]);
+            }
+        }
+        return max_area;
+    }
+
+    /*
+    130. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list-ii/)
+        Reverse a linked list from position m to n. Do it in one-pass.
+        Note: 1 ≤ m ≤ n ≤ length of list.
+
+        Example:
+        Input: 1->2->3->4->5->NULL, m = 2, n = 4
+        Output: 1->4->3->2->5->NULL
+    */
+    ListNode non_reversed_node = null;
+    public ListNode reverseBetween_rcur(ListNode head, int m, int n) //Recursive logic
+    {
+        if(m==1)
+            return reverseTillN(head,n);
+        ListNode last = reverseBetween_rcur(head.next,m-1,n-1);
+        head.next = last;
+        return head;
+    }
+
+    public ListNode reverseTillN(ListNode head, int n)
+    {
+        if(n==1)
+        {
+            non_reversed_node = head.next;
+            return head;
+        }
+        ListNode lastNode = reverseTillN(head.next,n-1);
+        head.next.next = head;
+        head.next = non_reversed_node;
+        return lastNode;
+    }
+
+    public ListNode reverseBetween(ListNode head, int m, int n) //Iterative logic
+    {
+        ListNode final_header = new ListNode(0);
+        final_header.next = head;
+        head = final_header;
+        n=n-m;
+        for(int iterator_i=2;iterator_i<=m;iterator_i++)
+            head = head.next;
+
+        ListNode prev_node = head,last_unsorted_node = prev_node;
+        head = head.next;
+        for(int iterator_i=0;iterator_i<=n;iterator_i++)
+        {
+            ListNode next_node = head.next;
+            head.next = prev_node;
+            prev_node = head;
+            head = next_node;
+        }
+
+        last_unsorted_node.next.next = head;
+        last_unsorted_node.next = prev_node;
+        return final_header.next;
+    }
+
+    /*
+    131. PROBLEM DESCRIPTION (https://leetcode.com/problems/array-partition-i/)
+        Given an array of 2n integers, your task is to group these integers into n pairs of integer, say (a1, b1), (a2, b2), ..., (an, bn) which makes sum of min(ai, bi) for all i from 1 to n as large as possible.
+
+        Example 1:
+        Input: [1,4,3,2]
+        Output: 4
+        Explanation: n is 2, and the maximum sum of pairs is 4 = min(1, 2) + min(3, 4).
+        Note:
+            n is a positive integer, which is in the range of [1, 10000].
+            All the integers in the array will be in the range of [-10000, 10000].
+    */
+    public int arrayPairSum_alt(int[] nums) //Sorting
+    {
+        int min_sum = 0;
+        Arrays.sort(nums);
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i+=2)
+            min_sum += nums[iterator_i];
+
+        return min_sum;
+    }
+
+    public int arrayPairSum(int[] nums) //Buckets
+    {
+        int bucket_arr[] = new int[20001],max_bucket_non_zero=0,min_bucket_non_zero=20000,min_sum=0;
+        for(int num_val:nums) {
+            bucket_arr[num_val + 10000]++;
+            max_bucket_non_zero = Math.max(max_bucket_non_zero,num_val+10000);
+            min_bucket_non_zero = Math.min(min_bucket_non_zero,num_val+10000);
+        }
+        boolean is_min_in_pair = true; //First is always in pair
+        for(int iterator_i=min_bucket_non_zero;iterator_i<=max_bucket_non_zero;iterator_i++)
+        {
+            while(bucket_arr[iterator_i]>0)
+            {
+                if(is_min_in_pair)
+                    min_sum += iterator_i-10000;
+                is_min_in_pair = !is_min_in_pair;
+                bucket_arr[iterator_i]--;
+            }
+        }
+        return min_sum;
+    }
+
+    /*
+    132. PROBLEM DESCRIPTION (https://leetcode.com/problems/super-ugly-number/)
+        Write a program to find the nth super ugly number.
+
+        Super ugly numbers are positive numbers whose all prime factors are in the given prime list primes of size k.
+
+        Example:
+        Input: n = 12, primes = [2,7,13,19]
+        Output: 32
+        Explanation: [1,2,4,7,8,13,14,16,19,26,28,32] is the sequence of the first 12
+             super ugly numbers given primes = [2,7,13,19] of size 4.
+
+        Note:
+        1. 1 is a super ugly number for any given primes.
+        2. The given numbers in primes are in ascending order.
+        3. 0 < k ≤ 100, 0 < n ≤ 106, 0 < primes[i] < 1000.
+        4. The nth super ugly number is guaranteed to fit in a 32-bit signed integer.
+    */
+    public int nthSuperUglyNumber_alt(int n, int[] primes) // Can also be done using priority queue for next_value_for_prime
+    {
+        int ugly_arr[] = new int[n],next_value_for_prime[] = new int[primes.length], current_prime_multiplication_index[]= new int[primes.length];
+        Arrays.fill(next_value_for_prime,1);
+        int next = 1;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            ugly_arr[iterator_i] = next;
+            next = Integer.MAX_VALUE;
+            for(int iterator_j=0;iterator_j<primes.length;iterator_j++)
+            {
+                if (next_value_for_prime[iterator_j] == ugly_arr[iterator_i])
+                    next_value_for_prime[iterator_j] = primes[iterator_j] * ugly_arr[current_prime_multiplication_index[iterator_j]++];
+                next = Math.min(next, next_value_for_prime[iterator_j]);
+            }
+        }
+        return ugly_arr[n-1];
+    }
+
+    public int nthSuperUglyNumber(int n, int[] primes)
+    {
+        PriorityQueue<UglyNum> ugly_queue = new PriorityQueue();
+        int ugly[] = new int[n],next=1;ugly[0] = 1;
+        for (int i = 0; i < primes.length; i++)
+            ugly_queue.add(new UglyNum(1, primes[i],primes[i]));
+        for(int iterator_i=1;iterator_i<n;iterator_i++)
+        {
+            UglyNum popped = ugly_queue.peek();
+            ugly[iterator_i] = popped.current_prime_val;
+            while (ugly_queue.peek().current_prime_val == ugly[iterator_i])
+            {
+                popped = ugly_queue.poll();
+                ugly_queue.add(new UglyNum(popped.prev_ugly_index + 1, popped.prime * ugly[popped.prev_ugly_index], popped.prime));
+            }
+        }
+        return ugly[n-1];
+    }
+
+    /*
+    133. PROBLEM DESCRIPTION (https://leetcode.com/problems/image-smoother/)
+        Given a 2D integer matrix M representing the gray scale of an image, you need to design a smoother to make the gray scale of each cell becomes the average gray scale (rounding down) of all the 8 surrounding cells and itself. If a cell has less than 8 surrounding cells, then use as many as you can.
+
+        Example 1:
+        Input:
+            [[1,1,1],
+             [1,0,1],
+             [1,1,1]]
+        Output:
+            [[0, 0, 0],
+             [0, 0, 0],
+             [0, 0, 0]]
+        Explanation:
+            For the point (0,0), (0,2), (2,0), (2,2): floor(3/4) = floor(0.75) = 0
+            For the point (0,1), (1,0), (1,2), (2,1): floor(5/6) = floor(0.83333333) = 0
+            For the point (1,1): floor(8/9) = floor(0.88888889) = 0
+
+        Note:
+            1. The value in the given matrix is in the range of [0, 255].
+            2. The length and width of the given matrix are in the range of [1, 150].
+    */
+    public int[][] imageSmoother(int[][] M)
+    {
+        if(M.length==0)
+            return M;
+        int final_matrix[][] = new int[M.length][M[0].length];
+        int directions[][] = {{-1,-1},{-1,0},{-1,1},{1,-1},{1,1},{1,0},{0,-1},{0,1}};
+        for(int iterator_i=0;iterator_i<M.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<M[0].length;iterator_j++)
+            {
+                int valid_pixels=1,final_pixel_val=M[iterator_i][iterator_j];
+                for(int[] direction:directions)
+                {
+                    int curr_row = iterator_i+direction[0],curr_col = iterator_j+direction[1];
+                    if(curr_row<0|| curr_row>=M.length || curr_col<0 || curr_col>=M[0].length)
+                        continue;
+                    valid_pixels++;
+                    final_pixel_val += M[curr_row][curr_col];
+                }
+                final_matrix[iterator_i][iterator_j] = final_pixel_val/valid_pixels;
+            }
+        }
+        return final_matrix;
+    }
+
 }

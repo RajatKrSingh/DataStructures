@@ -999,9 +999,134 @@ public class Runner {
         /** Driver Code for Q117.numJewelsInStones
          *
          */
-        System.out.println("Enter jewel and rocks");
-        System.out.println(obj.numJewelsInStones(sc.next(),sc.next()));
+//        System.out.println("Enter jewel and rocks");
+//        System.out.println(obj.numJewelsInStones(sc.next(),sc.next()));
 
+        /** Driver Code for Q118.findMinArrowShots
+         *
+         */
+//        System.out.println("Enter number of balloons");
+//        int balloons[][] = new int[sc.nextInt()][2];
+//        System.out.println("Enter balloons");
+//        for(int iterator_i=0;iterator_i<balloons.length;iterator_i++)
+//        {
+//            balloons[iterator_i][0] = sc.nextInt();
+//            balloons[iterator_i][1] = sc.nextInt();
+//        }
+//        System.out.println(obj.findMinArrowShots(balloons));
 
+        /** Driver Code for Q119.find132pattern
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.find132pattern(input_arr));
+
+        /** Driver Code for Q120.lemonadeChange
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.lemonadeChange(input_arr));
+
+        /** Driver Code for Q121.checkValidString
+         *
+         */
+//        System.out.println("Enter parenthesized string");
+//        System.out.println(obj.checkValidString(sc.next()));
+
+        /** Driver Code for Q122.arrangeCoins
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.arrangeCoins(sc.nextInt()));
+
+        /** Driver Code for Q123.updateBoard
+         *
+         */
+//        System.out.println("Enter board length n and m");
+//        int n = sc.nextInt(),m = sc.nextInt(),click[] = new int[2];
+//        char board[][] = new char[n][m];
+//        System.out.println("Enter board");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                board[iterator_i][iterator_j] = sc.next().charAt(0);
+//        System.out.println("Enter click position");
+//        click[0] = sc.nextInt();
+//        click[1] = sc.nextInt();
+//        obj.updateBoard(board,click);
+//        System.out.println(board[0][0]);
+
+        /** Driver Code for Q124.isPerfectSquare
+         *
+         */
+//        System.out.println("Enter number");
+//        System.out.println(obj.isPerfectSquare(sc.nextInt()));
+
+        /** Driver Code for Q125.totalNQueens
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.totalNQueens(sc.nextInt()));
+
+        /** Driver Code for Q126.deleteDuplicates
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        obj.deleteDuplicates(input_list);
+
+        /** Driver Code for Q127.deleteDuplicates
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        obj.deleteDuplicates2(input_list);
+
+        /** Driver Code for Q128.deleteDuplicates
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        System.out.println("Enter partition value");
+//        obj.partition(input_list,sc.nextInt());
+
+        /** Driver Code for Q129.maximalRectangle
+         *
+         */
+//        System.out.println("Enter m and n");
+//        char input_matrix[][] = new char[sc.nextInt()][sc.nextInt()];
+//        System.out.println("Enter matrix");
+//        for(int iterator_i=0;iterator_i<input_matrix.length;iterator_i++)
+//            for(int iterator_j=0;iterator_j<input_matrix[0].length;iterator_j++)
+//                input_matrix[iterator_i][iterator_j] = sc.next().charAt(0);
+//        System.out.println(obj.maximalRectangle(input_matrix));
+
+        /** Driver Code for Q130.reverseBetween
+         *
+         */
+//        ListNode input_list = create_linked_list(sc);
+//        System.out.println("Enter m and n");
+//        obj.reverseBetween(input_list,sc.nextInt(),sc.nextInt());
+//        System.out.println();
+
+        /** Driver Code for Q131.arrayPairSum
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.arrayPairSum(input_arr);
+
+        /** Driver Code for Q132.nthSuperUglyNumber
+         *
+         */
+        int input_primes[] = obj.create_array_int(sc);
+        System.out.println("Enter n");
+        System.out.println(obj.nthSuperUglyNumber(sc.nextInt(),input_primes));
+
+        /** Driver Code for Q133.imageSmoother
+         *
+         */
+//        System.out.println("Enter matrix size");
+//        int n=sc.nextInt(),input_matrix[][] = new int[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                input_matrix[iterator_i][iterator_j] = sc.nextInt();
+//
+//        obj.imageSmoother(input_matrix);
     }
 }
