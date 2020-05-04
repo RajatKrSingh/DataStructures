@@ -6183,4 +6183,601 @@ public class LeetCode {
         return final_matrix;
     }
 
+    /*
+    134. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-tilt/)
+        Given a binary tree, return the tilt of the whole tree.
+        The tilt of a tree node is defined as the absolute difference between the sum of all left subtree node values and the sum
+        of all right subtree node values. Null node has tilt 0.
+        The tilt of the whole tree is defined as the sum of all nodes' tilt.
+
+        Example:
+        Input:
+             1
+           /   \
+          2     3
+        Output: 1
+        Explanation:
+        Tilt of node 2 : 0
+        Tilt of node 3 : 0
+        Tilt of node 1 : |2-3| = 1
+        Tilt of binary tree : 0 + 0 + 1 = 1
+
+        Note:
+        1. The sum of node values in any subtree won't exceed the range of 32-bit integer.
+        2. All the tilt values won't exceed the range of 32-bit integer.
+    */
+    int tilt=0;
+    public int findTilt(TreeNode root)
+    {
+        findTiltHelper(root);
+        return tilt;
+    }
+
+    public int findTiltHelper(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        int leftSum = findTiltHelper(root.left);
+        int rightSum = findTiltHelper(root.right);
+        tilt += Math.abs(leftSum-rightSum);
+        return leftSum+rightSum+root.val;
+    }
+
+    /*
+    135. PROBLEM DESCRIPTION (https://leetcode.com/problems/distribute-candies/)
+        Given an integer array with even length, where different numbers in this array represent different kinds of candies. Each
+        number means one candy of the corresponding kind. You need to distribute these candies equally in number to brother and sister.
+        Return the maximum number of kinds of candies the sister could gain.
+
+        Example 1:
+        Input: candies = [1,1,2,2,3,3]
+        Output: 3
+        Explanation:
+        There are three different kinds of candies (1, 2 and 3), and two candies for each kind.
+        Optimal distribution: The sister has candies [1,2,3] and the brother has candies [1,2,3], too.
+        The sister has three different kinds of candies.
+
+        Example 2:
+        Input: candies = [1,1,2,3]
+        Output: 2
+        Explanation: For example, the sister has candies [2,3] and the brother has candies [1,1].
+        The sister has two different kinds of candies, the brother has only one kind of candies.
+
+        Note:
+        The length of the given array is in range [2, 10,000], and will be even.
+        The number in given array is in range [-100,000, 100,000].
+    */
+    public int distributeCandies_alt(int[] candies) //Time O(nlog(n)) Space O(1)
+    {
+        int count_candies = 1;
+        Arrays.sort(candies);
+        for(int iterator_i=1;iterator_i<candies.length && count_candies<candies.length/2;iterator_i++)
+        {
+            if(candies[iterator_i]>candies[iterator_i-1])
+                count_candies++;
+        }
+        return count_candies;
+    }
+
+    public int distributeCandies_alt1(int[] candies) //Time O(n) Space O(n)
+    {
+        HashSet<Integer> hset = new HashSet();
+        for(int iterator_i=0;iterator_i<candies.length &&hset.size()<candies.length/2;iterator_i++)
+            hset.add(candies[iterator_i]);
+
+        return hset.size();
+    }
+
+    public int distributeCandies(int[] candies) //Buckets
+    {
+        boolean bucket[] = new boolean[200001];
+        int unique_val=0;
+        for(int iterator_i=0;iterator_i<candies.length && unique_val<candies.length/2;iterator_i++)
+        {
+            if(bucket[100000+candies[iterator_i]]==false)
+                unique_val++;
+            bucket[100000+candies[iterator_i]] = true;
+        }
+        return unique_val;
+    }
+
+    /*
+    136. PROBLEM DESCRIPTION (https://leetcode.com/problems/trapping-rain-water/)
+        Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able
+        to trap after raining.
+
+        The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section)
+        are being trapped.
+
+        Example:
+        Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+        Output: 6
+    */
+    public int trap_alt(int[] height) // Time O(n) Space O(n)
+    {
+        if(height.length==0)
+            return 0;
+        int left_max[] = new int[height.length], right_max[] = new int[height.length],total_area=0;
+        left_max[0] = height[0];
+        right_max[height.length-1] = height[height.length-1];
+        for(int iterator_i=1;iterator_i<height.length;iterator_i++)
+        {
+            left_max[iterator_i] = Math.max(left_max[iterator_i-1],height[iterator_i]);
+            right_max[height.length-iterator_i-1] = Math.max(right_max[height.length-iterator_i],height[height.length-iterator_i-1]);
+        }
+        for(int iterator_i=0;iterator_i<height.length;iterator_i++)
+            total_area += Math.min(left_max[iterator_i],right_max[iterator_i]) - height[iterator_i];
+        return total_area;
+    }
+
+    public int trap(int[] height) // Time O(n) Space O(1)
+    {
+        int max_left_till_now = 0,max_right_till_now=0,left_pointer=0,right_pointer=height.length-1,total_area=0;
+        while(left_pointer<right_pointer)
+        {
+            if(height[left_pointer]<height[right_pointer]) // Trap bounded by max left val and current height itself since right is greater
+            {
+                if(height[left_pointer]>max_left_till_now)
+                    max_left_till_now = height[left_pointer];
+                else
+                    total_area += max_left_till_now-height[left_pointer];
+                left_pointer++;
+            }
+            else //Trap bounded by right max since left is greater than current val
+            {
+                if(height[right_pointer]>max_right_till_now)
+                    max_right_till_now = height[right_pointer];
+                else
+                    total_area += max_right_till_now-height[right_pointer];
+                right_pointer--;
+            }
+        }
+        return total_area;
+    }
+
+    /*
+    137. PROBLEM DESCRIPTION (https://leetcode.com/problems/first-unique-character-in-a-string/)
+        Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
+
+        Examples:
+        s = "leetcode"
+        return 0.
+
+        s = "loveleetcode",
+        return 2.
+        Note: You may assume the string contain only lowercase letters.
+    */
+    public int firstUniqChar(String s)
+    {
+        int isEncountered[] = new int[26];
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+            isEncountered[s.charAt(iterator_i)-'a']++;
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+            if(isEncountered[s.charAt(iterator_i)-'a']==1)
+                return iterator_i;
+        return -1;
+    }
+
+    /*
+    138. PROBLEM DESCRIPTION (https://leetcode.com/problems/perfect-squares/)
+        Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
+
+        Example 1:
+        Input: n = 12
+        Output: 3
+        Explanation: 12 = 4 + 4 + 4.
+
+        Example 2:
+        Input: n = 13
+        Output: 2
+        Explanation: 13 = 4 + 9.
+    */
+    public int numSquares_alt(int n) //dynamic programming
+    {
+        int dp_arr[] = new int[n+1];
+        Arrays.fill(dp_arr,Integer.MAX_VALUE);
+        for(int iterator_i=1;1.0*iterator_i<=1.0*n/iterator_i;iterator_i++)
+            dp_arr[iterator_i*iterator_i] = 1;
+
+        for(int iterator_i=2;iterator_i<=n;iterator_i++) // Corresponds to each dp_arr
+        {
+            if(dp_arr[iterator_i]==1)
+                continue;
+            //Check if any j exists such i = j*j +k , dp[k_val] should be >0 (also a square)
+            for(int iterator_j=1;iterator_j*iterator_j<iterator_i;iterator_j++)
+            {
+                if(dp_arr[iterator_i-iterator_j*iterator_j]!=Integer.MAX_VALUE)
+                    dp_arr[iterator_i] = Math.min(dp_arr[iterator_i],dp_arr[iterator_i-iterator_j*iterator_j]+1);
+            }
+        }
+        return dp_arr[n];
+    }
+
+    public int numSquares_alt1(int n) //BFS Add primes to queue and continue search from there updating count array for reaching particular number
+    {
+        int count_arr[] = new int[n+1];
+        Arrays.fill(count_arr,Integer.MAX_VALUE);
+        List<Integer> squares_list = new ArrayList<>();
+        Queue<Integer> bfs_q = new LinkedList<>();
+        for(int iterator_i=1;1.0*iterator_i<=1.0*n/iterator_i;iterator_i++)
+        {
+            squares_list.add(iterator_i*iterator_i);
+            count_arr[iterator_i * iterator_i] = 1;
+            bfs_q.add(iterator_i*iterator_i);
+        }
+        // If n is basic square
+        if(count_arr[n]==1)
+            return 1;
+
+        while(!bfs_q.isEmpty())
+        {
+            int current_val = bfs_q.poll();
+            for(Integer basicSquares:squares_list)
+            {
+                if(current_val+basicSquares>n)
+                    break;
+                if(current_val+basicSquares<n && count_arr[current_val+basicSquares]==Integer.MAX_VALUE) //Push value
+                {
+                    count_arr[current_val + basicSquares] = count_arr[current_val]+1;
+                    bfs_q.add(current_val+basicSquares);
+                }
+                else if(current_val+basicSquares==n) // Since BFS will have least squares
+                    return count_arr[current_val]+1;
+            }
+        }
+        return -1;
+    }
+
+    public int numSquares(int n) // Lagrange's four square theorem
+    {
+        //Check for basic prime count == 1
+        int sqrt_num = (int)Math.sqrt(n);
+        if(sqrt_num*sqrt_num == n)
+            return 1;
+
+        // Lagrange 3 square theorem : if for 4^k(8m+7) then count == 4
+        int n_cpy = n;
+        while(n%4==0)
+            n = n/4;
+        if(n%8 == 7)
+            return 4;
+
+        // Check if count == 2
+        for(int iterator_i=1;iterator_i<Math.sqrt(n_cpy);iterator_i++)
+        {
+            int complement = n - iterator_i*iterator_i;
+            sqrt_num = (int)Math.sqrt(complement);
+            if(sqrt_num*sqrt_num==complement)
+                return 2;
+        }
+
+        // If no cases match answer is 3
+        return 3;
+
+    }
+
+    /*
+    139. PROBLEM DESCRIPTION (https://leetcode.com/problems/path-sum/)
+        Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the
+        path equals the given sum.
+
+        Note: A leaf is a node with no children.
+
+        Example:
+        Given the below binary tree and sum = 22,
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+        return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+    */
+
+    public boolean hasPathSum(TreeNode root, int sum)
+    {
+        if(root==null)
+            return false;
+        if(root.right==null && root.left==null)
+        {
+            if(root.val == sum)
+                return true;
+            return false;
+        }
+        return (hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val));
+
+    }
+
+    public boolean hasPathSum_alt(TreeNode root, int sum) //Reduce recursion stack for root==null
+    {
+        if(root==null)
+            return false;
+        return hasPathSumHelper(root,sum);
+
+    }
+
+    public boolean hasPathSumHelper(TreeNode root, int sum)
+    {
+        if(root==null)
+            return false;
+        if(root.right==null && root.left==null)
+        {
+            if(root.val == sum)
+                return true;
+            return false;
+        }
+        return (hasPathSumHelper(root.left, sum - root.val) || hasPathSumHelper(root.right, sum - root.val));
+    }
+
+    /*
+    140. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-k-sorted-lists/)
+        Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+        Example:
+        Input:
+        [
+          1->4->5,
+          1->3->4,
+          2->6
+        ]
+        Output: 1->1->2->3->4->4->5->6
+    */
+    public ListNode mergeKLists_alt(ListNode[] lists) // Sort k lists 2 at a time using one with the least as result node Time O(nk) Space O(1)
+    {
+        ListNode result_node = new ListNode(Integer.MIN_VALUE);
+        for(int iterator_i=0;iterator_i<lists.length;iterator_i++)
+        {
+            ListNode result_node_ptr = result_node.next,result_node_prev=result_node,curr_list_ptr=lists[iterator_i];
+            while(curr_list_ptr!=null)
+            {
+                while(result_node_ptr!=null && result_node_ptr.val<curr_list_ptr.val)
+                {
+                    result_node_prev = result_node_ptr;
+                    result_node_ptr = result_node_ptr.next;
+                }
+                if(result_node_ptr==null)
+                {
+                    result_node_prev.next = curr_list_ptr;
+                    curr_list_ptr = null;
+                }
+                else
+                {
+                    result_node_prev.next = curr_list_ptr;
+                    curr_list_ptr = curr_list_ptr.next;
+                    result_node_prev.next.next = result_node_ptr;
+                    result_node_prev = result_node_prev.next;
+                }
+            }
+        }
+        return result_node.next;
+    }
+
+    public ListNode mergeKLists_alt1(ListNode[] lists) // Using priority Queue Time O(nlogk), where k<<n Space O(k) for Priority Queue
+    {
+        PriorityQueue<ListNodeQueue> pq = new PriorityQueue();
+        // Enter all starting nodes as initialization
+        for(int iterator_i=0;iterator_i<lists.length;iterator_i++)
+        {
+            if(lists[iterator_i]!=null)
+                pq.add(new ListNodeQueue(lists[iterator_i].val,lists[iterator_i]));
+        }
+        ListNode result_node = new ListNode(0), result_node_ptr = result_node;
+        while(!pq.isEmpty())
+        {
+            ListNodeQueue popped = pq.poll();
+            result_node.next = popped.node;
+            result_node = result_node.next;
+            if(popped.node.next!=null)
+                pq.add(new ListNodeQueue(popped.node.next.val,popped.node.next));
+        }
+        return result_node_ptr.next;
+    }
+
+    public ListNode mergeKLists(ListNode[] lists) //Divide and Conquer using MergeSort Time: O(nlogk) Space O(1)
+    {
+       return mergeKListsDistributer(lists,0,lists.length-1);
+    }
+
+    public ListNode mergeKListsDistributer(ListNode[] lists,int lb, int ub)
+    {
+        if(lb==ub)
+            return lists[lb];
+
+        int mid = (lb+ub)/2;
+        ListNode leftSortedList = mergeKListsDistributer(lists,lb,mid);
+        ListNode rightSortedList = mergeKListsDistributer(lists,mid+1,ub);
+
+        return mergeKListsMerger(leftSortedList,rightSortedList);
+    }
+
+    public ListNode mergeKListsMerger(ListNode list1,ListNode list2)
+    {
+        ListNode result_node = new ListNode(0),result_node_cpy = result_node;
+        while(list1!=null && list2!=null)
+        {
+            if(list1.val<=list2.val)
+            {
+                result_node.next = list1;
+                list1 = list1.next;
+            }
+            else
+            {
+                result_node.next = list2;
+                list2 = list2.next;
+            }
+            result_node = result_node.next;
+        }
+        if(list1==null)
+            result_node.next = list2;
+        else
+            result_node.next = list1;
+        return result_node_cpy.next;
+    }
+
+    /*
+    141. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-increasing-path-in-a-matrix/)
+        Given an integer matrix, find the length of the longest increasing path.
+
+        From each cell, you can either move to four directions: left, right, up or down. You may NOT move diagonally or move
+        outside of the boundary (i.e. wrap-around is not allowed).
+
+        Example 1:
+        Input: nums =
+        [
+          [9,9,4],
+          [6,6,8],
+          [2,1,1]
+        ]
+        Output: 4
+        Explanation: The longest increasing path is [1, 2, 6, 9].
+
+        Example 2:
+        Input: nums =
+        [
+          [3,4,5],
+          [3,2,6],
+          [2,2,1]
+        ]
+        Output: 4
+        Explanation: The longest increasing path is [3, 4, 5, 6]. Moving diagonally is not allowed.
+    */
+    public int longestIncreasingPath(int[][] matrix)
+    {
+        if(matrix.length==0)
+            return 0;
+        int memoization_arr[][] = new int[matrix.length][matrix[0].length],max_increasing_length=0;
+        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
+            Arrays.fill(memoization_arr[iterator_i],-1);
+        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
+        {
+            for (int iterator_j = 0; iterator_j < matrix[0].length; iterator_j++)
+            {
+                longestIncreasingPathHelper(matrix, iterator_i, iterator_j, memoization_arr);
+                max_increasing_length = Math.max(max_increasing_length,memoization_arr[iterator_i][iterator_j]);
+            }
+        }
+        return max_increasing_length;
+    }
+
+    public int longestIncreasingPathHelper(int[][] matrix,int row,int col,int[][] memoization_arr)
+    {
+        if(memoization_arr[row][col]>=0)
+            return memoization_arr[row][col];
+        int directions[][] = new int[][] {{1,0},{-1,0},{0,1},{0,-1}};
+        int max_path_len = 0;
+        for(int[] direction:directions)
+        {
+            int curr_row = row+direction[0], curr_col = col+direction[1];
+            if(curr_row<0 || curr_row>=matrix.length || curr_col<0 || curr_col>=matrix[0].length || matrix[row][col] >= matrix[curr_row][curr_col])
+                continue;
+            max_path_len = Math.max(max_path_len,longestIncreasingPathHelper(matrix,curr_row,curr_col,memoization_arr));
+        }
+        memoization_arr[row][col] = max_path_len+1;
+        return memoization_arr[row][col];
+    }
+
+    /*
+    142. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-arrays-ii/)
+        Given two arrays, write a function to compute their intersection.
+
+        Example 1:
+        Input: nums1 = [1,2,2,1], nums2 = [2,2]
+        Output: [2,2]
+
+        Example 2:
+        Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+        Output: [4,9]
+        Note:
+        1. Each element in the result should appear as many times as it shows in both arrays.
+        2. The result can be in any order.
+
+        Follow up:
+        1. What if the given array is already sorted? How would you optimize your algorithm?
+        2. What if nums1's size is small compared to nums2's size? Which algorithm is better?
+        3. What if elements of nums2 are stored on disk, and the memory is limited such that you cannot load all elements into the memory at once?
+    */
+    public int[] intersect(int[] nums1, int[] nums2)
+    {
+        if(nums1.length<nums2.length)
+            return intersect(nums2,nums1);
+        HashMap<Integer,Integer> hmap = new HashMap();
+        for(int iterator_i=0;iterator_i<nums1.length;iterator_i++)
+            hmap.put(nums1[iterator_i],hmap.getOrDefault(nums1[iterator_i],0)+1);
+
+        int result_index=0;
+        for(int iterator_i=0;iterator_i<nums2.length;iterator_i++)
+        {
+            if(hmap.getOrDefault(nums2[iterator_i],0)>0)
+            {
+                nums1[result_index++] = nums2[iterator_i];
+                hmap.put(nums2[iterator_i],hmap.get(nums2[iterator_i])-1);
+            }
+        }
+        return Arrays.copyOf(nums1,result_index);
+    }
+
+    /*
+    143. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-string/)
+        Write a function that reverses a string. The input string is given as an array of characters char[].
+        Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+        You may assume all the characters consist of printable ascii characters.
+
+        Example 1:
+        Input: ["h","e","l","l","o"]
+        Output: ["o","l","l","e","h"]
+
+        Example 2:
+        Input: ["H","a","n","n","a","h"]
+        Output: ["h","a","n","n","a","H"]
+    */
+    public void reverseString(char[] s)
+    {
+        for(int iterator_i=0;iterator_i<s.length/2;iterator_i++)
+        {
+            char temp = s[iterator_i];
+            s[iterator_i] = s[s.length-1-iterator_i];
+            s[s.length-1-iterator_i] = temp;
+        }
+    }
+
+    /*
+    144. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-intervals/)
+        Given a collection of intervals, merge all overlapping intervals.
+
+        Example 1:
+        Input: [[1,3],[2,6],[8,10],[15,18]]
+        Output: [[1,6],[8,10],[15,18]]
+        Explanation: Since intervals [1,3] and [2,6] overlaps, merge them into [1,6].
+
+        Example 2:
+        Input: [[1,4],[4,5]]
+        Output: [[1,5]]
+        Explanation: Intervals [1,4] and [4,5] are considered overlapping.
+    */
+    public int[][] merge(int[][] intervals)
+    {
+        if(intervals.length==0)
+            return intervals;
+        Arrays.sort(intervals,(a,b)->a[0]-b[0]);
+        int iterator_i = 1,current_max = intervals[0][1],current_min = intervals[0][0];
+        LinkedList<int[]> result_list = new LinkedList<>();
+        while(iterator_i<intervals.length)
+        {
+            if(intervals[iterator_i][0]<=current_max)
+                current_max = Math.max(current_max,intervals[iterator_i][1]);
+            else
+            {
+                result_list.add(new int[]{current_min,current_max});
+                current_min = intervals[iterator_i][0];
+                current_max = intervals[iterator_i][1];
+            }
+            iterator_i++;
+        }
+        result_list.add(new int[]{current_min,current_max});
+        // make copy of result
+        return result_list.toArray(new int[result_list.size()][]);
+    }
+
 }

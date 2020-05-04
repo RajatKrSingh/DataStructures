@@ -1114,9 +1114,9 @@ public class Runner {
         /** Driver Code for Q132.nthSuperUglyNumber
          *
          */
-        int input_primes[] = obj.create_array_int(sc);
-        System.out.println("Enter n");
-        System.out.println(obj.nthSuperUglyNumber(sc.nextInt(),input_primes));
+//        int input_primes[] = obj.create_array_int(sc);
+//        System.out.println("Enter n");
+//        System.out.println(obj.nthSuperUglyNumber(sc.nextInt(),input_primes));
 
         /** Driver Code for Q133.imageSmoother
          *
@@ -1128,5 +1128,93 @@ public class Runner {
 //                input_matrix[iterator_i][iterator_j] = sc.nextInt();
 //
 //        obj.imageSmoother(input_matrix);
+
+        /** Driver Code for Q134.findTilt
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println(obj.findTilt(input_tree));
+
+        /** Driver Code for Q135.distributeCandies
+         *
+         */
+//        int input_candies[] = obj.create_array_int(sc);
+//        System.out.println(obj.distributeCandies(input_candies));
+
+        /** Driver Code for Q136.trap
+         *
+         */
+//        int input_height[] = obj.create_array_int(sc);
+//        System.out.println(obj.trap(input_height));
+
+        /** Driver Code for Q137.firstUniqChar
+         *
+         */
+//        System.out.println("Enter String");
+//        System.out.println(obj.firstUniqChar(sc.next()));
+
+        /** Driver Code for Q138.numSquares
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.numSquares(sc.nextInt()));
+
+        /** Driver Code for Q139.hasPathSum
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println("Enter sum");
+//        System.out.println(obj.hasPathSum(input_tree,sc.nextInt()));
+
+        /** Driver Code for Q140.mergeKLists
+         *
+         */
+//        System.out.println("Enter number of lists");
+//        int k = sc.nextInt();
+//        ListNode input_lists[] = new ListNode[k];
+//        for(int iterator_i=0;iterator_i<k;iterator_i++)
+//        {
+//            System.out.println("Enter List "+(iterator_i+1));
+//            input_lists[iterator_i] = create_linked_list(sc);
+//        }
+//        ListNode result_node = obj.mergeKLists(input_lists);
+
+        /** Driver Code for Q143.longestIncreasingPath
+         *
+         */
+//        System.out.println("Enter matrix size");
+//        int n = sc.nextInt(),input_matrix[][] = new int[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                input_matrix[iterator_i][iterator_j] = sc.nextInt();
+//        System.out.println(obj.longestIncreasingPath(input_matrix));
+
+        /** Driver Code for Q142.intersect
+         *
+         */
+//        int input_arr1[] = obj.create_array_int(sc);
+//        int input_arr2[] = obj.create_array_int(sc);
+//        input_arr1 = obj.intersect(input_arr1,input_arr2);
+
+        /** Driver Code for Q143.reverseString
+         *
+         */
+//        System.out.println("Enter string");
+//        obj.reverseString(sc.next().toCharArray());
+
+        /** Driver Code for Q144.merge
+         *
+         */
+//        System.out.println("Enter number of intervals");
+//        int n = sc.nextInt(),input_intervals[][] = new int[n][2];
+//        System.out.println("Enter intervals");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            input_intervals[iterator_i][0] = sc.nextInt();
+//            input_intervals[iterator_i][1] = sc.nextInt();
+//        }
+//        input_intervals = obj.merge(input_intervals);
+        
+
     }
 }
