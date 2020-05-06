@@ -6780,4 +6780,265 @@ public class LeetCode {
         return result_list.toArray(new int[result_list.size()][]);
     }
 
+    /*
+        145. PROBLEM DESCRIPTION (https://leetcode.com/problems/median-of-two-sorted-arrays/)
+            There are two sorted arrays nums1 and nums2 of size m and n respectively.
+
+            Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
+            You may assume nums1 and nums2 cannot be both empty.
+
+            Example 1:
+            nums1 = [1, 3]
+            nums2 = [2]
+            The median is 2.0
+
+            Example 2:
+            nums1 = [1, 2]
+            nums2 = [3, 4]
+            The median is (2 + 3)/2 = 2.5
+        */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2)
+    {
+        if(nums1.length<nums2.length) // Swap bcuz of cornercase when no elements present in nums1
+        {
+            int temp[] = nums1;
+            nums1 = nums2;
+            nums2 = temp;
+        }
+        int lb_arr1=0,ub_arr1=nums1.length-1;
+        int elements_in_median = (int)Math.ceil((nums1.length+nums2.length+1)/2.0);
+        while(lb_arr1<=ub_arr1)
+        {
+            int elements_in_nums1 = Math.min((lb_arr1+ub_arr1+2)/2,elements_in_median);
+            int elements_in_nums2 = elements_in_median-elements_in_nums1;
+
+            if(elements_in_nums2>nums2.length)
+            {
+                lb_arr1 = elements_in_nums1;// Increase elements chosen from first arr
+                continue;
+            }
+            if(elements_in_nums1>nums1.length)
+            {
+                ub_arr1 = elements_in_nums1-1;// Decrease elements chosen from first arr
+                continue;
+            }
+
+            int last_chosen_nums1 = elements_in_nums1>0?nums1[elements_in_nums1-1]:Integer.MIN_VALUE;
+            int last_chosen_nums2 = elements_in_nums2>0?nums2[elements_in_nums2-1]:Integer.MIN_VALUE;
+            int last_nums1 = elements_in_nums1>=nums1.length?Integer.MAX_VALUE:nums1[elements_in_nums1];
+            int last_nums2 = elements_in_nums2>=nums2.length?Integer.MAX_VALUE:nums2[elements_in_nums2];
+
+            if(elements_in_nums2<nums2.length && elements_in_nums1>=0 && last_chosen_nums1>last_nums2)
+                ub_arr1 = elements_in_nums1-1;
+            else if(elements_in_nums1<nums1.length && elements_in_nums2>=0 && last_chosen_nums2>last_nums1)
+                lb_arr1 = elements_in_nums1;
+            else
+            {
+                if((nums1.length+nums2.length)%2!=0)
+                {
+                    if (last_chosen_nums1 > last_chosen_nums2)
+                        return last_chosen_nums1;
+                    else
+                        return last_chosen_nums2;
+                }
+                else
+                {
+                    int total_med=0,max2 =last_chosen_nums1;
+                    if(last_chosen_nums1>last_chosen_nums2)
+                    {
+                        max2 = last_chosen_nums2;
+                        total_med += last_chosen_nums1;
+                    }
+                    else
+                        total_med += last_chosen_nums2;
+                    if(elements_in_nums1-1>0)
+                        max2 = Math.max(max2,nums1[elements_in_nums1-2]);
+                    if(elements_in_nums2-1>0)
+                        max2 = Math.max(max2,nums2[elements_in_nums2-2]);
+                    return (total_med+max2)/2.0;
+                }
+            }
+
+        }
+        return 0.0;
+    }
+
+    /*
+    146. PROBLEM DESCRIPTION (https://leetcode.com/problems/median-of-two-sorted-arrays/)
+        Given a positive integer, return its corresponding column title as appear in an Excel sheet.
+
+        For example:
+            1 -> A
+            2 -> B
+            3 -> C
+            ...
+            26 -> Z
+            27 -> AA
+            28 -> AB
+            ...
+
+        Example 1:
+        Input: 1
+        Output: "A"
+
+        Example 2:
+        Input: 28
+        Output: "AB"
+
+        Example 3:
+        Input: 701
+        Output: "ZY"
+    */
+    public String convertToTitle(int n)
+    {
+        String final_str = "";
+        while(n!=0)
+        {
+            final_str = (char)((n-1)%26  + 'A') + final_str;
+            n = (n-1)/26;
+        }
+        return final_str;
+    }
+
+    /*
+    147. PROBLEM DESCRIPTION (https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/)
+        Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target
+        number.
+        The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than
+        index2.
+
+        Note:
+        1. Your returned answers (both index1 and index2) are not zero-based.
+        2. You may assume that each input would have exactly one solution and you may not use the same element twice.
+
+        Example:
+        Input: numbers = [2,7,11,15], target = 9
+        Output: [1,2]
+        Explanation: The sum of 2 and 7 is 9. Therefore index1 = 1, index2 = 2.
+    */
+    public int[] twoSum2(int[] numbers, int target)
+    {
+        int left_ptr=0,right_ptr=numbers.length-1;
+        while(left_ptr<right_ptr)
+        {
+            if(numbers[left_ptr]+numbers[right_ptr]<target)
+                left_ptr++;
+            else if((numbers[left_ptr]+numbers[right_ptr]>target))
+                right_ptr--;
+            else
+                return new int[]{left_ptr+1,right_ptr+1};
+        }
+        return null;
+    }
+
+    /*
+    148. PROBLEM DESCRIPTION (https://leetcode.com/problems/zigzag-conversion/)
+        The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern
+         in a fixed font for better legibility)
+
+        P   A   H   N
+        A P L S I I G
+        Y   I   R
+        And then read line by line: "PAHNAPLSIIGYIR"
+
+        Write the code that will take a string and make this conversion given a number of rows:
+        string convert(string s, int numRows);
+
+        Example 1:
+        Input: s = "PAYPALISHIRING", numRows = 3
+        Output: "PAHNAPLSIIGYIR"
+
+        Example 2:
+        Input: s = "PAYPALISHIRING", numRows = 4
+        Output: "PINALSIGYAHRPI"
+        Explanation:
+        P     I    N
+        A   L S  I G
+        Y A   H R
+        P     I
+    */
+    public String convert_alt(String s, int numRows)
+    {
+        String separate_rows[] = new String[numRows],result_str="";
+        if(numRows==1)
+            return s;
+        for(int iterator_i=0;iterator_i<separate_rows.length;iterator_i++)
+            separate_rows[iterator_i] = "";
+        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        {
+            int pattern_mod_val = (iterator_i)%(2*numRows-2);
+            if(pattern_mod_val<numRows)
+                separate_rows[pattern_mod_val] += s.charAt(iterator_i);
+            else
+            {
+                separate_rows[2*numRows-2-pattern_mod_val] += s.charAt(iterator_i);
+            }
+        }
+        for(String row_string:separate_rows)
+            result_str += row_string;
+        return result_str;
+    }
+
+    public String convert(String s, int numRows) // use String Builder to avoid String arrays. Process row at a time
+    {
+        if(numRows==1)
+            return s;
+        StringBuilder result = new StringBuilder();
+        for(int iterator_i=0;iterator_i<numRows;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j+iterator_i<s.length();iterator_j+=(2*numRows-2))
+            {
+                result.append(s.charAt(iterator_i+iterator_j));
+                if(iterator_i!=0 && iterator_i!=(numRows-1) && (iterator_j-iterator_i+2*numRows-2)<s.length())
+                    result.append(s.charAt(iterator_j-iterator_i+2*numRows-2));
+            }
+        }
+        return result.toString();
+    }
+
+    /*
+    149. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-root-to-leaf-numbers/)
+        Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
+        An example is the root-to-leaf path 1->2->3 which represents the number 123. Find the total sum of all root-to-leaf numbers.
+
+        Note: A leaf is a node with no children.
+        Example:
+        Input: [1,2,3]
+            1
+           / \
+          2   3
+        Output: 25
+        Explanation:
+        The root-to-leaf path 1->2 represents the number 12.
+        The root-to-leaf path 1->3 represents the number 13.
+        Therefore, sum = 12 + 13 = 25.
+
+        Example 2:
+        Input: [4,9,0,5,1]
+            4
+           / \
+          9   0
+         / \
+        5   1
+        Output: 1026
+        Explanation:
+        The root-to-leaf path 4->9->5 represents the number 495.
+        The root-to-leaf path 4->9->1 represents the number 491.
+        The root-to-leaf path 4->0 represents the number 40.
+        Therefore, sum = 495 + 491 + 40 = 1026.
+    */
+    public int sumNumbers(TreeNode root)
+    {
+        return sumNumbersHelper(root,0);
+    }
+    public int sumNumbersHelper(TreeNode root,int sum_till_now)
+    {
+        if(root==null)
+            return 0;
+        if(root.left==null && root.right==null)
+            return sum_till_now*10 + root.val;
+        return sumNumbersHelper(root.left,sum_till_now*10+root.val) + sumNumbersHelper(root.right,sum_till_now*10+root.val);
+    }
+
+
 }

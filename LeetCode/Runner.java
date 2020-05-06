@@ -1214,7 +1214,39 @@ public class Runner {
 //            input_intervals[iterator_i][1] = sc.nextInt();
 //        }
 //        input_intervals = obj.merge(input_intervals);
-        
+
+        /** Driver Code for Q145.findMedianSortedArrays
+         *
+         */
+//        int input_arr1[] = obj.create_array_int(sc);
+//        int input_arr2[] = obj.create_array_int(sc);
+//        System.out.println(obj.findMedianSortedArrays(input_arr1,input_arr2));
+
+        /** Driver Code for Q146.convertToTitle
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.convertToTitle(sc.nextInt()));
+
+        /** Driver Code for Q147.twoSum
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        obj.twoSum2(input_arr,sc.nextInt());
+
+        /** Driver Code for Q148.convert
+         *
+         */
+//        System.out.println("Enter String and number of rows");
+//        System.out.println(obj.convert(sc.next(),sc.nextInt()));
+
+        /** Driver Code for Q149.sumNumbers
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        obj.sumNumbers(input_tree);
+
 
     }
 }
