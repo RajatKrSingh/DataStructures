@@ -1,5 +1,9 @@
 package LeetCode;
 
+import com.sun.org.apache.xerces.internal.xs.StringList;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import static LeetCode.LeetCode.create_binary_tree;
 import static LeetCode.LeetCode.create_linked_list;
@@ -1247,6 +1251,114 @@ public class Runner {
 //        TreeNode input_tree = create_binary_tree(null,sc);
 //        obj.sumNumbers(input_tree);
 
+        /** Driver Code for Q150.maxCoins
+         *
+         */
+//        int balloons[] = obj.create_array_int(sc);
+//        System.out.println(obj.maxCoins(balloons));
 
+        /** Driver Code for Q151.isIsomorphic
+         *
+         */
+//        System.out.println("Enter 2 strings");
+//        System.out.println(obj.isIsomorphic(sc.next(),sc.next()));
+
+        /** Driver Code for Q152.isUgly
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println(obj.isUgly(sc.nextInt()));
+
+        /** Driver Code for Q153.restoreIpAddresses
+         *
+         */
+//        System.out.println("Enter string");
+//        obj.restoreIpAddresses(sc.next());
+
+        /** Driver Code for Q154.minimumTotal
+         *
+         */
+//        List<List<Integer>> input_list = new ArrayList<>();
+//        System.out.println("Enter size of triangle");
+//        int n = sc.nextInt();
+//        System.out.println("Enter triangle");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            input_list.add(new ArrayList<>());
+//            for(int iterator_j = 0;iterator_j<=iterator_i;iterator_j++)
+//                input_list.get(iterator_i).add(sc.nextInt());
+//        }
+//        System.out.println(obj.minimumTotal(input_list));
+
+        /** Driver Code for Q155.binaryTreePaths
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        List<String> paths = obj.binaryTreePaths(input_tree);
+
+        /** Driver Code for Q156.countSmaller
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.countSmaller(input_arr);
+
+        /** Driver Code for Q157.intersection
+         *
+         */
+//        int input_arr1[] = obj.create_array_int(sc);
+//        int input_arr2[] = obj.create_array_int(sc);
+//        input_arr1 = obj.intersection(input_arr1,input_arr2);
+
+        /** Driver Code for Q158.getSkyline
+         *
+         */
+//        System.out.println("Enter number of buildings");
+//        int n = sc.nextInt(),input_buildings[][] = new int[n][3];
+//        System.out.println("Enter triplets");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            input_buildings[iterator_i][0] = sc.nextInt();
+//            input_buildings[iterator_i][1] = sc.nextInt();
+//            input_buildings[iterator_i][2] = sc.nextInt();
+//        }
+//        List<List<Integer>> outline_list = obj.getSkyline(input_buildings);
+
+        /** No Driver Code for Q159.lowestCommonAncestor
+         *
+         */
+
+        /** Driver Code for Q160.hIndex
+         *
+         */
+//        int input_citations[] = obj.create_array_int(sc);
+//        System.out.println(obj.hIndex(input_citations));
+
+        /** Driver Code for Q161.sumOfLeftLeaves
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println(obj.sumOfLeftLeaves(input_tree));
+
+        /** Driver Code for Q162.canConstruct
+         *
+         */
+//        System.out.println("Enter ransom and magazine");
+//        System.out.println(obj.canConstruct(sc.next(),sc.next()));
+
+        /** Driver Code for Q163.findItinerary
+         *
+         */
+//        List<List<String>> input_tickets = new ArrayList<>();
+//        System.out.println("Enter number of tickets");
+//        int n = sc.nextInt();
+//        System.out.println("Enter tickets");
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            List<String> ticket = new ArrayList<>();
+//            ticket.add(sc.next());
+//            ticket.add(sc.next());
+//            input_tickets.add(ticket);
+//        }
+//        List<String> ret_itinerary = obj.findItinerary(input_tickets);
     }
 }

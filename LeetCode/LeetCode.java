@@ -3,6 +3,7 @@ package LeetCode;
 import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LeetCode {
 /*
@@ -7040,5 +7041,768 @@ public class LeetCode {
         return sumNumbersHelper(root.left,sum_till_now*10+root.val) + sumNumbersHelper(root.right,sum_till_now*10+root.val);
     }
 
+    /*
+    150. PROBLEM DESCRIPTION (https://leetcode.com/problems/burst-balloons/)
+        Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums. You are
+        asked to burst all the balloons. If you burst balloon i you will get nums[left] * nums[i] * nums[right] coins. Here left
+        and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
 
+        Find the maximum coins you can collect by bursting the balloons wisely.
+        Note:
+        1. You may imagine nums[-1] = nums[n] = 1. They are not real therefore you can not burst them.
+        2. 0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+
+        Example:
+        Input: [3,1,5,8]
+        Output: 167
+        Explanation: nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
+             coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+    */
+    public int maxCoins_alt(int[] nums) //Recursion with memoization
+    {
+        int extended_balloons[] = new int[nums.length+2],memoization_arr[][] = new int[nums.length+2][nums.length+2];
+        for(int iterator_i=1;iterator_i<=nums.length;iterator_i++)
+            extended_balloons[iterator_i] = nums[iterator_i-1];
+        extended_balloons[0] = extended_balloons[nums.length+1] = 1;
+        return maxCoinsHelper(extended_balloons,0,extended_balloons.length-1,memoization_arr);
+
+    }
+
+    public int maxCoinsHelper(int[] balloons,int lb,int ub,int[][] memoization_arr) // lb and ub are boundaries will not be bursted
+    {
+        if(lb+1==ub) //No balloon to burst
+            return 0;
+        if(memoization_arr[lb][ub]>0)
+            return memoization_arr[lb][ub];
+        int max_till_now = Integer.MIN_VALUE;
+        for(int iterator_i=lb+1;iterator_i<ub;iterator_i++)
+        {
+            max_till_now = Math.max(max_till_now, balloons[lb]*balloons[iterator_i]*balloons[ub]+
+                    maxCoinsHelper(balloons,lb,iterator_i,memoization_arr)+maxCoinsHelper(balloons,iterator_i,ub,memoization_arr));
+        }
+        memoization_arr[lb][ub] = max_till_now;
+        return max_till_now;
+    }
+
+    public int maxCoins(int[] nums) //Dp approach Start with size 3 sets since size 2 is 0
+    {
+        int extended_balloons[] = new int[nums.length+2],dp_arr[][] = new int[nums.length+2][nums.length+2];
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            extended_balloons[iterator_i+1] = nums[iterator_i];
+        extended_balloons[0] = extended_balloons[nums.length+1] = 1;
+
+        for(int iterator_size_interval=2;iterator_size_interval<extended_balloons.length;iterator_size_interval++)
+        {
+            for(int iterator_left = 0; iterator_left+iterator_size_interval<extended_balloons.length;iterator_left++)
+            {
+                int right_balloon = iterator_left+iterator_size_interval,maxCoin= Integer.MIN_VALUE;
+                for(int iterator_dp=iterator_left+1;iterator_dp<right_balloon;iterator_dp++)
+                {
+                    maxCoin = Math.max((dp_arr[iterator_left][iterator_dp]+dp_arr[iterator_dp][right_balloon]
+                            +extended_balloons[iterator_left]*extended_balloons[iterator_dp]*extended_balloons[right_balloon]),maxCoin);
+                }
+                dp_arr[iterator_left][right_balloon] = maxCoin;
+            }
+        }
+        return dp_arr[0][dp_arr.length-1];
+    }
+
+    /*
+    151. PROBLEM DESCRIPTION (https://leetcode.com/problems/isomorphic-strings/)
+        Given two strings s and t, determine if they are isomorphic.
+
+        Two strings are isomorphic if the characters in s can be replaced to get t.
+        All occurrences of a character must be replaced with another character while preserving the order of characters. No two
+        characters may map to the same character but a character may map to itself.
+
+        Example 1:
+        Input: s = "egg", t = "add"
+        Output: true
+
+        Example 2:
+        Input: s = "foo", t = "bar"
+        Output: false
+
+        Example 3:
+        Input: s = "paper", t = "title"
+        Output: true
+
+        Note:
+        You may assume both s and t have the same length.
+    */
+    public boolean isIsomorphic(String s, String t)
+    {
+        int mapping_s[] = new int[256],mapping_t[] = new int[256]; //Extended Ascii
+        Arrays.fill(mapping_s,-1);
+        Arrays.fill(mapping_t,-1);
+
+        for(int iterator_s=0;iterator_s<s.length();iterator_s++)
+        {
+            if(mapping_s[s.charAt(iterator_s)]!=mapping_t[t.charAt(iterator_s)])
+                return false;
+            mapping_s[s.charAt(iterator_s)] = s.charAt(iterator_s);
+            mapping_t[t.charAt(iterator_s)] = s.charAt(iterator_s);
+        }
+        return true;
+    }
+
+    /*
+    152. PROBLEM DESCRIPTION (https://leetcode.com/problems/ugly-number/)
+        Write a program to check whether a given number is an ugly number. Ugly numbers are positive numbers whose prime factors only
+        include 2, 3, 5.
+
+        Example 1:
+        Input: 6
+        Output: true
+        Explanation: 6 = 2 × 3
+
+        Example 2:
+        Input: 8
+        Output: true
+        Explanation: 8 = 2 × 2 × 2
+
+        Example 3:
+        Input: 14
+        Output: false
+        Explanation: 14 is not ugly since it includes another prime factor 7.
+
+        Note:
+        1. 1 is typically treated as an ugly number.
+        2. Input is within the 32-bit signed integer range: [−2^31,  2^31 − 1].
+    */
+    public boolean isUgly(int num)
+    {
+        if(num<=0)
+            return false;
+        int primes_for_ugly[] = new int[]{2,3,5}, prime_iterator=0;
+        while(num!=1 && prime_iterator<primes_for_ugly.length)
+        {
+            int current_prime = primes_for_ugly[prime_iterator++];
+            while(num%current_prime==0)
+                num /= current_prime;
+        }
+        if(num==1)
+            return true;
+        return false;
+    }
+
+    /*
+    153. PROBLEM DESCRIPTION (https://leetcode.com/problems/restore-ip-addresses/)
+        Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+        A valid IP address consists of exactly four integers (each integer is between 0 and 255) separated by single points.
+
+        Example:
+        Input: "25525511135"
+        Output: ["255.255.11.135", "255.255.111.35"]
+    */
+    public List<String> restoreIpAddresses(String s)
+    {
+        List<String> list = new ArrayList<>();
+        for(int len1=1;len1<4 && len1<=s.length();len1++)
+        {
+            if((len1>1 && s.charAt(0)=='0') || (len1==3 && Integer.parseInt(s.substring(0,len1))>255))
+                continue;
+            for(int len2=1;len2<4 && len1+len2<=s.length();len2++)
+            {
+                if((len2>1 && s.charAt(len1)=='0') || (len2==3 && Integer.parseInt(s.substring(len1,len1+len2))>255))
+                    continue;
+                for(int len3=1;len3<4 && len1+len2+len3<=s.length();len3++)
+                {
+                    if((len3>1 && s.charAt(len1+len2)=='0')  || (len3==3 && Integer.parseInt(s.substring(len1+len2,len1+len2+len3))>255))
+                        continue;
+                    int len4 = s.length()-len1-len2-len3;
+                    if(len4>0 && len4<4)
+                    {
+                        if((len4>1 && s.charAt(len1+len2+len3)=='0') || (len4==3 && Integer.parseInt(s.substring(len1+len2+len3,len1+len2+len3+len4))>255))
+                            continue;
+                        list.add(s.substring(0,len1)+"."+s.substring(len1,len1+len2)+"."+s.substring(len1+len2,len1+len2+len3)+"."+
+                                s.substring(len1+len2+len3,len1+len2+len3+len4));
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    /*
+    154. PROBLEM DESCRIPTION (https://leetcode.com/problems/triangle/)
+        Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+        For example, given the following triangle
+        [
+             [2],
+            [3,4],
+           [6,5,7],
+          [4,1,8,3]
+        ]
+        The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+
+        Note:
+        Bonus point if you are able to do this using only O(n) extra space, where n is the total number of rows in the triangle.
+    */
+    public int minimumTotal(List<List<Integer>> triangle)
+    {
+        if(triangle.size()==0)
+            return 0;
+        int dp_current_row[] = triangle.get(triangle.size()-1).stream().mapToInt(i->i).toArray();
+
+        for(int iterator_row = triangle.size()-2;iterator_row>=0;iterator_row--)
+        {
+            List<Integer> current_list = triangle.get(iterator_row);
+            for(int iterator_list=dp_current_row.length-1;iterator_list>=triangle.size()-iterator_row-1;iterator_list--)
+                dp_current_row[iterator_list] = Math.min(dp_current_row[iterator_list-1],dp_current_row[iterator_list]) + current_list.get(iterator_list-(triangle.size()-iterator_row-1));
+        }
+        return dp_current_row[dp_current_row.length-1];
+    }
+
+    /*
+    155. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-paths/)
+        Given a binary tree, return all root-to-leaf paths.
+
+        Note: A leaf is a node with no children.
+
+        Example:
+        Input:
+           1
+         /   \
+        2     3
+         \
+          5
+
+        Output: ["1->2->5", "1->3"]
+        Explanation: All root-to-leaf paths are: 1->2->5, 1->3
+    */
+    public List<String> binaryTreePaths(TreeNode root)
+    {
+        List<String> list = new ArrayList<>();
+        binaryTreePathsHelper(root,list,new StringBuilder());
+        return list;
+    }
+
+    public void binaryTreePathsHelper(TreeNode root,List<String> list,StringBuilder current_path)
+    {
+        if(root==null)
+            return;
+        int len = current_path.length();
+        current_path.append(root.val);
+        if(root.left==null && root.right==null)
+        {
+            list.add(current_path.toString());
+            current_path.setLength(len);
+            return;
+        }
+        current_path.append("->");
+        binaryTreePathsHelper(root.left,list,current_path);
+        binaryTreePathsHelper(root.right,list,current_path);
+        current_path.setLength(len);
+    }
+
+    /*
+    156. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-of-smaller-numbers-after-self/)
+        You are given an integer array nums and you have to return a new counts array. The counts array has the property where counts[i]
+        is the number of smaller elements to the right of nums[i].
+
+        Example:
+        Input: [5,2,6,1]
+        Output: [2,1,1,0]
+        Explanation:
+        To the right of 5 there are 2 smaller elements (2 and 1).
+        To the right of 2 there is only 1 smaller element (1).
+        To the right of 6 there is 1 smaller element (1).
+        To the right of 1 there is 0 smaller element.
+    */
+
+    public List<Integer> countSmaller(int[] nums) //Using MergeSort Implementation
+    {
+        List<Integer> count_smaller_right = new ArrayList<>();
+        if(nums.length==0)
+            return count_smaller_right;
+        countSmallerTuple num_arr[] = new countSmallerTuple[nums.length];
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            num_arr[iterator_i] = new countSmallerTuple(nums[iterator_i],iterator_i);
+        int count_arr[] = new int[nums.length];
+        countSmallerMergeSort(num_arr,count_arr,0,nums.length-1);
+        return Arrays.stream( count_arr ).boxed().collect( Collectors.toList() );
+    }
+
+    public void countSmallerMergeSort(countSmallerTuple[] nums,int[] count_arr,int lb,int ub)
+    {
+        if(lb<ub)
+        {
+            int mid = lb + (ub - lb) / 2;
+            countSmallerMergeSort(nums,count_arr,lb,mid);
+            countSmallerMergeSort(nums,count_arr,mid+1,ub);
+            countSmallerMerge(nums,count_arr,lb,mid,ub);
+        }
+    }
+
+    public void countSmallerMerge(countSmallerTuple[] nums,int[] count_arr,int lb,int mid,int ub)
+    {
+        int index_left = mid, index_right=ub,sorted_index=ub-lb,current_increment = ub-mid;//Total elements in right subarray
+        countSmallerTuple sorted_result[] = new countSmallerTuple[ub-lb+1];
+        while(index_left>=lb && index_right>mid)
+        {
+            if(nums[index_left].arr_val>nums[index_right].arr_val)// greater than all elements in right subarray
+            {
+                sorted_result[sorted_index] = nums[index_left];
+                count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index] + current_increment;
+                index_left--;
+            }
+            else
+            {
+                sorted_result[sorted_index] = nums[index_right];
+                count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
+                current_increment--;
+                index_right--;
+            }
+        }
+        while(index_right>mid)
+        {
+            sorted_result[sorted_index] = nums[index_right];
+            count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
+            index_right--;
+        }
+        while(index_left>=lb)
+        {
+            sorted_result[sorted_index] = nums[index_left];
+            count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
+            index_left--;
+        }
+
+        for(int iterator_i=lb;iterator_i<=ub;iterator_i++)
+            nums[iterator_i] = sorted_result[iterator_i-lb];
+    }
+
+    /*
+    157. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-arrays/)
+        Given two arrays, write a function to compute their intersection.
+
+        Example 1:
+        Input: nums1 = [1,2,2,1], nums2 = [2,2]
+        Output: [2]
+
+        Example 2:
+        Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+        Output: [9,4]
+
+        Note:
+        Each element in the result must be unique.
+        The result can be in any order.
+    */
+    public int[] intersection(int[] nums1, int[] nums2)
+    {
+        if(nums1.length<nums2.length)
+            intersection(nums2,nums1);
+        HashSet hset = new HashSet();
+        for(int numval:nums1)
+            hset.add(numval);
+        int counter_index=0;
+        for(int numval:nums2)
+        {
+            if(hset.contains(numval))
+            {
+                nums1[counter_index++] = numval;
+                hset.remove(numval);
+            }
+        }
+        return Arrays.copyOf(nums1,counter_index);
+    }
+
+    /*
+    158. PROBLEM DESCRIPTION (https://leetcode.com/problems/the-skyline-problem/)
+        A city's skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance.
+        Now suppose you are given the locations and height of all the buildings as shown on a cityscape photo (Figure A), write a program
+        to output the skyline formed by these buildings collectively (Figure B).
+
+        The geometric information of each building is represented by a triplet of integers [Li, Ri, Hi], where Li and Ri are the x
+        coordinates of the left and right edge of the ith building, respectively, and Hi is its height. It is guaranteed that
+        0 ≤ Li, Ri ≤ INT_MAX, 0 < Hi ≤ INT_MAX, and Ri - Li > 0. You may assume all buildings are perfect rectangles grounded on
+        an absolutely flat surface at height 0.
+
+        For instance, the dimensions of all buildings in Figure A are recorded as: [ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] .
+
+        The output is a list of "key points" (red dots in Figure B) in the format of [ [x1,y1], [x2, y2], [x3, y3], ... ] that uniquely defines
+        a skyline. A key point is the left endpoint of a horizontal line segment. Note that the last key point, where the rightmost building
+        ends, is merely used to mark the termination of the skyline, and always has zero height. Also, the ground in between any two
+        adjacent buildings should be considered part of the skyline contour.
+
+        For instance, the skyline in Figure B should be represented as:[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ].
+
+        Notes:
+        The number of buildings in any input list is guaranteed to be in the range [0, 10000].
+        The input list is already sorted in ascending order by the left x position Li.
+        The output list must be sorted by the x position.
+        There must be no consecutive horizontal lines of equal height in the output skyline. For instance, [...[2 3], [4 5], [7 5], [11 5], [12 7]...] is not acceptable; the three lines of height 5 should be merged into one in the final output as such: [...[2 3], [4 5], [12 7], ...]
+    */
+    public List<List<Integer>> getSkyline_alt(int[][] buildings) // using Treemap O(nlogn)
+    {
+        List<int[]> height_changes = new ArrayList<>();
+        List<List<Integer>> outline = new ArrayList<>();
+        for(int[] building:buildings)
+        {
+            height_changes.add(new int[]{building[0],-building[2]});
+            height_changes.add(new int[]{building[1],building[2]});
+        }
+        Collections.sort(height_changes,(a,b)->(a[0] == b[0]?(a[1] - b[1]):(a[0] - b[0])));
+
+        TreeMap<Integer,Integer> tmap = new TreeMap<>(Collections.reverseOrder());
+        tmap.put(0,1);
+        int previous_height = 0;
+        for(int[] height_encountered:height_changes)
+        {
+            if(height_encountered[1]<0)
+            {
+                Integer mapval = tmap.get(-height_encountered[1]);
+                int count = mapval==null?1:mapval+1;
+                tmap.put(-height_encountered[1],count);
+            }
+            else
+            {
+                Integer mapval = tmap.get(height_encountered[1]);
+                if(mapval==1)
+                    tmap.remove(height_encountered[1]);
+                else
+                    tmap.put(height_encountered[1],mapval-1);
+            }
+            int current_max_height = tmap.firstKey();
+            if(current_max_height!=previous_height)
+            {
+                List<Integer> new_addition = new ArrayList<>();
+                new_addition.add(height_encountered[0]);
+                new_addition.add(current_max_height);
+                outline.add(new_addition);
+                previous_height = current_max_height;
+            }
+        }
+        return outline;
+    }
+
+    public List<List<Integer>> getSkyline(int[][] buildings) //Merge Sort logic
+    {
+        if(buildings.length==0)
+            return new ArrayList<>();
+        List<List<Integer>> finlist =  getSkylineMergeHelper(buildings,0,buildings.length-1);
+        return finlist;
+    }
+
+    public List<List<Integer>> getSkylineMergeHelper(int[][] buildings,int lb,int ub)
+    {
+        List<List<Integer>> result = new ArrayList<>();
+        if(ub==lb)
+        {
+            List<Integer> outline = new ArrayList<>();
+            outline.add(buildings[lb][0]);
+            outline.add(buildings[lb][2]);
+            result.add(outline);
+            outline = new ArrayList<>();
+            outline.add(buildings[lb][1]);
+            outline.add(0);
+            result.add(outline);
+            return result;
+        }
+
+        int mid = lb +(ub-lb)/2;
+        List<List<Integer>> left_outline = getSkylineMergeHelper(buildings,lb,mid);
+        List<List<Integer>> right_outline = getSkylineMergeHelper(buildings,mid+1,ub);
+
+        return getSkylineMerge(left_outline,right_outline);
+    }
+
+    public List<List<Integer>> getSkylineMerge(List<List<Integer>> left,List<List<Integer>> right)
+    {
+        List<List<Integer>> result = new ArrayList<>();
+        int current_x=0,height_left=0,height_right=0,curr_height=0,left_ptr=0,right_ptr=0;
+        while(left_ptr<left.size() && right_ptr <right.size())
+        {
+            List<Integer> l1 = left.get(left_ptr);
+            List<Integer> l2 = right.get(right_ptr);
+
+            if(l1.get(0)<l2.get(0))
+            {
+                current_x = l1.get(0);
+                height_left = l1.get(1);
+                left_ptr++;
+            }
+            else if(l1.get(0)>l2.get(0))
+            {
+                current_x = l2.get(0);
+                height_right = l2.get(1);
+                right_ptr++;
+            }
+            else
+            {
+                current_x = l1.get(0);
+                height_right = l2.get(1);
+                height_left = l1.get(1);
+                left_ptr++;
+                right_ptr++;
+            }
+
+            //Check if new height recorded
+            if(curr_height!=Math.max(height_left,height_right))
+            {
+                curr_height = Math.max(height_left,height_right);
+                List<Integer> new_add = new ArrayList<>();
+                new_add.add(current_x);
+                new_add.add(curr_height);
+                result.add(new_add);
+            }
+        }
+        while(left_ptr<left.size())
+        {
+            result.add(left.get(left_ptr));
+            left_ptr++;
+        }
+        while(right_ptr<right.size())
+        {
+            result.add(right.get(right_ptr));
+            right_ptr++;
+        }
+        return result;
+    }
+
+    /*
+    159. PROBLEM DESCRIPTION (http://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+        Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.
+
+        Example 1:
+        Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+        Output: 6
+        Explanation: The LCA of nodes 2 and 8 is 6.
+
+        Example 2:
+        Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+        Output: 2
+        Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
+
+        Note:
+        1. All of the nodes' values will be unique.
+        2. p and q are different and both values will exist in the BST.
+    */
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q)
+    {
+        if(root==null)
+            return root;
+        if(p.val>root.val && q.val>root.val)
+            return lowestCommonAncestor2(root.right,p,q);
+        else if(p.val<root.val && q.val<root.val)
+            return lowestCommonAncestor2(root.left,p,q);
+        return root;
+    }
+
+    /*
+    160. PROBLEM DESCRIPTION (https://leetcode.com/problems/h-index/)
+        Given an array of citations (each citation is a non-negative integer) of a researcher, write a function to compute the researcher's
+        h-index. According to the definition of h-index on Wikipedia: "A scientist has index h if h of his/her N papers have at least h
+        citations each, and the other N − h papers have no more than h citations each."
+
+        Example:
+        Input: citations = [3,0,6,1,5]
+        Output: 3
+        Explanation: [3,0,6,1,5] means the researcher has 5 papers in total and each of them had
+             received 3, 0, 6, 1, 5 citations respectively.
+             Since the researcher has 3 papers with at least 3 citations each and the remaining
+             two with no more than 3 citations each, her h-index is 3.
+        Note: If there are several possible values for h, the maximum one is taken as the h-index.
+    */
+    public int hIndex_sort(int[] citations) //Using sort
+    {
+        Arrays.sort(citations);
+        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
+        {
+            if(citations[iterator_i]>=(citations.length-iterator_i))
+                return citations.length-iterator_i;
+        }
+        return 0;
+    }
+
+    public int hIndex_bucket(int[] citations) //Buckets Approach
+    {
+        int buckets[] = new int[citations.length+1];
+        for(int citation:citations)
+        {
+            if (citation <= citations.length)
+                buckets[citation]++;
+            else
+                buckets[buckets.length - 1]++;
+        }
+        for(int iterator_i=buckets.length-1,count_till_now=0;iterator_i>=0;iterator_i--)
+        {
+            count_till_now += buckets[iterator_i];
+            if(count_till_now >= iterator_i)
+                return iterator_i;
+        }
+        return 0;
+    }
+
+    public int hIndex(int[] citations) //In Place Bucket Sort Approach
+    {
+        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
+        {
+            int current_citation = citations[iterator_i],next_citation=0;
+            if(current_citation<0) // Already accounted for
+                continue;
+            citations[iterator_i] = -1; // No entries in this bucket till now
+            if(current_citation<citations.length)
+            {
+                while((next_citation=citations[current_citation])>-1)
+                {
+                    citations[current_citation] = -2;//Since positive and this is first occurrence encountered
+                    if(next_citation>=citations.length)
+                        break;
+                    current_citation = next_citation;
+                }
+                if(next_citation<citations.length)
+                    citations[current_citation]--; // Increase count of occurrence
+            }
+        }
+
+        int count_till_now=0;
+        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
+        {
+            count_till_now += Math.max(-citations[iterator_i]-1,0);
+            if(count_till_now>=citations.length-iterator_i)
+                return iterator_i;
+        }
+        return citations.length;
+    }
+
+    /*
+    161. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-left-leaves/)
+        Find the sum of all left leaves in a given binary tree.
+
+        Example:
+
+            3
+           / \
+          9  20
+            /  \
+           15   7
+
+        There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
+    */
+    public int sumOfLeftLeaves_alt(TreeNode root) //With Helper
+    {
+        if(root==null)
+            return 0;
+        return sumOfLeftLeavesHelper(root,false);
+    }
+
+    public int sumOfLeftLeavesHelper(TreeNode root, boolean isLeft)
+    {
+        if(root.left==null && root.right==null)
+        {
+            if(isLeft)
+                return root.val;
+            return 0;
+        }
+        return (root.left!=null?sumOfLeftLeavesHelper(root.left,true):0)+(root.right!=null?sumOfLeftLeavesHelper(root.right,false):0);
+    }
+
+    public int sumOfLeftLeaves(TreeNode root) //Without Helper
+    {
+        int sum=0;
+        if(root==null)
+            return sum;
+        if(root.left!=null)
+        {
+            if(root.left.left==null && root.left.right==null)
+                sum += root.left.val;
+            else
+                sum += sumOfLeftLeaves(root.left);
+        }
+
+        return sum+sumOfLeftLeaves(root.right);
+    }
+
+    /*
+    162. PROBLEM DESCRIPTION (https://leetcode.com/problems/ransom-note/)
+        Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that
+        will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+        Each letter in the magazine string can only be used once in your ransom note.
+        Example 1:
+        Input: ransomNote = "a", magazine = "b"
+        Output: false
+
+        Example 2:
+        Input: ransomNote = "aa", magazine = "ab"
+        Output: false
+
+        Example 3:
+        Input: ransomNote = "aa", magazine = "aab"
+        Output: true
+    */
+    public boolean canConstruct(String ransomNote, String magazine)
+    {
+        int count_characters[] = new int[26];//Ascii Set
+        for(char c:magazine.toCharArray())
+            count_characters[c-'a']++;
+        for(char c:ransomNote.toCharArray())
+        {
+            int curr_val = --count_characters[c-'a'];
+            if(curr_val<0)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    163. PROBLEM DESCRIPTION (https://leetcode.com/problems/reconstruct-itinerary/)
+        Given a list of airline tickets represented by pairs of departure and arrival airports [from, to], reconstruct the itinerary in
+        order. All of the tickets belong to a man who departs from JFK. Thus, the itinerary must begin with JFK.
+
+        Note:
+        1. If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string. For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+        2. All airports are represented by three capital letters (IATA code).
+        3. You may assume all tickets form at least one valid itinerary.
+
+        Example 1:
+        Input: [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+        Output: ["JFK", "MUC", "LHR", "SFO", "SJC"]
+
+        Example 2:
+        Input: [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+        Output: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+        Explanation: Another possible reconstruction is ["JFK","SFO","ATL","JFK","ATL","SFO"].
+             But it is larger in lexical order.
+    */
+    public List<String> findItinerary_bfs(List<List<String>> tickets) //BFS
+    {
+        HashMap<String,PriorityQueue<String>> hmap = new HashMap<>();
+        for(int iterator_i=0;iterator_i<tickets.size();iterator_i++)
+            hmap.computeIfAbsent(tickets.get(iterator_i).get(0),a->new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
+
+        Stack<String> output_stck = new Stack<>();
+        LinkedList<String> final_list = new LinkedList<>();
+        output_stck.push("JFK");
+        String next_stop = "";
+        while(!output_stck.isEmpty())
+        {
+            while((hmap.get(output_stck.peek())!=null) && (next_stop= hmap.get(output_stck.peek()).poll())!=null)
+                output_stck.push(next_stop);
+
+            final_list.add(0,output_stck.pop());
+        }
+        return final_list;
+    }
+
+    public List<String> findItinerary(List<List<String>> tickets) //DFS
+    {
+        HashMap<String,PriorityQueue<String>> hmap = new HashMap<>();
+        for(int iterator_i=0;iterator_i<tickets.size();iterator_i++)
+            hmap.computeIfAbsent(tickets.get(iterator_i).get(0),a->new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
+
+        LinkedList<String> final_string = new LinkedList<>();
+        findItinerary_dfsHelper(final_string,"JFK",hmap);
+        return final_string;
+    }
+
+    public void findItinerary_dfsHelper(LinkedList<String> final_string,String airport,HashMap<String,PriorityQueue<String>> hmap)
+    {
+        String next_airport="";
+        while(hmap.get(airport)!=null && (next_airport=hmap.get(airport).poll())!=null)
+            findItinerary_dfsHelper(final_string,next_airport,hmap);
+        final_string.add(0,airport);
+    }
 }
