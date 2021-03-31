@@ -1,7 +1,7 @@
 package LeetCode;
 
 import com.sun.org.apache.xerces.internal.xs.StringList;
-
+import LeetCode.Revision;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,11 +13,12 @@ public class Runner {
     {
         Scanner sc = new Scanner(System.in);
         LeetCode obj = new LeetCode();
+        Revision rev_obj = new Revision();
 
         /** Driver Code for Q1. twoSum
          **
          */
-//
+
 //        System.out.println("Enter length\n");
 //        int length = sc.nextInt();
 //
@@ -31,6 +32,7 @@ public class Runner {
 //
 //        int result[] = new int[2];
 //        result = obj.twoSum(nums,target);
+//        result = rev_obj.twoSum(nums,target);
 //
 //        System.out.println(result[0]+" "+result[1]);
 
@@ -38,7 +40,7 @@ public class Runner {
          **
          */
 //        int len1,len2;
-//        System.out.println("Enter lengths\n");
+//        System.out.println("Enter lengths");
 //        len1 = sc.nextInt();
 //        len2 = sc.nextInt();
 //        System.out.println("Enter first list");
@@ -56,7 +58,7 @@ public class Runner {
 //            }
 //        }
 //        temp = null;
-//        System.out.println("Enter second list\n");
+//        System.out.println("Enter second list");
 //        for(int i=0;i<len2;i++)
 //        {
 //            ListNode l1 = new ListNode(sc.nextInt());
@@ -357,7 +359,7 @@ public class Runner {
          */
 //        int candidates[] = obj.create_array_int(sc);
 //        System.out.println("Enter target");
-//        obj.combinationSum2(candidates,sc.nextInt());
+//        rev_obj.combinationSum2(candidates,sc.nextInt());
 
         /** Driver Code for Q32.isValidSudoku
          *
@@ -383,7 +385,7 @@ public class Runner {
 //                        {'.','.','.','4','1','9','.','.','5'},
 //                        {'.','.','.','.','8','.','.','7','9'}
 //                        };
-//        obj.solveSudoku(board);
+//        rev_obj.solveSudoku(board);
 
         /** Driver Code for Q34.threeSum
          *
@@ -421,7 +423,7 @@ public class Runner {
          */
 //        int input_arr[] = obj.create_array_int(sc);
 //        System.out.println("Enter target");
-//        System.out.println(obj.findBestValue(input_arr, sc.nextInt()));
+//        System.out.println(rev_obj.findBestValue(input_arr, sc.nextInt()));
 
 
         /** Driver Code for Q39.isHappy
@@ -479,7 +481,7 @@ public class Runner {
          *
          */
 //        int height[] = obj.create_array_int(sc);
-//        obj.maxArea(height);
+//        System.out.println(obj.maxArea(height));
 
         /** Driver Code for Q48.sortColors
          *
@@ -650,7 +652,7 @@ public class Runner {
 //        String input_strs[] = new String[n];
 //        for(int iterator_i=0;iterator_i<n;iterator_i++)
 //            input_strs[iterator_i] = sc.next();
-//        List<List<String>> final_list = obj.groupAnagrams(input_strs);
+//        List<List<String>> final_list = rev_obj.groupAnagrams(input_strs);
 //        for(List<String> lists:final_list) {
 //            for (String s : lists)
 //                System.out.print(s + " ");
@@ -711,7 +713,7 @@ public class Runner {
          *
          */
 //        System.out.println("Enter n ");
-//        System.out.println(obj.countPrimes(sc.nextInt()));
+//        System.out.println(rev_obj.countPrimes(sc.nextInt()));
 
         /** Driver Code for Q80.numIslands
          *
@@ -934,7 +936,7 @@ public class Runner {
          *
          */
 //        ListNode input_list = create_linked_list(sc);
-//        obj.reorderList(input_list);
+//        rev_obj.reorderList(input_list);
 //        System.out.println("1");
 
         /** Driver Code for Q108.bstFromPreorder
@@ -994,9 +996,10 @@ public class Runner {
          */
 //        System.out.println("Enter size of 2d matrix");
 //        int n = sc.nextInt();
-//        char matrix[][] = new char[n][n];
+//        int m = sc.nextInt();
+//        char matrix[][] = new char[n][m];
 //        for(int iterator_i=0;iterator_i<n;iterator_i++)
-//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
 //                matrix[iterator_i][iterator_j] = sc.next().charAt(0);
 //        System.out.println(obj.maximalSquare(matrix));
 
@@ -1099,7 +1102,7 @@ public class Runner {
 //        for(int iterator_i=0;iterator_i<input_matrix.length;iterator_i++)
 //            for(int iterator_j=0;iterator_j<input_matrix[0].length;iterator_j++)
 //                input_matrix[iterator_i][iterator_j] = sc.next().charAt(0);
-//        System.out.println(obj.maximalRectangle(input_matrix));
+//        System.out.println(rev_obj.maximalRectangle(input_matrix));
 
         /** Driver Code for Q130.reverseBetween
          *
@@ -1330,8 +1333,8 @@ public class Runner {
         /** Driver Code for Q160.hIndex
          *
          */
-//        int input_citations[] = obj.create_array_int(sc);
-//        System.out.println(obj.hIndex(input_citations));
+        int input_citations[] = obj.create_array_int(sc);
+        System.out.println(obj.hIndex(input_citations));
 
         /** Driver Code for Q161.sumOfLeftLeaves
          *
@@ -1359,6 +1362,19 @@ public class Runner {
 //            ticket.add(sc.next());
 //            input_tickets.add(ticket);
 //        }
-//        List<String> ret_itinerary = obj.findItinerary(input_tickets);
+//        List<String> ret_itinerary = obj.findItinerary_bfs(input_tickets);
+
+        /** Driver Code for Q164.findMinFibonacciNumbers
+         *
+         */
+
+        //int arr[] = obj.create_array_int(sc);
+        //System.out.println("Enter S");
+        //int S = sc.nextInt();
+        //System.out.println("Answer:"+obj.pivotIndex(arr));
+
+//        TreeNode inputtree=null;
+//        inputtree = create_binary_tree(inputtree,sc);
+//        System.out.println(obj.sumRootToLeaf(inputtree));
     }
 }

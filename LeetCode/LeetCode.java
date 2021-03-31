@@ -5,8 +5,9 @@ import sun.reflect.generics.tree.Tree;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LeetCode {
-/*
+public class LeetCode
+{
+    /*
  1. PROBLEM DESCRIPTION (https://leetcode.com/problems/two-sum/)
     Given an array of integers, return indices of the two numbers such that they add up to a specific target. You may assume that each
     input would have exactly one solution, and you may not use the same element twice.
@@ -20,15 +21,13 @@ public class LeetCode {
 */
     public int[] twoSum(int[] nums, int target)
     {
-        Map<Integer,Integer> map = new HashMap<>();
-        for(int i=0;i<nums.length;i++)
-        {
-            int complement = target-nums[i];
-            if(map.containsKey(complement))
-            {
-                return new int[]{map.get(complement),i};
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if (map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
             }
-            map.put(nums[i],i);
+            map.put(nums[i], i);
         }
         return nums;
     }
@@ -48,8 +47,7 @@ public class LeetCode {
 
     public void DisplayList(ListNode lnode)
     {
-        while(lnode!=null)
-        {
+        while (lnode != null) {
             System.out.println(lnode.val);
             lnode = lnode.next;
         }
@@ -57,31 +55,28 @@ public class LeetCode {
 
     public ListNode addTwoNumbers(ListNode l1, ListNode l2)
     {
-        ListNode temp1=l1,temp2=l2;
-        ListNode final_list = new ListNode(0),temp_final = final_list;
-        int sum=0;
-        while(temp1!=null || temp2!=null)
-        {
+        ListNode temp1 = l1, temp2 = l2;
+        ListNode final_list = new ListNode(0), temp_final = final_list;
+        int sum = 0;
+        while (temp1 != null || temp2 != null) {
             sum /= 10;
-            if(temp1!=null)
-            {
+            if (temp1 != null) {
                 sum += temp1.val;
                 temp1 = temp1.next;
             }
-            if(temp2!=null)
-            {
+            if (temp2 != null) {
                 sum += temp2.val;
                 temp2 = temp2.next;
             }
-            temp_final.next = new ListNode(sum%10);
+            temp_final.next = new ListNode(sum % 10);
             temp_final = temp_final.next;
         }
-        if(sum/10==1)
+        if (sum / 10 == 1)
             temp_final.next = new ListNode(1);
         return final_list.next;
     }
 
-/*
+    /*
  3. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-substring-without-repeating-characters/)
     Given a string, find the length of the longest substring without repeating characters.
 
@@ -103,19 +98,19 @@ public class LeetCode {
     Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
 
 */
-    public int lengthOfLongestSubstring(String s) {
+    public int lengthOfLongestSubstring(String s)
+    {
 
-        int maximum=0,char_map[]= new int[256],j=0;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            j = char_map[s.charAt(iterator_i)]>0? Math.max(char_map[s.charAt(iterator_i)],j):j;
-            char_map[s.charAt(iterator_i)] = iterator_i+1;
-            maximum = Math.max(maximum,iterator_i-j+1);
+        int maximum = 0, char_map[] = new int[256], j = 0;
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            j = char_map[s.charAt(iterator_i)] > 0 ? Math.max(char_map[s.charAt(iterator_i)], j) : j;
+            char_map[s.charAt(iterator_i)] = iterator_i + 1;
+            maximum = Math.max(maximum, iterator_i - j + 1);
         }
         return maximum;
     }
 
-/*
+    /*
  4. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-integer/)
     Given a 32-bit signed integer, reverse digits of an integer.
 
@@ -134,20 +129,20 @@ public class LeetCode {
     Note: Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range: [−231,  231 − 1].
     For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.
 */
-    public int reverse(int x) {
+    public int reverse(int x)
+    {
 
         int result = 0;
-        while(x!=0)
-        {
-            if (result > Integer.MAX_VALUE/10 || (result == Integer.MAX_VALUE / 10 && x%10 > 7)) return 0;
-            if (result < Integer.MIN_VALUE/10 || (result == Integer.MIN_VALUE / 10 && x%10 < -8)) return 0;
-            result =result*10 + x%10;
+        while (x != 0) {
+            if (result > Integer.MAX_VALUE / 10 || (result == Integer.MAX_VALUE / 10 && x % 10 > 7)) return 0;
+            if (result < Integer.MIN_VALUE / 10 || (result == Integer.MIN_VALUE / 10 && x % 10 < -8)) return 0;
+            result = result * 10 + x % 10;
             x /= 10;
         }
         return result;
     }
 
-/*
+    /*
  5. PROBLEM DESCRIPTION (https://leetcode.com/problems/string-to-integer-atoi/)
     Implement atoi which converts a string to an integer. The function first discards as many whitespace characters as necessary until the first non-whitespace character is found.
     Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits as possible, and interprets them as a numerical value.
@@ -182,41 +177,38 @@ public class LeetCode {
         Output: -2147483648
         Explanation: The number "-91283472332" is out of the range of a 32-bit signed integer.Therefore INT_MIN (−231) is returned.
 */
-    public int myAtoi(String str) {
-        int i = 0,signflag=0;
-        if(str.length()==0 || str==null)
+    public int myAtoi(String str)
+    {
+        int i = 0, signflag = 0;
+        if (str.length() == 0 || str == null)
             return 0;
-        int result=0;
-        while(i<str.length() && str.charAt(i)==' ') {
+        int result = 0;
+        while (i < str.length() && str.charAt(i) == ' ') {
             i++;
         }
-        if(i<str.length() &&((str.charAt(i)<='9' && str.charAt(i)>='0')||(str.charAt(i)=='+')||(str.charAt(i)=='-')))
-        {
-            if(str.charAt(i)=='-') {
+        if (i < str.length() && ((str.charAt(i) <= '9' && str.charAt(i) >= '0') || (str.charAt(i) == '+') || (str.charAt(i) == '-'))) {
+            if (str.charAt(i) == '-') {
                 signflag = 1;
                 i++;
-            }
-            else if(str.charAt(i)=='+')
+            } else if (str.charAt(i) == '+')
                 i++;
-            while(i<str.length() &&(str.charAt(i)<='9'&& str.charAt(i)>='0'))
-            {
+            while (i < str.length() && (str.charAt(i) <= '9' && str.charAt(i) >= '0')) {
                 if (signflag == 0 && (result > Integer.MAX_VALUE / 10 || (result == Integer.MAX_VALUE / 10 && ((int) (str.charAt(i) - '0')) % 10 > 7)))
                     return Integer.MAX_VALUE;
-                if (signflag == 1 && ((0-result) < Integer.MIN_VALUE / 10 || ((0-result) == Integer.MIN_VALUE / 10 && ((0-(int) (str.charAt(i) - '0'))) % 10 < -8)))
+                if (signflag == 1 && ((0 - result) < Integer.MIN_VALUE / 10 || ((0 - result) == Integer.MIN_VALUE / 10 && ((0 - (int) (str.charAt(i) - '0'))) % 10 < -8)))
                     return Integer.MIN_VALUE;
                 result = result * 10 + (int) (str.charAt(i) - '0');
                 i++;
                 System.out.flush();
             }
-            if(signflag==1)
-                result = 0-result;
+            if (signflag == 1)
+                result = 0 - result;
             return result;
-        }
-        else
+        } else
             return 0;
     }
 
-/*
+    /*
  6. PROBLEM DESCRIPTION (https://leetcode.com/problems/palindrome-number/)
     Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.
 
@@ -234,22 +226,22 @@ public class LeetCode {
         Output: false
         Explanation: Reads 01 from right to left. Therefore it is not a palindrome.
 */
-    public boolean isPalindrome(int x) {
+    public boolean isPalindrome(int x)
+    {
 
-        if(x<0)
+        if (x < 0)
             return false;
-        int cpy = x,res=0;
-        while(cpy!=0)
-        {
-            res = res*10 + cpy%10;
-            cpy = cpy/10;
+        int cpy = x, res = 0;
+        while (cpy != 0) {
+            res = res * 10 + cpy % 10;
+            cpy = cpy / 10;
         }
-        if(res==x)
+        if (res == x)
             return true;
         return false;
     }
 
-/*
+    /*
  7. PROBLEM DESCRIPTION (https://leetcode.com/problems/integer-to-roman/)
     Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.
 
@@ -296,73 +288,48 @@ public class LeetCode {
         Output: "MCMXCIV"
         Explanation: M = 1000, CM = 900, XC = 90 and IV = 4.
 */
-    public String intToRoman(int num) {
+    public String intToRoman(int num)
+    {
 
-        String result ="";
-        while(num!=0)
-        {
-            if(num>=1000)
-            {
+        String result = "";
+        while (num != 0) {
+            if (num >= 1000) {
                 num -= 1000;
                 result += "M";
-            }
-            else if(num>=900)
-            {
+            } else if (num >= 900) {
                 num -= 900;
                 result += "CM";
-            }
-            else if(num>=500)
-            {
+            } else if (num >= 500) {
                 num -= 500;
                 result += "D";
-            }
-            else if(num>=400)
-            {
+            } else if (num >= 400) {
                 num -= 400;
                 result += "CD";
-            }
-            else if(num>=100)
-            {
+            } else if (num >= 100) {
                 num -= 100;
                 result += "C";
-            }
-            else if(num>=90)
-            {
+            } else if (num >= 90) {
                 num -= 90;
                 result += "XC";
-            }
-            else if(num>=50)
-            {
+            } else if (num >= 50) {
                 num -= 50;
                 result += "L";
-            }
-            else if(num>=40)
-            {
+            } else if (num >= 40) {
                 num -= 40;
                 result += "XL";
-            }
-            else if(num>=10)
-            {
+            } else if (num >= 10) {
                 num -= 10;
                 result += "X";
-            }
-            else if(num>=9)
-            {
+            } else if (num >= 9) {
                 num -= 9;
                 result += "IX";
-            }
-            else if(num>=5)
-            {
+            } else if (num >= 5) {
                 num -= 5;
                 result += "V";
-            }
-            else if(num>=4)
-            {
+            } else if (num >= 4) {
                 num -= 4;
                 result += "IV";
-            }
-            else if(num>=1)
-            {
+            } else if (num >= 1) {
                 num -= 1;
                 result += "I";
             }
@@ -377,10 +344,10 @@ public class LeetCode {
         String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
         String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
         String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
-        return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
+        return M[num / 1000] + C[(num % 1000) / 100] + X[(num % 100) / 10] + I[num % 10];
     }
 
-/*
+    /*
  8. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-common-prefix/)
     Write a function to find the longest common prefix string amongst an array of strings.
 
@@ -395,18 +362,17 @@ public class LeetCode {
         Output: ""
         Explanation: There is no common prefix among the input strings.
 */
-    public String longestCommonPrefix(String[] strs) {
+    public String longestCommonPrefix(String[] strs)
+    {
 
-        String prefix="";
-        if(strs==null || strs.length<1)
+        String prefix = "";
+        if (strs == null || strs.length < 1)
             return prefix;
-        if(strs.length==1)
+        if (strs.length == 1)
             return strs[0];
-        for(int i=0;i<strs[0].length();i++)
-        {
-            for(int j=1;j< strs.length;j++)
-            {
-                if((i>=strs[j].length())||strs[j].charAt(i)!=strs[0].charAt(i))
+        for (int i = 0; i < strs[0].length(); i++) {
+            for (int j = 1; j < strs.length; j++) {
+                if ((i >= strs[j].length()) || strs[j].charAt(i) != strs[0].charAt(i))
                     return prefix;
             }
             prefix += strs[0].charAt(i);
@@ -414,7 +380,7 @@ public class LeetCode {
         return prefix;
     }
 
-/*
+    /*
  9. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-parentheses/)
     Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
 
@@ -444,37 +410,33 @@ public class LeetCode {
         Input: "{[]}"
         Output: true
 */
-    public boolean isValid(String s) {
+    public boolean isValid(String s)
+    {
 
-        int top=-1;
+        int top = -1;
         char stack[] = new char[s.length()];
 
-        for(int i=0;i<s.length();i++)
-        {
-            if(s.charAt(i)=='{' || s.charAt(i)=='(' || s.charAt(i)=='[')
-            {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '{' || s.charAt(i) == '(' || s.charAt(i) == '[') {
                 stack[++top] = s.charAt(i);
-            }
-            else
-            {
-                if(top<0)
+            } else {
+                if (top < 0)
                     return false;
-                switch(s.charAt(i))
-                {
+                switch (s.charAt(i)) {
                     case '}':
-                        if(stack[top]!='{')
+                        if (stack[top] != '{')
                             return false;
                         else
                             top--;
                         break;
                     case ')':
-                        if(stack[top]!='(')
+                        if (stack[top] != '(')
                             return false;
                         else
                             top--;
                         break;
                     case ']':
-                        if(stack[top]!='[')
+                        if (stack[top] != '[')
                             return false;
                         else
                             top--;
@@ -482,7 +444,7 @@ public class LeetCode {
                 }
             }
         }
-        if(top==-1)
+        if (top == -1)
             return true;
         return false;
     }
@@ -496,23 +458,20 @@ public class LeetCode {
         Output: 1->1->2->3->4->4
 */
 
-    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        ListNode final_result = new ListNode(0),temp_result=final_result;
-        while(l1!=null && l2!=null)
-        {
-            if(l1.val<l2.val)
-            {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2)
+    {
+        ListNode final_result = new ListNode(0), temp_result = final_result;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
                 temp_result.next = new ListNode(l1.val);
                 l1 = l1.next;
-            }
-            else
-            {
+            } else {
                 temp_result.next = new ListNode(l2.val);
                 l2 = l2.next;
             }
             temp_result = temp_result.next;
         }
-        temp_result.next = l1==null?l2:l1;
+        temp_result.next = l1 == null ? l2 : l1;
         return final_result.next;
     }
 
@@ -533,18 +492,18 @@ public class LeetCode {
     Note: It doesn't matter what values are set beyond the returned length.
 */
 
-    public int removeDuplicates(int[] nums) {
-        int last_index=1,iterator_i=1;
-        while(iterator_i<nums.length)
-        {
-            if(nums[iterator_i]!=nums[iterator_i-1])
+    public int removeDuplicates(int[] nums)
+    {
+        int last_index = 1, iterator_i = 1;
+        while (iterator_i < nums.length) {
+            if (nums[iterator_i] != nums[iterator_i - 1])
                 nums[last_index++] = nums[iterator_i];
             iterator_i++;
         }
         return last_index;
     }
 
-/*
+    /*
 12. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-element/)
     Given an array nums and a value val, remove all instances of that value in-place and return the new length.
 
@@ -563,12 +522,12 @@ public class LeetCode {
     Note that the order of those five elements can be arbitrary.
     Note: It doesn't matter what values are set beyond the returned length.
 */
-    public int removeElement(int[] nums, int val) {
+    public int removeElement(int[] nums, int val)
+    {
 
-        int last_index=-1,index=0;
-        while(index<nums.length)
-        {
-            if(nums[index]!=val) {
+        int last_index = -1, index = 0;
+        while (index < nums.length) {
+            if (nums[index] != val) {
                 nums[++last_index] = nums[index];
             }
             index++;
@@ -603,17 +562,17 @@ public class LeetCode {
         Output: "1211"
 */
 
-    public String countAndSay(int n) {
-        String final_string="1";
-        for(int iterator_i=1;iterator_i<n;iterator_i++)
-        {
-            int iterator_j=0;String iterator_string="";
-            while(iterator_j<final_string.length())
-            {
+    public String countAndSay(int n)
+    {
+        String final_string = "1";
+        for (int iterator_i = 1; iterator_i < n; iterator_i++) {
+            int iterator_j = 0;
+            String iterator_string = "";
+            while (iterator_j < final_string.length()) {
                 int current__item_pos = iterator_j;
-                while(iterator_j<final_string.length()-1 && final_string.charAt(iterator_j)==final_string.charAt(iterator_j+1))
+                while (iterator_j < final_string.length() - 1 && final_string.charAt(iterator_j) == final_string.charAt(iterator_j + 1))
                     iterator_j++;
-                iterator_string += (char)(iterator_j++ -current__item_pos+49) + "" + final_string.charAt(current__item_pos);
+                iterator_string += (char) (iterator_j++ - current__item_pos + 49) + "" + final_string.charAt(current__item_pos);
 
             }
             final_string = iterator_string;
@@ -621,7 +580,7 @@ public class LeetCode {
         return final_string;
     }
 
-/*
+    /*
 14. PROBLEM DESCRIPTION (https://leetcode.com/problems/search-insert-position/)
     Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 
@@ -643,36 +602,36 @@ public class LeetCode {
         Input: [1,3,5,6], 0
         Output: 0
 */
-    public int searchInsert(int[] nums, int target) {
-        int lb=0,ub=nums.length-1,mid=0;
-        if(nums.length==1 && nums[0]<target)
+    public int searchInsert(int[] nums, int target)
+    {
+        int lb = 0, ub = nums.length - 1, mid = 0;
+        if (nums.length == 1 && nums[0] < target)
             return 1;
-        else if(nums.length==1)
+        else if (nums.length == 1)
             return 0;
-        while(lb<ub)
-        {
-            mid = (int)Math.ceil((lb+ub)/2.0);
-            if(nums[mid-1]<target && nums[mid]>=target)
+        while (lb < ub) {
+            mid = (int) Math.ceil((lb + ub) / 2.0);
+            if (nums[mid - 1] < target && nums[mid] >= target)
                 return mid;
-            else if(nums[mid-1]<target)
-                lb = mid+1;
+            else if (nums[mid - 1] < target)
+                lb = mid + 1;
             else
-                ub = mid-1;
-            System.out.println(lb+" "+ub);
+                ub = mid - 1;
+            System.out.println(lb + " " + ub);
         }
-        if(ub==0)
+        if (ub == 0)
             return 0;
-        System.out.println(lb+" "+ub);
-        if((lb==ub)&&nums[lb]>=target)
+        System.out.println(lb + " " + ub);
+        if ((lb == ub) && nums[lb] >= target)
             return lb;
 
 
-        return ub+1;
+        return ub + 1;
 
 
     }
 
-/*
+    /*
     15. PROBLEM DESCRIPTION (https://leetcode.com/problems/plus-one/)
         Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
 
@@ -689,19 +648,19 @@ public class LeetCode {
             Output: [4,3,2,2]
             Explanation: The array represents the integer 4321.
 */
-    public int[] plusOne(int[] digits) {
+    public int[] plusOne(int[] digits)
+    {
 
-        int index=digits.length-1;
-        while(index>=0)
-        {
-            if(digits[index]<9) {
+        int index = digits.length - 1;
+        while (index >= 0) {
+            if (digits[index] < 9) {
                 digits[index]++;
                 return digits;
             }
-            digits[index]=0;
+            digits[index] = 0;
             index--;
         }
-        int copy_arr[] = new int[digits.length+1];
+        int copy_arr[] = new int[digits.length + 1];
         copy_arr[0] = 1;
         return copy_arr;
 
@@ -726,18 +685,18 @@ public class LeetCode {
             the decimal part is truncated, 2 is returned.
 */
 
-    public int mySqrt(int x) {
-        if(x==1 || x==2 )
+    public int mySqrt(int x)
+    {
+        if (x == 1 || x == 2)
             return 1;
-        int lb = 1,ub = x;
-        while(lb<=ub)
-        {
-            int mid = (int)((lb+ub)/2);
-            if(mid>1.0*x/mid)
-                ub = mid-1;
-            else if((mid<=x/mid && (mid+1)>x/(mid+1)))
-                return (int)mid;
-            else lb = mid+1;
+        int lb = 1, ub = x;
+        while (lb <= ub) {
+            int mid = (int) ((lb + ub) / 2);
+            if (mid > 1.0 * x / mid)
+                ub = mid - 1;
+            else if ((mid <= x / mid && (mid + 1) > x / (mid + 1)))
+                return (int) mid;
+            else lb = mid + 1;
         }
         return 0;
     }
@@ -755,16 +714,16 @@ public class LeetCode {
         Output: 5
 */
 
-    public int lengthOfLastWord(String s) {
-        int iterator_i=s.length()-1;
-        while(iterator_i>0)
-        {
-            while(iterator_i>=0 && s.charAt(iterator_i)==' ')
+    public int lengthOfLastWord(String s)
+    {
+        int iterator_i = s.length() - 1;
+        while (iterator_i > 0) {
+            while (iterator_i >= 0 && s.charAt(iterator_i) == ' ')
                 iterator_i--;
-            int curr_last=iterator_i;
-            while(iterator_i>=0 && s.charAt(iterator_i)!=' ')
+            int curr_last = iterator_i;
+            while (iterator_i >= 0 && s.charAt(iterator_i) != ' ')
                 iterator_i--;
-            return curr_last-iterator_i>0? curr_last-iterator_i+(iterator_i<0?1:0):0;
+            return curr_last - iterator_i > 0 ? curr_last - iterator_i + (iterator_i < 0 ? 1 : 0) : 0;
         }
         return 0;
     }
@@ -783,30 +742,28 @@ public class LeetCode {
         Output: "10101"
 */
 
-    public String addBinary(String a, String b) {
-        int a_len = a.length()-1,b_len = b.length()-1,curr_sum=0;
-        String final_sum="";
-        while(a_len>=0 || b_len>=0)
-        {
-            if(a_len>=0)
-            {
-                curr_sum += ((int)a.charAt(a_len))-48;
+    public String addBinary(String a, String b)
+    {
+        int a_len = a.length() - 1, b_len = b.length() - 1, curr_sum = 0;
+        String final_sum = "";
+        while (a_len >= 0 || b_len >= 0) {
+            if (a_len >= 0) {
+                curr_sum += ((int) a.charAt(a_len)) - 48;
                 a_len--;
             }
-            if(b_len>=0)
-            {
-                curr_sum += ((int)b.charAt(b_len))-48;
+            if (b_len >= 0) {
+                curr_sum += ((int) b.charAt(b_len)) - 48;
                 b_len--;
             }
-            final_sum = curr_sum%2 + final_sum;
-            curr_sum = curr_sum>1?1:0;
+            final_sum = curr_sum % 2 + final_sum;
+            curr_sum = curr_sum > 1 ? 1 : 0;
         }
-        if(curr_sum==1)
-            return "1"+final_sum;
-        return  final_sum;
+        if (curr_sum == 1)
+            return "1" + final_sum;
+        return final_sum;
     }
 
-/*
+    /*
 19. PROBLEM DESCRIPTION (https://leetcode.com/problems/climbing-stairs/)
     You are climbing a stair case. It takes n steps to reach to the top.
     Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
@@ -828,19 +785,19 @@ public class LeetCode {
             2. 1 step + 2 steps
             3. 2 steps + 1 step
 */
-    public int climbStairs(int n) {
+    public int climbStairs(int n)
+    {
 
-        int ways[] = new int[n+1];
+        int ways[] = new int[n + 1];
         ways[0] = 1;
         ways[1] = 2;
-        for(int i=2;i<n;i++)
-        {
-            ways[i] = ways[i-1]+ways[i-2];
+        for (int i = 2; i < n; i++) {
+            ways[i] = ways[i - 1] + ways[i - 2];
         }
-        return ways[n-1];
+        return ways[n - 1];
     }
 
-/*
+    /*
 20. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-sorted-array/)
     Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.
     Note: The number of elements initialized in nums1 and nums2 are m and n respectively. You may assume that nums1 has enough space (size that is greater or equal
@@ -853,18 +810,18 @@ public class LeetCode {
 
     Output: [1,2,2,3,5,6]
 */
-    public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int iterator_i=m-1,iterator_j=n-1;
-        while(iterator_i>=0 || iterator_j>=0)
-        {
-            if(iterator_i<0 ? false : ( iterator_j<0? true : nums1[iterator_i]>nums2[iterator_j]))
-                nums1[iterator_i+iterator_j+1] = nums1[iterator_i--];
+    public void merge(int[] nums1, int m, int[] nums2, int n)
+    {
+        int iterator_i = m - 1, iterator_j = n - 1;
+        while (iterator_i >= 0 || iterator_j >= 0) {
+            if (iterator_i < 0 ? false : (iterator_j < 0 ? true : nums1[iterator_i] > nums2[iterator_j]))
+                nums1[iterator_i + iterator_j + 1] = nums1[iterator_i--];
             else
-                nums1[iterator_i+iterator_j+1] = nums2[iterator_j--];
+                nums1[iterator_i + iterator_j + 1] = nums2[iterator_j--];
         }
     }
 
-/*
+    /*
 21. PROBLEM DESCRIPTION (https://leetcode.com/problems/single-number/)
     Given a non-empty array of integers, every element appears twice except for one. Find that single one.
 
@@ -878,16 +835,17 @@ public class LeetCode {
         Input: [4,1,2,1,2]
         Output: 4
 */
-    public int singleNumber(int[] nums) {
+    public int singleNumber(int[] nums)
+    {
 
         int result = 0;
-        for(int i=0;i<nums.length;i++)
+        for (int i = 0; i < nums.length; i++)
             result = result ^ nums[i];
         return result;
     }
 
 
-/*
+    /*
 22. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
     Say you have an array for which the ith element is the price of a given stock on day i.
     If you were only permitted to complete at most one transaction (i.e., buy one and sell one share of the stock), design an algorithm to find the maximum profit.
@@ -905,19 +863,19 @@ public class LeetCode {
         Output: 0
         Explanation: In this case, no transaction is done, i.e. max profit = 0.
 */
-    public int maxProfit(int[] prices) {
+    public int maxProfit(int[] prices)
+    {
 
         int max_profit = 0, min_till_now = Integer.MAX_VALUE;
-        for(int i=0;i<prices.length;i++)
-        {
-            min_till_now = Math.min(min_till_now,prices[i]);
-            max_profit = Math.max(max_profit,prices[i] - min_till_now);
+        for (int i = 0; i < prices.length; i++) {
+            min_till_now = Math.min(min_till_now, prices[i]);
+            max_profit = Math.max(max_profit, prices[i] - min_till_now);
         }
         return max_profit;
     }
 
 
-/*
+    /*
 23. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
     Say you have an array for which the ith element is the price of a given stock on day i.
     Design an algorithm to find the maximum profit. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).
@@ -942,16 +900,17 @@ public class LeetCode {
         Output: 0
         Explanation: In this case, no transaction is done, i.e. max profit = 0.
 */
-    public int maxProfit1(int[] prices) {
+    public int maxProfit1(int[] prices)
+    {
 
         int max_profit = 0;
-        for(int i=0;i<prices.length-1;i++)
-                max_profit = prices[i+1]<prices[i]? max_profit : max_profit+prices[i+1] - prices[i];
+        for (int i = 0; i < prices.length - 1; i++)
+            max_profit = prices[i + 1] < prices[i] ? max_profit : max_profit + prices[i + 1] - prices[i];
         return max_profit;
     }
 
 
-/*
+    /*
     24. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
         Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
 
@@ -965,16 +924,16 @@ public class LeetCode {
             Input: "race a car"
             Output: false
 */
-    public boolean isPalindrome(String s) {
-        int start_index=0,end_index=s.length()-1;
-        while(start_index<end_index)
-        {
-            if(Character.isLetterOrDigit(s.charAt(start_index)) && Character.isLetterOrDigit(s.charAt(end_index)))
-                if(Character.toUpperCase(s.charAt(start_index++)) != Character.toUpperCase(s.charAt(end_index--)))
+    public boolean isPalindrome(String s)
+    {
+        int start_index = 0, end_index = s.length() - 1;
+        while (start_index < end_index) {
+            if (Character.isLetterOrDigit(s.charAt(start_index)) && Character.isLetterOrDigit(s.charAt(end_index)))
+                if (Character.toUpperCase(s.charAt(start_index++)) != Character.toUpperCase(s.charAt(end_index--)))
                     return false;
-            if(!Character.isLetterOrDigit(s.charAt(start_index)))
+            if (!Character.isLetterOrDigit(s.charAt(start_index)))
                 start_index++;
-            if(!Character.isLetterOrDigit(s.charAt(end_index)))
+            if (!Character.isLetterOrDigit(s.charAt(end_index)))
                 end_index--;
         }
         return true;
@@ -996,72 +955,66 @@ public class LeetCode {
 
 */
 
-    public int strStr(String haystack, String needle) {
-        for(int iterator_i=0;;iterator_i++)
-        {
-            for(int iterator_j=0;;iterator_j++)
-            {
-                if(iterator_j==needle.length())
+    public int strStr(String haystack, String needle)
+    {
+        for (int iterator_i = 0; ; iterator_i++) {
+            for (int iterator_j = 0; ; iterator_j++) {
+                if (iterator_j == needle.length())
                     return iterator_i;
-                if(iterator_i+iterator_j==haystack.length())
+                if (iterator_i + iterator_j == haystack.length())
                     return -1;
-                if(needle.charAt(iterator_j)!=haystack.charAt(iterator_i+iterator_j))
+                if (needle.charAt(iterator_j) != haystack.charAt(iterator_i + iterator_j))
                     break;
             }
         }
     }
 
-    public static int strStr1(String haystack,String needle)
+    public static int strStr1(String haystack, String needle)
     {
-        if(needle.length()==0)
+        if (needle.length() == 0)
             return 0;
         //Create shift table
         int shift_table[] = new int[256];
-        for(int iterator_i=0;iterator_i<shift_table.length;iterator_i++)
+        for (int iterator_i = 0; iterator_i < shift_table.length; iterator_i++)
             shift_table[iterator_i] = needle.length();
-        for(int iterator_i=0;iterator_i<needle.length()-1;iterator_i++)
-            shift_table[needle.charAt(iterator_i)] = needle.length()-1-iterator_i;
+        for (int iterator_i = 0; iterator_i < needle.length() - 1; iterator_i++)
+            shift_table[needle.charAt(iterator_i)] = needle.length() - 1 - iterator_i;
 
         // Create Bad Symbol Table
-        int bad_symbol[] = new int[needle.length()-1];
-        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
+        int bad_symbol[] = new int[needle.length() - 1];
+        for (int iterator_i = 0; iterator_i < bad_symbol.length; iterator_i++)
             bad_symbol[iterator_i] = needle.length();
-        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
-        {
-            int iterator_j=needle.length()-2-iterator_i + ((iterator_i==0)?0:1),iterator_k=needle.length()-1;
-            while(iterator_j>=0 && iterator_k>=needle.length()-1-iterator_i)
-            {
-                if(needle.charAt(iterator_j)==needle.charAt(iterator_k))
+        for (int iterator_i = 0; iterator_i < bad_symbol.length; iterator_i++) {
+            int iterator_j = needle.length() - 2 - iterator_i + ((iterator_i == 0) ? 0 : 1), iterator_k = needle.length() - 1;
+            while (iterator_j >= 0 && iterator_k >= needle.length() - 1 - iterator_i) {
+                if (needle.charAt(iterator_j) == needle.charAt(iterator_k))
                     iterator_k--;
                 else
-                    iterator_k = needle.length()-1;
+                    iterator_k = needle.length() - 1;
                 iterator_j--;
             }
-            if(iterator_j<0 || iterator_k<needle.length()-1-iterator_i)
-                bad_symbol[iterator_i] = iterator_k-iterator_j;
+            if (iterator_j < 0 || iterator_k < needle.length() - 1 - iterator_i)
+                bad_symbol[iterator_i] = iterator_k - iterator_j;
         }
 
-        for(int iterator_i=0;iterator_i<bad_symbol.length;iterator_i++)
-            System.out.print(bad_symbol[iterator_i]+" ");
+        for (int iterator_i = 0; iterator_i < bad_symbol.length; iterator_i++)
+            System.out.print(bad_symbol[iterator_i] + " ");
         System.out.println();
         // Perform actual String Matching
-        int iterator_i = needle.length()-1;
-        while(iterator_i<haystack.length())
-        {
+        int iterator_i = needle.length() - 1;
+        while (iterator_i < haystack.length()) {
             int iterator_j = 0;
-            while(iterator_j<needle.length() && needle.charAt(needle.length()-1-iterator_j)==haystack.charAt(iterator_i-iterator_j))
+            while (iterator_j < needle.length() && needle.charAt(needle.length() - 1 - iterator_j) == haystack.charAt(iterator_i - iterator_j))
                 iterator_j++;
-            if(iterator_j==needle.length())
-                return iterator_i-iterator_j+1;
+            if (iterator_j == needle.length())
+                return iterator_i - iterator_j + 1;
 
-            if(iterator_j==0)
-            {
+            if (iterator_j == 0) {
                 iterator_i += shift_table[haystack.charAt(iterator_i)];
                 System.out.println(iterator_i + " " + iterator_j + " ");
-            }
-            else {
-                iterator_i += Math.max(shift_table[haystack.charAt(iterator_i - iterator_j )]-iterator_j, bad_symbol[iterator_j - 1]);
-                System.out.println(iterator_i + " " + iterator_j + " " + shift_table[haystack.charAt(iterator_i - iterator_j )]);
+            } else {
+                iterator_i += Math.max(shift_table[haystack.charAt(iterator_i - iterator_j)] - iterator_j, bad_symbol[iterator_j - 1]);
+                System.out.println(iterator_i + " " + iterator_j + " " + shift_table[haystack.charAt(iterator_i - iterator_j)]);
             }
         }
         return -1;
@@ -1084,7 +1037,8 @@ public class LeetCode {
             [3,2,1]
         ]
     */
-    public int[]  create_array_int(Scanner sc) {
+    public int[] create_array_int(Scanner sc)
+    {
         System.out.println("Enter size of array");
         int n = sc.nextInt();
         int created_arr[] = new int[n];
@@ -1094,23 +1048,23 @@ public class LeetCode {
         return created_arr;
     }
 
-    public List<List<Integer>> permute(int[] nums) {
+    public List<List<Integer>> permute(int[] nums)
+    {
         List<List<Integer>> all_permutations = new ArrayList<List<Integer>>();
-        permute_backtrack(nums,all_permutations,new ArrayList<>());
+        permute_backtrack(nums, all_permutations, new ArrayList<>());
         return all_permutations;
     }
 
-    public static void permute_backtrack(int nums[],List<List<Integer>> all_permutations,List<Integer> curr_perm)
+    public static void permute_backtrack(int nums[], List<List<Integer>> all_permutations, List<Integer> curr_perm)
     {
-        if(curr_perm.size()==nums.length)
+        if (curr_perm.size() == nums.length)
             all_permutations.add(new ArrayList<>(curr_perm));
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(curr_perm.contains(nums[iterator_i])) continue;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (curr_perm.contains(nums[iterator_i])) continue;
             curr_perm.add(nums[iterator_i]);
-            permute_backtrack(nums,all_permutations,curr_perm);
+            permute_backtrack(nums, all_permutations, curr_perm);
             System.out.println(iterator_i);
-            curr_perm.remove(curr_perm.size()-1);
+            curr_perm.remove(curr_perm.size() - 1);
 
         }
     }
@@ -1130,36 +1084,37 @@ public class LeetCode {
         ]
     */
 
-    public List<List<Integer>> permuteUnique(int[] nums) {
+    public List<List<Integer>> permuteUnique(int[] nums)
+    {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
         Arrays.sort(nums);
-        permuteUniqueBacktrack(nums,new boolean[nums.length],new ArrayList<Integer>(),list);
+        permuteUniqueBacktrack(nums, new boolean[nums.length], new ArrayList<Integer>(), list);
         return list;
     }
 
     public boolean isPermuteReached(boolean[] position_visited_flag)
     {
-        for(boolean value: position_visited_flag){
-            if(!value){ return false;}
+        for (boolean value : position_visited_flag) {
+            if (!value) {
+                return false;
+            }
         }
         return true;
     }
 
-    public void permuteUniqueBacktrack(int[] nums,boolean[] position_visited_flag,List curr_perm,List<List<Integer>> list)
+    public void permuteUniqueBacktrack(int[] nums, boolean[] position_visited_flag, List curr_perm, List<List<Integer>> list)
     {
-        if(isPermuteReached(position_visited_flag))
-        {
+        if (isPermuteReached(position_visited_flag)) {
             list.add(new ArrayList<>(curr_perm));
             return;
         }
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(position_visited_flag[iterator_i]==true || (iterator_i>0 && nums[iterator_i-1]==nums[iterator_i] && !position_visited_flag[iterator_i-1]))
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (position_visited_flag[iterator_i] == true || (iterator_i > 0 && nums[iterator_i - 1] == nums[iterator_i] && !position_visited_flag[iterator_i - 1]))
                 continue;
-            position_visited_flag[iterator_i]=true;
+            position_visited_flag[iterator_i] = true;
             curr_perm.add(nums[iterator_i]);
-            permuteUniqueBacktrack(nums,position_visited_flag,curr_perm,list);
-            curr_perm.remove(curr_perm.size()-1);
+            permuteUniqueBacktrack(nums, position_visited_flag, curr_perm, list);
+            curr_perm.remove(curr_perm.size() - 1);
             position_visited_flag[iterator_i] = false;
         }
     }
@@ -1179,25 +1134,23 @@ public class LeetCode {
 
     public String multiply(String num1, String num2)
     {
-        int final_product[] = new int[num1.length()+num2.length()],carry=0;
-        String product_str="";
-        for(int iterator_i=num1.length()-1;iterator_i>=0;iterator_i--)
-        {
-            for (int iterator_j = num2.length() - 1; iterator_j >= 0; iterator_j--)
-            {
-                int temp=carry;
+        int final_product[] = new int[num1.length() + num2.length()], carry = 0;
+        String product_str = "";
+        for (int iterator_i = num1.length() - 1; iterator_i >= 0; iterator_i--) {
+            for (int iterator_j = num2.length() - 1; iterator_j >= 0; iterator_j--) {
+                int temp = carry;
                 carry = (temp + final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] + (int) (num1.charAt(iterator_i) - 48) * (int) (num2.charAt(iterator_j) - 48)) / 10;
                 final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] = (temp + final_product[num1.length() + num2.length() - 2 - iterator_i - iterator_j] + (int) (num1.charAt(iterator_i) - 48) * (int) (num2.charAt(iterator_j) - 48)) % 10;
             }
-            final_product[num2.length()+num1.length()-1-iterator_i] += carry;
-            carry=0;
+            final_product[num2.length() + num1.length() - 1 - iterator_i] += carry;
+            carry = 0;
         }
-        int last_pos=final_product.length-1;
-        while(last_pos>0 && final_product[last_pos]==0)
+        int last_pos = final_product.length - 1;
+        while (last_pos > 0 && final_product[last_pos] == 0)
             last_pos--;
-        for(int digits:Arrays.copyOfRange(final_product,0,last_pos+1))
-            product_str = digits+product_str;
-        return carry>0?carry+product_str:product_str;
+        for (int digits : Arrays.copyOfRange(final_product, 0, last_pos + 1))
+            product_str = digits + product_str;
+        return carry > 0 ? carry + product_str : product_str;
     }
 
     /*
@@ -1217,22 +1170,21 @@ public class LeetCode {
     public List<String> generateParenthesis(int n)
     {
         List<String> list = new ArrayList<String>();
-        generateParenthesisBacktrack(list,0,"",n*2);
+        generateParenthesisBacktrack(list, 0, "", n * 2);
         return list;
     }
 
-    public void generateParenthesisBacktrack(List<String> list,int bracket_count,String current_string,int n)
+    public void generateParenthesisBacktrack(List<String> list, int bracket_count, String current_string, int n)
     {
-        if(current_string.length()==n)
-        {
-            if(bracket_count==0)
+        if (current_string.length() == n) {
+            if (bracket_count == 0)
                 list.add(current_string);
             return;
         }
-        if(bracket_count>0)
-            generateParenthesisBacktrack(list,bracket_count-1,new String(current_string+")"),n);
-        if(bracket_count<n/2)
-            generateParenthesisBacktrack(list,bracket_count+1,new String(current_string+"("),n);
+        if (bracket_count > 0)
+            generateParenthesisBacktrack(list, bracket_count - 1, new String(current_string + ")"), n);
+        if (bracket_count < n / 2)
+            generateParenthesisBacktrack(list, bracket_count + 1, new String(current_string + "("), n);
     }
 
     /*
@@ -1254,31 +1206,28 @@ public class LeetCode {
         ]
     */
 
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+    public List<List<Integer>> combinationSum(int[] candidates, int target)
+    {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
         Arrays.sort(candidates);
-        combinationSumBacktrack(list,target,new ArrayList<Integer>(),0,candidates,0);
+        combinationSumBacktrack(list, target, new ArrayList<Integer>(), 0, candidates, 0);
         return list;
     }
 
-    public static void combinationSumBacktrack(List<List<Integer>> list,int target,List current_items,int current_sum,int[] candidates,int current_item)
+    public static void combinationSumBacktrack(List<List<Integer>> list, int target, List current_items, int current_sum, int[] candidates, int current_item)
     {
-        for(int iterator_i=current_item;iterator_i<candidates.length;iterator_i++)
-        {
-            if(current_sum+candidates[iterator_i]==target)
-            {
+        for (int iterator_i = current_item; iterator_i < candidates.length; iterator_i++) {
+            if (current_sum + candidates[iterator_i] == target) {
                 current_items.add(candidates[iterator_i]);
                 list.add(new ArrayList<>(current_items));
-                current_items.remove(current_items.size()-1);
+                current_items.remove(current_items.size() - 1);
                 return;
             }
-            if(current_sum+candidates[iterator_i]<target)
-            {
+            if (current_sum + candidates[iterator_i] < target) {
                 current_items.add(candidates[iterator_i]);
-                combinationSumBacktrack(list, target,current_items , current_sum+candidates[iterator_i], candidates, iterator_i);
-                current_items.remove(current_items.size()-1);
-            }
-            else
+                combinationSumBacktrack(list, target, current_items, current_sum + candidates[iterator_i], candidates, iterator_i);
+                current_items.remove(current_items.size() - 1);
+            } else
                 return;
         }
     }
@@ -1302,40 +1251,37 @@ public class LeetCode {
             [1, 1, 6]
         ]
     */
-    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target)
+    {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
         Arrays.sort(candidates);
-        combinationSumBacktrack2(list,target,new ArrayList<Integer>(),0,candidates,-1);
+        combinationSumBacktrack2(list, target, new ArrayList<Integer>(), 0, candidates, -1);
         return list;
     }
 
-    public static void combinationSumBacktrack2(List<List<Integer>> list,int target,List current_items,int current_sum,int[] candidates,int current_item)
+    public static void combinationSumBacktrack2(List<List<Integer>> list, int target, List current_items, int current_sum, int[] candidates, int current_item)
     {
-        System.out.print("pos:"+current_item+":"+current_sum+" ");
-        for(Object e:current_items)
-            System.out.print(e.toString()+" ");
+        System.out.print("pos:" + current_item + ":" + current_sum + " ");
+        for (Object e : current_items)
+            System.out.print(e.toString() + " ");
         System.out.println();
-        for(int iterator_i=current_item+1;iterator_i<candidates.length;iterator_i++)
-        {
-            if(current_sum+candidates[iterator_i]==target)
-            {
+        for (int iterator_i = current_item + 1; iterator_i < candidates.length; iterator_i++) {
+            if (current_sum + candidates[iterator_i] == target) {
                 current_items.add(candidates[iterator_i]);
-                for(Object e:current_items)
-                    System.out.print(e.toString()+" ");
+                for (Object e : current_items)
+                    System.out.print(e.toString() + " ");
                 System.out.println();
                 list.add(new ArrayList<>(current_items));
-                current_items.remove(current_items.size()-1);
+                current_items.remove(current_items.size() - 1);
                 return;
             }
-            if(current_sum+candidates[iterator_i]<target)
-            {
-                if((iterator_i==current_item+1)||(candidates[iterator_i]!=candidates[iterator_i-1])) {
+            if (current_sum + candidates[iterator_i] < target) {
+                if ((iterator_i == current_item + 1) || (candidates[iterator_i] != candidates[iterator_i - 1])) {
                     current_items.add(candidates[iterator_i]);
                     combinationSumBacktrack2(list, target, current_items, current_sum + candidates[iterator_i], candidates, iterator_i);
                     current_items.remove(current_items.size() - 1);
                 }
-            }
-            else
+            } else
                 return;
         }
     }
@@ -1349,15 +1295,13 @@ public class LeetCode {
         Each of the 9 3x3 sub-boxes of the grid must contain the digits 1-9 without repetition.
     */
 
-    public boolean isValidSudoku(char[][] board) {
+    public boolean isValidSudoku(char[][] board)
+    {
         HashSet<String> hset = new HashSet<>();
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
-            {
-                if(board[iterator_i][iterator_j]!='.')
-                {
-                    if(!hset.add(iterator_i+"-"+board[iterator_i][iterator_j]) ||!hset.add("-"+board[iterator_i][iterator_j]+""+iterator_j)||!hset.add(iterator_i/3+"-"+board[iterator_i][iterator_j]+""+iterator_j/3))
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++) {
+                if (board[iterator_i][iterator_j] != '.') {
+                    if (!hset.add(iterator_i + "-" + board[iterator_i][iterator_j]) || !hset.add("-" + board[iterator_i][iterator_j] + "" + iterator_j) || !hset.add(iterator_i / 3 + "-" + board[iterator_i][iterator_j] + "" + iterator_j / 3))
                         return false;
                 }
             }
@@ -1377,50 +1321,45 @@ public class LeetCode {
         Empty cells are indicated by the character '.'.
     */
 
-    public void solveSudoku(char[][] board) {
-        solveSudokuBacktrack(board,0,0);
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
-                System.out.print(board[iterator_i][iterator_j]+" ");
+    public void solveSudoku(char[][] board)
+    {
+        solveSudokuBacktrack(board, 0, 0);
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++)
+                System.out.print(board[iterator_i][iterator_j] + " ");
             System.out.println();
         }
     }
 
-    public static boolean isSudokuValid(char[][] board,int row_current,int column_current,char value)
+    public static boolean isSudokuValid(char[][] board, int row_current, int column_current, char value)
     {
         //Column Elements Check
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-            if(board[iterator_i][column_current]==value)
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++)
+            if (board[iterator_i][column_current] == value)
                 return false;
 
         //Row Elements Check
-        for(int iterator_i=0;iterator_i<board[0].length;iterator_i++)
-            if(board[row_current][iterator_i]==value)
+        for (int iterator_i = 0; iterator_i < board[0].length; iterator_i++)
+            if (board[row_current][iterator_i] == value)
                 return false;
 
         //Subsection check
-        for(int iterator_i=3*(row_current/3);iterator_i<3*(row_current/3) + 3;iterator_i++)
-        {
-            for(int iterator_j=3*(column_current/3);iterator_j<3*(column_current/3)+3;iterator_j++)
-                if(board[iterator_i][iterator_j]==value)
+        for (int iterator_i = 3 * (row_current / 3); iterator_i < 3 * (row_current / 3) + 3; iterator_i++) {
+            for (int iterator_j = 3 * (column_current / 3); iterator_j < 3 * (column_current / 3) + 3; iterator_j++)
+                if (board[iterator_i][iterator_j] == value)
                     return false;
         }
         return true;
     }
 
-    public static boolean solveSudokuBacktrack(char[][] board,int row_current,int column_current)
+    public static boolean solveSudokuBacktrack(char[][] board, int row_current, int column_current)
     {
-        //System.out.println(row_current+""+column_current+" "+((board[0].length)-1));
-        if(board[row_current][column_current]!='.')
-        {
-            if(row_current==board.length-1 && column_current==board[0].length-1)
+        if (board[row_current][column_current] != '.') {
+            if (row_current == board.length - 1 && column_current == board[0].length - 1)
                 return true;
-            if(solveSudokuBacktrack(board,column_current==board[0].length-1? row_current+1:row_current,column_current==board[0].length-1?0:column_current+1))
+            if (solveSudokuBacktrack(board, column_current == board[0].length - 1 ? row_current + 1 : row_current, column_current == board[0].length - 1 ? 0 : column_current + 1))
                 return true;
-        }
-        else
-        {
+        } else {
             for (char iterator_i = '1'; iterator_i <= '9'; iterator_i++) {
                 if (isSudokuValid(board, row_current, column_current, iterator_i)) {
                     board[row_current][column_current] = iterator_i;
@@ -1451,22 +1390,18 @@ public class LeetCode {
     */
 
 
-
     public List<List<Integer>> threeSum(int[] nums)
     {
         List<List<Integer>> list = new ArrayList<>();
         Arrays.sort(nums);
-        int iterator_i=0;
-        while(iterator_i<nums.length-2)
-        {
-            if(iterator_i==0 || nums[iterator_i]!=nums[iterator_i-1])
-            {
+        int iterator_i = 0;
+        while (iterator_i < nums.length - 2) {
+            if (iterator_i == 0 || nums[iterator_i] != nums[iterator_i - 1]) {
                 int l_pos = iterator_i + 1, r_pos = nums.length - 1;
-                while (l_pos < r_pos)
-                {
-                    if ((l_pos != iterator_i + 1 && nums[l_pos] == nums[l_pos - 1])||(nums[iterator_i] + nums[l_pos] + nums[r_pos] < 0))
+                while (l_pos < r_pos) {
+                    if ((l_pos != iterator_i + 1 && nums[l_pos] == nums[l_pos - 1]) || (nums[iterator_i] + nums[l_pos] + nums[r_pos] < 0))
                         l_pos++;
-                    else if ((r_pos != nums.length - 1 && nums[r_pos] == nums[r_pos + 1])||(nums[iterator_i] + nums[l_pos] + nums[r_pos] > 0))
+                    else if ((r_pos != nums.length - 1 && nums[r_pos] == nums[r_pos + 1]) || (nums[iterator_i] + nums[l_pos] + nums[r_pos] > 0))
                         r_pos--;
                     else {
                         list.add(Arrays.asList(nums[iterator_i], nums[l_pos], nums[r_pos]));
@@ -1489,24 +1424,23 @@ public class LeetCode {
         The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
     */
 
-    public int threeSumClosest(int[] nums, int target) {
-        int min_diff = Integer.MAX_VALUE,iterator_i=0;
-        while(iterator_i<nums.length-2)
-        {
-            int l_pos=iterator_i+1,r_pos=nums.length-1;
-            while(l_pos<r_pos)
-            {
-                System.out.println(l_pos+" "+r_pos);
-                if(Math.abs(nums[iterator_i]+nums[l_pos]+nums[r_pos]-target)<Math.abs(min_diff))
-                    min_diff = nums[iterator_i]+nums[l_pos]+nums[r_pos]-target;
-                if(nums[iterator_i]+nums[l_pos]+nums[r_pos]-target<0)
+    public int threeSumClosest(int[] nums, int target)
+    {
+        int min_diff = Integer.MAX_VALUE, iterator_i = 0;
+        while (iterator_i < nums.length - 2) {
+            int l_pos = iterator_i + 1, r_pos = nums.length - 1;
+            while (l_pos < r_pos) {
+                System.out.println(l_pos + " " + r_pos);
+                if (Math.abs(nums[iterator_i] + nums[l_pos] + nums[r_pos] - target) < Math.abs(min_diff))
+                    min_diff = nums[iterator_i] + nums[l_pos] + nums[r_pos] - target;
+                if (nums[iterator_i] + nums[l_pos] + nums[r_pos] - target < 0)
                     l_pos++;
                 else
                     r_pos--;
             }
             iterator_i++;
         }
-        return min_diff+target;
+        return min_diff + target;
     }
 
     /*
@@ -1520,25 +1454,23 @@ public class LeetCode {
 
     public List<String> letterCombinations(String digits)
     {
-        List<String> list= new ArrayList<String>();
-        String vocabulary[] = {"abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
-        letterCombinationsBacktrack(list,digits,0,vocabulary,new StringBuilder());
+        List<String> list = new ArrayList<String>();
+        String vocabulary[] = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        letterCombinationsBacktrack(list, digits, 0, vocabulary, new StringBuilder());
         return list;
     }
 
-    public static void letterCombinationsBacktrack(List<String> list,String digits,int position,String[] vocabulary,StringBuilder curr_elements)
+    public static void letterCombinationsBacktrack(List<String> list, String digits, int position, String[] vocabulary, StringBuilder curr_elements)
     {
-        if(position==digits.length())
-        {
-            if(curr_elements.toString().length()>0)
+        if (position == digits.length()) {
+            if (curr_elements.toString().length() > 0)
                 list.add(curr_elements.toString());
             return;
         }
-        for(int iterator_i=0;iterator_i<vocabulary[digits.charAt(position)-50].length();iterator_i++)
-        {
-            curr_elements.append(vocabulary[digits.charAt(position)-50].charAt(iterator_i));
-            letterCombinationsBacktrack(list,digits,position+1,vocabulary,curr_elements);
-            curr_elements.deleteCharAt(curr_elements.length()-1);
+        for (int iterator_i = 0; iterator_i < vocabulary[digits.charAt(position) - 50].length(); iterator_i++) {
+            curr_elements.append(vocabulary[digits.charAt(position) - 50].charAt(iterator_i));
+            letterCombinationsBacktrack(list, digits, position + 1, vocabulary, curr_elements);
+            curr_elements.deleteCharAt(curr_elements.length() - 1);
         }
     }
 
@@ -1555,18 +1487,17 @@ public class LeetCode {
 
     public int longestValidParentheses(String s)
     {
-        if(s.length()==0)
+        if (s.length() == 0)
             return 0;
-        int max_valid[]=new int[s.length()];
-        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
-        {
-            if(s.charAt(iterator_i) == ')' && s.charAt(iterator_i-1)=='(')
-                max_valid[iterator_i] = iterator_i<2?2:Math.max(max_valid[iterator_i], max_valid[iterator_i - 2] + 2);
-            else if(s.charAt(iterator_i) == ')' && s.charAt(iterator_i-1)==')' && iterator_i -1-max_valid[iterator_i-1]>=0 && s.charAt(iterator_i -1-max_valid[iterator_i-1])=='(')
-                max_valid[iterator_i] = Math.max(max_valid[iterator_i], max_valid[iterator_i-1]+2+((iterator_i -1-max_valid[iterator_i-1]>0)?max_valid[iterator_i -2-max_valid[iterator_i-1]]:0));
+        int max_valid[] = new int[s.length()];
+        for (int iterator_i = 1; iterator_i < s.length(); iterator_i++) {
+            if (s.charAt(iterator_i) == ')' && s.charAt(iterator_i - 1) == '(')
+                max_valid[iterator_i] = iterator_i < 2 ? 2 : Math.max(max_valid[iterator_i], max_valid[iterator_i - 2] + 2);
+            else if (s.charAt(iterator_i) == ')' && s.charAt(iterator_i - 1) == ')' && iterator_i - 1 - max_valid[iterator_i - 1] >= 0 && s.charAt(iterator_i - 1 - max_valid[iterator_i - 1]) == '(')
+                max_valid[iterator_i] = Math.max(max_valid[iterator_i], max_valid[iterator_i - 1] + 2 + ((iterator_i - 1 - max_valid[iterator_i - 1] > 0) ? max_valid[iterator_i - 2 - max_valid[iterator_i - 1]] : 0));
         }
         Arrays.sort(max_valid);
-        return max_valid[max_valid.length-1];
+        return max_valid[max_valid.length - 1];
     }
 
     /*
@@ -1581,19 +1512,18 @@ public class LeetCode {
     */
     public int numDecodings(String s)
     {
-        if(s.length()==0)
+        if (s.length() == 0)
             return 0;
-        int num_decodings[] = new int[s.length()+1];
+        int num_decodings[] = new int[s.length() + 1];
         num_decodings[0] = 1;
-        num_decodings[1] = s.charAt(0)=='0'?0:1;
-        for(int iterator_i=2;iterator_i<num_decodings.length;iterator_i++)
-        {
-            if(s.charAt(iterator_i-1)!='0')
-                num_decodings[iterator_i] = num_decodings[iterator_i-1];
-            if(s.charAt(iterator_i-2)<'3' && (s.charAt(iterator_i-2)=='2'?s.charAt(iterator_i-1)<'7':true) && s.charAt(iterator_i-2)!='0')
-                num_decodings[iterator_i] += num_decodings[iterator_i-2];
+        num_decodings[1] = s.charAt(0) == '0' ? 0 : 1;
+        for (int iterator_i = 2; iterator_i < num_decodings.length; iterator_i++) {
+            if (s.charAt(iterator_i - 1) != '0')
+                num_decodings[iterator_i] = num_decodings[iterator_i - 1];
+            if (s.charAt(iterator_i - 2) < '3' && (s.charAt(iterator_i - 2) == '2' ? s.charAt(iterator_i - 1) < '7' : true) && s.charAt(iterator_i - 2) != '0')
+                num_decodings[iterator_i] += num_decodings[iterator_i - 2];
         }
-        return num_decodings[num_decodings.length-1];
+        return num_decodings[num_decodings.length - 1];
     }
 
     /*
@@ -1610,18 +1540,17 @@ public class LeetCode {
             Explanation: When using 3 arr converts to [3, 3, 3] which sums 9 and that's the optimal answer.
     */
 
-    public static int findClosestposition(int[] arr,int value)
+    public static int findClosestposition(int[] arr, int value)
     {
-        int lb=0,ub=arr.length-1,mid=0;
-        while(lb<=ub)
-        {
-            mid = (lb+ub)/2;
-            if(arr[mid]==value ||( mid>0 && arr[mid]>value && arr[mid-1]<value)||(mid==0 && arr[mid]>value))
+        int lb = 0, ub = arr.length - 1, mid = 0;
+        while (lb <= ub) {
+            mid = (lb + ub) / 2;
+            if (arr[mid] == value || (mid > 0 && arr[mid] > value && arr[mid - 1] < value) || (mid == 0 && arr[mid] > value))
                 return mid;
-            else if(arr[mid]<value)
-                lb = mid+1;
+            else if (arr[mid] < value)
+                lb = mid + 1;
             else
-                ub = mid-1;
+                ub = mid - 1;
         }
         return mid;
     }
@@ -1629,23 +1558,21 @@ public class LeetCode {
     public int findBestValue(int[] arr, int target)
     {
         Arrays.sort(arr);
-        int lb = arr[0],ub=arr[arr.length-1],sum_arr[] = new int[arr.length+1],current_closest_val=Integer.MAX_VALUE,current_best_value=-1;
-        for(int iterator_i=1;iterator_i<=arr.length;iterator_i++)
-            sum_arr[iterator_i] = sum_arr[iterator_i-1]+arr[iterator_i-1];
-        if(target<arr[0]*arr.length)
-            return (int)(Math.round(1.0*target/arr.length));
-        while(lb<=ub)
-        {
-            int mid = (lb+ub)/2,pos_mid = findClosestposition(arr,mid);
-            if(current_closest_val==Integer.MAX_VALUE || Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)<Math.abs(current_closest_val)|| mid<current_best_value && Math.abs(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target)==Math.abs(current_closest_val))
-            {
-                current_closest_val = sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target;
+        int lb = arr[0], ub = arr[arr.length - 1], sum_arr[] = new int[arr.length + 1], current_closest_val = Integer.MAX_VALUE, current_best_value = -1;
+        for (int iterator_i = 1; iterator_i <= arr.length; iterator_i++)
+            sum_arr[iterator_i] = sum_arr[iterator_i - 1] + arr[iterator_i - 1];
+        if (target < arr[0] * arr.length)
+            return (int) (Math.round(1.0 * target / arr.length));
+        while (lb <= ub) {
+            int mid = (lb + ub) / 2, pos_mid = findClosestposition(arr, mid);
+            if (current_closest_val == Integer.MAX_VALUE || Math.abs(sum_arr[pos_mid] + (arr.length - pos_mid) * mid - target) < Math.abs(current_closest_val) || mid < current_best_value && Math.abs(sum_arr[pos_mid] + (arr.length - pos_mid) * mid - target) == Math.abs(current_closest_val)) {
+                current_closest_val = sum_arr[pos_mid] + (arr.length - pos_mid) * mid - target;
                 current_best_value = mid;
             }
-            if(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target<0)
-                lb = mid+1;
-            else if(sum_arr[pos_mid]+(arr.length-pos_mid)*mid-target>0)
-                ub = mid-1;
+            if (sum_arr[pos_mid] + (arr.length - pos_mid) * mid - target < 0)
+                lb = mid + 1;
+            else if (sum_arr[pos_mid] + (arr.length - pos_mid) * mid - target > 0)
+                ub = mid - 1;
             else
                 return current_best_value;
         }
@@ -1666,29 +1593,28 @@ public class LeetCode {
             1^2 + 0^2 + 0^2 = 1
     */
 
-    public boolean isHappy(int n) {
+    public boolean isHappy(int n)
+    {
         HashSet<String> hset = new HashSet<>();
-        int new_number=0;
-        while(true)
-        {
+        int new_number = 0;
+        while (true) {
             char curr_temp[] = new char[1];
-            int sum=0;
-            while(n!=0)
-            {
-                curr_temp[curr_temp.length-1] = (char)(n%10+48);
-                sum += n%10;
-                curr_temp = Arrays.copyOf(curr_temp,curr_temp.length+1);
-                new_number += Math.pow((n%10),2);
+            int sum = 0;
+            while (n != 0) {
+                curr_temp[curr_temp.length - 1] = (char) (n % 10 + 48);
+                sum += n % 10;
+                curr_temp = Arrays.copyOf(curr_temp, curr_temp.length + 1);
+                new_number += Math.pow((n % 10), 2);
                 n /= 10;
             }
-            if(sum==1)
+            if (sum == 1)
                 return true;
             n = new_number;
-            new_number=0;
+            new_number = 0;
             Arrays.sort(curr_temp);
-            if(!hset.add(new String(curr_temp)))
+            if (!hset.add(new String(curr_temp)))
                 return false;
-            System.out.println(n+":"+sum);
+            System.out.println(n + ":" + sum);
         }
     }
 
@@ -1711,31 +1637,29 @@ public class LeetCode {
     {
         System.out.println("Enter value");
         int val = sc.nextInt();
-        if(val==-1)
+        if (val == -1)
             return input_treenode;
         input_treenode = new TreeNode(val);
-        System.out.println("Left Node of "+val);
-        input_treenode.left =  create_binary_tree(input_treenode.left,sc);
-        System.out.println("Right node of "+val);
-        input_treenode.right = create_binary_tree(input_treenode.right,sc);
+        System.out.println("Left Node of " + val);
+        input_treenode.left = create_binary_tree(input_treenode.left, sc);
+        System.out.println("Right node of " + val);
+        input_treenode.right = create_binary_tree(input_treenode.right, sc);
         return input_treenode;
     }
 
-    public List<Integer> inorderTraversal(TreeNode root) {
+    public List<Integer> inorderTraversal(TreeNode root)
+    {
         Stack node_stack = new Stack();
         List<Integer> list = new ArrayList<>();
         TreeNode current_node = root;
-        while(!node_stack.empty() || current_node!=null)
-        {
-            while(current_node!=null)
-            {
+        while (!node_stack.empty() || current_node != null) {
+            while (current_node != null) {
                 node_stack.push(current_node);
                 current_node = current_node.left;
             }
-            while(current_node==null && !node_stack.empty())
-            {
+            while (current_node == null && !node_stack.empty()) {
                 list.add(((TreeNode) (node_stack.peek())).val);
-                System.out.print(((TreeNode) (node_stack.peek())).val+" ");
+                System.out.print(((TreeNode) (node_stack.peek())).val + " ");
                 current_node = ((TreeNode) (node_stack.pop())).right;
             }
         }
@@ -1743,36 +1667,37 @@ public class LeetCode {
     }
 
     /*
-    41. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-inorder-traversal/)
+    41. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-nodes-and-return-forest/)
         Given the root of a binary tree, each node in the tree has a distinct value.
 
         After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
         Return the roots of the trees in the remaining forest.  You may return the result in any order.
     */
 
-    public static boolean isForDeletion(int val,int[] del_arr)
+    public static boolean isForDeletion(int val, int[] del_arr)
     {
-        for(int del_val:del_arr)
-            if(del_val==val)
+        for (int del_val : del_arr)
+            if (del_val == val)
                 return true;
         return false;
     }
 
-    public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+    public List<TreeNode> delNodes(TreeNode root, int[] to_delete)
+    {
         List<TreeNode> list = new ArrayList<TreeNode>();
-        delNodesHelper(root,to_delete,list,true);
+        delNodesHelper(root, to_delete, list, true);
         return list;
     }
 
-    public static TreeNode delNodesHelper(TreeNode node,int[] to_delete,List<TreeNode> list,boolean is_root)
+    public static TreeNode delNodesHelper(TreeNode node, int[] to_delete, List<TreeNode> list, boolean is_root)
     {
-        if(node==null)
+        if (node == null)
             return null;
-        if(is_root && !isForDeletion(node.val,to_delete))
+        if (is_root && !isForDeletion(node.val, to_delete))
             list.add(node);
-        node.left = delNodesHelper(node.left,to_delete,list,isForDeletion(node.val,to_delete));
-        node.right = delNodesHelper(node.right,to_delete,list,isForDeletion(node.val,to_delete));
-        return isForDeletion(node.val,to_delete)?null:node;
+        node.left = delNodesHelper(node.left, to_delete, list, isForDeletion(node.val, to_delete));
+        node.right = delNodesHelper(node.right, to_delete, list, isForDeletion(node.val, to_delete));
+        return isForDeletion(node.val, to_delete) ? null : node;
     }
 
     /*
@@ -1784,46 +1709,43 @@ public class LeetCode {
 
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q)
     {
-        if(root==null || root==p || root==q)
+        if (root == null || root == p || root == q)
             return root;
-        TreeNode left = lowestCommonAncestor(root.left,p,q);
-        TreeNode right = lowestCommonAncestor(root.right,p,q);
-        if(left!=null && right!=null)
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if (left != null && right != null)
             return root;
-        if(left==null && right==null)
+        if (left == null && right == null)
             return null;
-        return left==null?right:left;
+        return left == null ? right : left;
     }
 
     public TreeNode lowestCommonAncestorIter(TreeNode root, TreeNode p, TreeNode q)
     {
         Stack bfs_stack = new Stack();
-        Map<TreeNode,TreeNode> parents_edges = new HashMap<TreeNode, TreeNode>();
+        Map<TreeNode, TreeNode> parents_edges = new HashMap<TreeNode, TreeNode>();
         TreeNode current_node = root;
         bfs_stack.push(current_node);
-        parents_edges.put(current_node,null);
-        while(!parents_edges.containsKey(p) || !parents_edges.containsKey(q))
-        {
+        parents_edges.put(current_node, null);
+        while (!parents_edges.containsKey(p) || !parents_edges.containsKey(q)) {
             current_node = (TreeNode) bfs_stack.pop();
-            if(current_node.left!=null)
-            {
+            if (current_node.left != null) {
                 bfs_stack.push(current_node.left);
-                parents_edges.put(current_node.left,current_node);;
+                parents_edges.put(current_node.left, current_node);
+                ;
             }
-            if(current_node.right!=null)
-            {
-                parents_edges.put(current_node.right,current_node);
+            if (current_node.right != null) {
+                parents_edges.put(current_node.right, current_node);
                 bfs_stack.push(current_node.right);
             }
         }
         HashSet<TreeNode> ancestor_path = new HashSet<>();
         ancestor_path.add(p);
-        while(p!=null &&parents_edges.containsKey(p))
-        {
+        while (p != null && parents_edges.containsKey(p)) {
             p = parents_edges.get(p);
             ancestor_path.add(p);
         }
-        while(!ancestor_path.contains(q))
+        while (!ancestor_path.contains(q))
             q = parents_edges.get(q);
 
         return q;
@@ -1840,35 +1762,32 @@ public class LeetCode {
 
     public int subarraySum_alt(int[] nums, int k) //DP approach
     {
-        int dp_arr[][] = new int[2][nums.length],count=0;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
+        int dp_arr[][] = new int[2][nums.length], count = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
             dp_arr[0][iterator_i] = nums[iterator_i];
-            if(nums[iterator_i]==k)
+            if (nums[iterator_i] == k)
                 count++;
         }
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-        {
-            for(int iterator_j=iterator_i;iterator_j<nums.length;iterator_j++)
-            {
-                if(dp_arr[0][iterator_j-1]+nums[iterator_j]==k)
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++) {
+            for (int iterator_j = iterator_i; iterator_j < nums.length; iterator_j++) {
+                if (dp_arr[0][iterator_j - 1] + nums[iterator_j] == k)
                     count++;
-                dp_arr[1][iterator_j] = dp_arr[0][iterator_j-1]+nums[iterator_j];
+                dp_arr[1][iterator_j] = dp_arr[0][iterator_j - 1] + nums[iterator_j];
             }
             dp_arr[0] = dp_arr[1].clone();
         }
         return count;
     }
+
     public int subarraySum(int[] nums, int k)
     {
-        HashMap<Integer,Integer> map = new HashMap<>();
-        map.put(0,1);
-        int sum=0,count=0;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0, count = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
             sum += nums[iterator_i];
-            count += map.getOrDefault(sum-k,0);
-            map.put(sum,map.getOrDefault(sum,0) +1);
+            count += map.getOrDefault(sum - k, 0);
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
         }
         return count;
     }
@@ -1885,17 +1804,16 @@ public class LeetCode {
 
     public int maxSubArray(int[] nums)
     {
-        int current_sum = Integer.MIN_VALUE,max_till_now = Integer.MIN_VALUE;
-        for(int curr_num: nums)
-        {
-            current_sum = (current_sum==Integer.MIN_VALUE || curr_num+current_sum<curr_num)?curr_num:current_sum+curr_num;
-            max_till_now =Math.max(max_till_now,current_sum);
+        int current_sum = Integer.MIN_VALUE, max_till_now = Integer.MIN_VALUE;
+        for (int curr_num : nums) {
+            current_sum = (current_sum == Integer.MIN_VALUE || curr_num + current_sum < curr_num) ? curr_num : current_sum + curr_num;
+            max_till_now = Math.max(max_till_now, current_sum);
         }
         return max_till_now;
     }
 
     /*
-    45. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-palindromic-substring/solution/)
+    45. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-palindromic-substring)
         Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
 
         Example 1:
@@ -1906,20 +1824,18 @@ public class LeetCode {
 
     public String longestPalindrome_alt(String s) // O(n^2) time and space
     {
-        if(s.length()==0)
+        if (s.length() == 0)
             return "";
         int dp_arr[][] = new int[s.length()][s.length()];
-        String max_palindrome=""+s.charAt(0);
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
+        String max_palindrome = "" + s.charAt(0);
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++)
             dp_arr[0][iterator_i] = 1;
 
-        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
-        {
-            for(int iterator_j=iterator_i;iterator_j<s.length();iterator_j++)
-            {
-                dp_arr[iterator_i][iterator_j] = ( (iterator_i>1?dp_arr[iterator_i-2][iterator_j-1] == 1:true) && s.charAt(iterator_j)==s.charAt(iterator_j-iterator_i))?1:0;
-                if(dp_arr[iterator_i][iterator_j]==1)
-                    max_palindrome = s.substring(iterator_j-iterator_i ,iterator_j+1);
+        for (int iterator_i = 1; iterator_i < s.length(); iterator_i++) {
+            for (int iterator_j = iterator_i; iterator_j < s.length(); iterator_j++) {
+                dp_arr[iterator_i][iterator_j] = ((iterator_i > 1 ? dp_arr[iterator_i - 2][iterator_j - 1] == 1 : true) && s.charAt(iterator_j) == s.charAt(iterator_j - iterator_i)) ? 1 : 0;
+                if (dp_arr[iterator_i][iterator_j] == 1)
+                    max_palindrome = s.substring(iterator_j - iterator_i, iterator_j + 1);
             }
         }
         return max_palindrome;
@@ -1928,29 +1844,26 @@ public class LeetCode {
     public String longestPalindrome(String s) // O(n^2) time  O(1)space
     {
         String max_palindrome = "";
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            String curr_pal = expandFromCenterPalindrome(s,iterator_i,iterator_i);
-            if(curr_pal.length()>max_palindrome.length())
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            String curr_pal = expandFromCenterPalindrome(s, iterator_i, iterator_i);
+            if (curr_pal.length() > max_palindrome.length())
                 max_palindrome = curr_pal;
-            if(iterator_i>0 && s.charAt(iterator_i-1)==s.charAt(iterator_i))
-            {
-                curr_pal = expandFromCenterPalindrome(s,iterator_i-1,iterator_i);
-                if(curr_pal.length()>max_palindrome.length())
+            if (iterator_i > 0 && s.charAt(iterator_i - 1) == s.charAt(iterator_i)) {
+                curr_pal = expandFromCenterPalindrome(s, iterator_i - 1, iterator_i);
+                if (curr_pal.length() > max_palindrome.length())
                     max_palindrome = curr_pal;
             }
         }
         return max_palindrome;
     }
 
-    public static String expandFromCenterPalindrome(String s, int left,int right)
+    public static String expandFromCenterPalindrome(String s, int left, int right)
     {
-        while(left>=0 && right<s.length() && s.charAt(left)==s.charAt(right))
-        {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
             left--;
             right++;
         }
-        return s.substring(left+1,right);
+        return s.substring(left + 1, right);
     }
 
     /*
@@ -1964,24 +1877,21 @@ public class LeetCode {
 
     public ListNode removeNthFromEnd(ListNode head, int n)
     {
-        ListNode slow_ptr=head,fast_ptr=head,prev_ptr=null;
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        ListNode slow_ptr = head, fast_ptr = head, prev_ptr = null;
+        for (int iterator_i = 0; iterator_i < n; iterator_i++)
             fast_ptr = fast_ptr.next;
-        while(fast_ptr!=null)
-        {
+        while (fast_ptr != null) {
             int slide = 0;
-            while(slide<n && fast_ptr!=null)
-            {
+            while (slide < n && fast_ptr != null) {
                 fast_ptr = fast_ptr.next;
                 slide++;
             }
-            for(int iterator_i=0;iterator_i<slide;iterator_i++)
-            {
+            for (int iterator_i = 0; iterator_i < slide; iterator_i++) {
                 prev_ptr = slow_ptr;
                 slow_ptr = slow_ptr.next;
             }
         }
-        if(prev_ptr!=null)
+        if (prev_ptr != null)
             prev_ptr.next = slow_ptr.next;
         else return head.next;
         return head;
@@ -1991,15 +1901,12 @@ public class LeetCode {
     {
         System.out.println("Enter number of items");
         int n = sc.nextInt();
-        ListNode return_node = null,current_node=null;
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
-            if(return_node==null) {
+        ListNode return_node = null, current_node = null;
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+            if (return_node == null) {
                 current_node = new ListNode(sc.nextInt());
                 return_node = current_node;
-            }
-            else
-            {
+            } else {
                 current_node.next = new ListNode(sc.nextInt());
                 current_node = current_node.next;
             }
@@ -2015,12 +1922,11 @@ public class LeetCode {
     */
     public int maxArea(int[] height)
     {
-        int left_ptr=0,right_ptr=height.length-1,max_area = Integer.MIN_VALUE;
-        while(left_ptr<right_ptr)
-        {
-            System.out.println(left_ptr+" "+right_ptr);
-            max_area = Math.max(max_area,Math.min(height[left_ptr],height[right_ptr])*(right_ptr-left_ptr));
-            if(height[left_ptr]<height[right_ptr])
+        int left_ptr = 0, right_ptr = height.length - 1, max_area = Integer.MIN_VALUE;
+        while (left_ptr < right_ptr) {
+            System.out.println(left_ptr + " " + right_ptr);
+            max_area = Math.max(max_area, Math.min(height[left_ptr], height[right_ptr]) * (right_ptr - left_ptr));
+            if (height[left_ptr] < height[right_ptr])
                 left_ptr++;
             else
                 right_ptr--;
@@ -2041,33 +1947,29 @@ public class LeetCode {
     public void sortColors(int[] nums)
     {
         int pos[] = new int[2];
-        pos[0]=-1;pos[1]=-1;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(nums[iterator_i]==0)
-            {
-                int temp = nums[pos[0]+1];
+        pos[0] = -1;
+        pos[1] = -1;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (nums[iterator_i] == 0) {
+                int temp = nums[pos[0] + 1];
                 nums[++pos[0]] = nums[iterator_i];
                 pos[1]++;
-                if(temp==1)
-                {
+                if (temp == 1) {
                     int temp1 = nums[pos[1]];
                     nums[pos[1]] = temp;
                     temp = temp1;
                 }
-                if(temp==2)
+                if (temp == 2)
+                    nums[iterator_i] = 2;
+            } else if (nums[iterator_i] == 1) {
+                int temp = nums[pos[1] + 1];
+                nums[++pos[1]] = nums[iterator_i];
+                if (temp == 2)
                     nums[iterator_i] = 2;
             }
-            else if(nums[iterator_i]==1)
-            {
-                int temp = nums[pos[1]+1];
-                nums[++pos[1]] = nums[iterator_i];
-                if(temp==2)
-                    nums[iterator_i]=2;
-            }
-            System.out.println(pos[0]+":"+pos[1]);
-            for(int iterator_k=0;iterator_k<nums.length;iterator_k++)
-                System.out.print(nums[iterator_k]+" ");
+            System.out.println(pos[0] + ":" + pos[1]);
+            for (int iterator_k = 0; iterator_k < nums.length; iterator_k++)
+                System.out.print(nums[iterator_k] + " ");
             System.out.println();
         }
     }
@@ -2084,28 +1986,25 @@ public class LeetCode {
     */
     public int[] searchRange(int[] nums, int target)
     {
-        int lb=0,ub=nums.length-1;
-        int return_range[] = {-1,-1};
-        while(lb<=ub)
-        {
-            int mid = (lb+ub)/2;
-            if(nums[mid]==target)
-            {
-                int front=mid,rear=mid;
-                while(front>=0 && nums[front] == target)
+        int lb = 0, ub = nums.length - 1;
+        int return_range[] = {-1, -1};
+        while (lb <= ub) {
+            int mid = (lb + ub) / 2;
+            if (nums[mid] == target) {
+                int front = mid, rear = mid;
+                while (front >= 0 && nums[front] == target)
                     front--;
-                while(rear<nums.length && nums[rear] == target)
+                while (rear < nums.length && nums[rear] == target)
                     rear++;
-                return_range[0] = front+1;
-                return_range[1] = rear-1;
+                return_range[0] = front + 1;
+                return_range[1] = rear - 1;
                 return return_range;
-            }
-            else if(nums[mid]>target && ((mid>0 && nums[mid-1]<target)||mid==0))
+            } else if (nums[mid] > target && ((mid > 0 && nums[mid - 1] < target) || mid == 0))
                 return return_range;
-            else if(nums[mid]>target)
-                ub = mid-1;
+            else if (nums[mid] > target)
+                ub = mid - 1;
             else
-                lb = mid+1;
+                lb = mid + 1;
         }
         return return_range;
     }
@@ -2122,11 +2021,10 @@ public class LeetCode {
     */
     public Node copyRandomList(Node head)
     {
-        if(head==null)
+        if (head == null)
             return head;
         Node temp = head;
-        while(temp!=null)
-        {
+        while (temp != null) {
             Node newnode = new Node(temp.val);
             newnode.next = temp.next;
             temp.next = newnode;
@@ -2134,20 +2032,18 @@ public class LeetCode {
         }
 
         temp = head;
-        while(temp!=null)
-        {
-            temp.next.random = (temp.random==null)?null:temp.random.next;;
+        while (temp != null) {
+            temp.next.random = (temp.random == null) ? null : temp.random.next;
+            ;
             temp = temp.next.next;
         }
-        Node return_head = null,return_temp=null;
-        temp=head;
-        while(temp!=null)
-        {
-            if(return_head==null) {
+        Node return_head = null, return_temp = null;
+        temp = head;
+        while (temp != null) {
+            if (return_head == null) {
                 return_head = temp.next;
                 return_temp = return_head;
-            }
-            else {
+            } else {
                 return_temp.next = temp.next;
                 return_temp = return_temp.next;
             }
@@ -2165,22 +2061,21 @@ public class LeetCode {
 
         Note: The length of temperatures will be in the range [1, 30000]. Each temperature will be an integer in the range [30, 100].
     */
-    public int[] dailyTemperatures_alt(int[] T) { // O(N*W) Time  O(W+N) Space
+    public int[] dailyTemperatures_alt(int[] T)
+    { // O(N*W) Time  O(W+N) Space
         int temperature_record[] = new int[70];
         int return_result[] = new int[T.length];
-        Arrays.fill(temperature_record,Integer.MAX_VALUE);
-        for(int iterator_i=T.length-1;iterator_i>=0;iterator_i--)
-        {
-            int current_pos = Integer.MAX_VALUE,current_valid_temp_found=0;
-            for(int iterator_j=T[iterator_i]-29;iterator_j<temperature_record.length && current_valid_temp_found<T.length-iterator_i-1 ;iterator_j++)
-            {
-                if(temperature_record[iterator_j]!=Integer.MAX_VALUE)
+        Arrays.fill(temperature_record, Integer.MAX_VALUE);
+        for (int iterator_i = T.length - 1; iterator_i >= 0; iterator_i--) {
+            int current_pos = Integer.MAX_VALUE, current_valid_temp_found = 0;
+            for (int iterator_j = T[iterator_i] - 29; iterator_j < temperature_record.length && current_valid_temp_found < T.length - iterator_i - 1; iterator_j++) {
+                if (temperature_record[iterator_j] != Integer.MAX_VALUE)
                     current_valid_temp_found++;
-                if(temperature_record[iterator_j]<current_pos)
+                if (temperature_record[iterator_j] < current_pos)
                     current_pos = temperature_record[iterator_j];
             }
-            temperature_record[T[iterator_i]-30] = iterator_i;
-            return_result[iterator_i] = (current_pos==Integer.MAX_VALUE)?0:current_pos-iterator_i;
+            temperature_record[T[iterator_i] - 30] = iterator_i;
+            return_result[iterator_i] = (current_pos == Integer.MAX_VALUE) ? 0 : current_pos - iterator_i;
         }
         return return_result;
     }
@@ -2189,15 +2084,14 @@ public class LeetCode {
     {
         Stack temp_stack = new Stack();
         int return_result[] = new int[T.length];
-        for(int iterator_i=T.length-1;iterator_i>=0;iterator_i--)
-        {
-            int next_ele = (temp_stack.empty())?-1:(int)temp_stack.peek();
-            while(!temp_stack.empty() && T[(int)temp_stack.peek()]<=T[iterator_i])
-                next_ele = (int)temp_stack.pop();
-            if(next_ele==-1 || temp_stack.isEmpty())
+        for (int iterator_i = T.length - 1; iterator_i >= 0; iterator_i--) {
+            int next_ele = (temp_stack.empty()) ? -1 : (int) temp_stack.peek();
+            while (!temp_stack.empty() && T[(int) temp_stack.peek()] <= T[iterator_i])
+                next_ele = (int) temp_stack.pop();
+            if (next_ele == -1 || temp_stack.isEmpty())
                 return_result[iterator_i] = 0;
             else
-                return_result[iterator_i] = (int)temp_stack.peek() - iterator_i;
+                return_result[iterator_i] = (int) temp_stack.peek() - iterator_i;
             temp_stack.push(iterator_i);
         }
         return return_result;
@@ -2209,7 +2103,7 @@ public class LeetCode {
     */
     public TreeNode invertTree(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return root;
         TreeNode right = invertTree(root.left);
         root.left = invertTree(root.right);
@@ -2221,17 +2115,16 @@ public class LeetCode {
     {
         Stack treenode_stack = new Stack();
         TreeNode current_node = root;
-        while(current_node!=null)
-        {
-            if(current_node.left!=null)
+        while (current_node != null) {
+            if (current_node.left != null)
                 treenode_stack.push(current_node.left);
-            if(current_node.right!=null)
+            if (current_node.right != null)
                 treenode_stack.push(current_node.right);
             TreeNode temp = current_node.left;
             current_node.left = current_node.right;
             current_node.right = temp;
 
-            current_node =  treenode_stack.empty()?null:(TreeNode)treenode_stack.pop();
+            current_node = treenode_stack.empty() ? null : (TreeNode) treenode_stack.pop();
         }
         return root;
     }
@@ -2243,13 +2136,12 @@ public class LeetCode {
     public boolean hasCycle(ListNode head)
     {
         ListNode slow_ptr = head, fast_ptr = head;
-        while(fast_ptr!=null)
-        {
-            if(fast_ptr.next==null)
+        while (fast_ptr != null) {
+            if (fast_ptr.next == null)
                 return false;
             fast_ptr = fast_ptr.next.next;
             slow_ptr = slow_ptr.next;
-            if(fast_ptr == slow_ptr)
+            if (fast_ptr == slow_ptr)
                 return true;
         }
         return false;
@@ -2264,23 +2156,21 @@ public class LeetCode {
     {
         ListNode slow_ptr = head, fast_ptr = head;
         boolean isCycle = false;
-        while(fast_ptr!=null)
-        {
-            if(fast_ptr.next==null)
+        while (fast_ptr != null) {
+            if (fast_ptr.next == null)
                 break;
             fast_ptr = fast_ptr.next.next;
             slow_ptr = slow_ptr.next;
-            if(fast_ptr == slow_ptr) {
+            if (fast_ptr == slow_ptr) {
                 isCycle = true;
                 break;
             }
         }
-        if(!isCycle)
+        if (!isCycle)
             return null;
 
         slow_ptr = head;
-        while(slow_ptr != fast_ptr)
-        {
+        while (slow_ptr != fast_ptr) {
             slow_ptr = slow_ptr.next;
             fast_ptr = fast_ptr.next;
         }
@@ -2297,32 +2187,29 @@ public class LeetCode {
     */
     public boolean isPalindrome(ListNode head)
     {
-        if(head==null || head.next==null)
+        if (head == null || head.next == null)
             return true;
         ListNode first = head;
         int count = 0;
-        while(first!=null)
-        {
+        while (first != null) {
             first = first.next;
             count++;
         }
         first = head;
-        for(int iterator_i=0;iterator_i<Math.ceil(count/2.0)-1;iterator_i++)
+        for (int iterator_i = 0; iterator_i < Math.ceil(count / 2.0) - 1; iterator_i++)
             first = first.next;
 
         ListNode prev_node = first;
         first = first.next;
-        for(int iterator_i=0;iterator_i<Math.floor(count/2.0);iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < Math.floor(count / 2.0); iterator_i++) {
             ListNode next_node = first.next;
             first.next = prev_node;
             prev_node = first;
-            if(next_node != null)
+            if (next_node != null)
                 first = next_node;
         }
-        for(int iterator_i=0;iterator_i<Math.floor(count/2.0);iterator_i++)
-        {
-            if(head.val != first.val)
+        for (int iterator_i = 0; iterator_i < Math.floor(count / 2.0); iterator_i++) {
+            if (head.val != first.val)
                 return false;
             head = head.next;
             first = first.next;
@@ -2342,14 +2229,12 @@ public class LeetCode {
     */
     public int majorityElement(int[] nums) // Boyer Moore Voting
     {
-        int current_ele =0,count_majority=0;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(count_majority==0) {
+        int current_ele = 0, count_majority = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (count_majority == 0) {
                 current_ele = nums[iterator_i];
                 count_majority = 1;
-            }
-            else if(current_ele == nums[iterator_i])
+            } else if (current_ele == nums[iterator_i])
                 count_majority++;
             else
                 count_majority--;
@@ -2368,44 +2253,40 @@ public class LeetCode {
     public int findKthLargest_alt(int[] nums, int k) // Priority Dueue
     {
         PriorityQueue pqueue = new PriorityQueue();
-        for(int num:nums)
-        {
+        for (int num : nums) {
             pqueue.offer(num);
-            while(pqueue.size()>k)
+            while (pqueue.size() > k)
                 pqueue.poll();
         }
-        return (int)pqueue.peek();
+        return (int) pqueue.peek();
     }
 
-    public int findKthLargest(int[] nums,int k)
+    public int findKthLargest(int[] nums, int k)
     {
-        int lb = 0,ub = nums.length-1;
-        k=nums.length-k;
-        while(lb<=ub)
-        {
+        int lb = 0, ub = nums.length - 1;
+        k = nums.length - k;
+        while (lb <= ub) {
             int s = findKthPartition(nums, lb, ub);
-            if(s<k)
-                lb = s+1;
-            else if(s>k)
-                ub = s-1;
+            if (s < k)
+                lb = s + 1;
+            else if (s > k)
+                ub = s - 1;
             else
                 return nums[s];
         }
         return -1;
     }
 
-    public static int findKthPartition(int[] nums,int lb, int ub)
+    public static int findKthPartition(int[] nums, int lb, int ub)
     {
-        int i=lb+1,j=ub;
-        while(i<=j)
-        {
-            while(i<=ub && nums[lb]>nums[i])
+        int i = lb + 1, j = ub;
+        while (i <= j) {
+            while (i <= ub && nums[lb] > nums[i])
                 i++;
-            while(j>=i && nums[j]>=nums[lb])
+            while (j >= i && nums[j] >= nums[lb])
                 j--;
 
-            if(i<j)
-            {
+            if (i < j) {
                 int temp = nums[i];
                 nums[i] = nums[j];
                 nums[j] = temp;
@@ -2426,13 +2307,13 @@ public class LeetCode {
     */
     public TreeNode mergeTrees(TreeNode t1, TreeNode t2)
     {
-        if(t1==null)
+        if (t1 == null)
             return t2;
-        if(t2 ==null)
+        if (t2 == null)
             return t1;
-        t1 .val = t1.val + t2.val;
-        t1.left = mergeTrees(t1.left,t2.left);
-        t1.right = mergeTrees(t1.right,t2.right);
+        t1.val = t1.val + t2.val;
+        t1.left = mergeTrees(t1.left, t2.left);
+        t1.right = mergeTrees(t1.right, t2.right);
         return t1;
     }
 
@@ -2452,50 +2333,42 @@ public class LeetCode {
     */
     public void gameOfLife(int[][] board)
     {
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
-                updateLivingCondition(board,iterator_i,iterator_j);
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++)
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++)
+                updateLivingCondition(board, iterator_i, iterator_j);
 
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
-            {
-                if(board[iterator_i][iterator_j]==2)
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++) {
+                if (board[iterator_i][iterator_j] == 2)
                     board[iterator_i][iterator_j] = 1;
-                else if(board[iterator_i][iterator_j]==-1)
+                else if (board[iterator_i][iterator_j] == -1)
                     board[iterator_i][iterator_j] = 0;
             }
         }
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
             for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++)
                 System.out.print(board[iterator_i][iterator_j] + " ");
             System.out.println();
         }
     }
 
-    public static void updateLivingCondition(int[][] board,int row, int col)
+    public static void updateLivingCondition(int[][] board, int row, int col)
     {
-        int offset[] ={-1,0,1},count_active_neighbors = 0;
-        for(int iterator_i=0;iterator_i<offset.length;iterator_i++)
-        {
+        int offset[] = {-1, 0, 1}, count_active_neighbors = 0;
+        for (int iterator_i = 0; iterator_i < offset.length; iterator_i++) {
 
-            for(int iterator_j=0;iterator_j<offset.length;iterator_j++)
-            {
-                if(row+offset[iterator_i]<0 || row+offset[iterator_i]>=board.length || col+offset[iterator_j]<0 || col+offset[iterator_j]>=board[0].length || (iterator_i==1 && iterator_j==1))
+            for (int iterator_j = 0; iterator_j < offset.length; iterator_j++) {
+                if (row + offset[iterator_i] < 0 || row + offset[iterator_i] >= board.length || col + offset[iterator_j] < 0 || col + offset[iterator_j] >= board[0].length || (iterator_i == 1 && iterator_j == 1))
                     continue;
-                if(board[row+offset[iterator_i]][col+offset[iterator_j]]==1 || board[row+offset[iterator_i]][col+offset[iterator_j]]==-1)
+                if (board[row + offset[iterator_i]][col + offset[iterator_j]] == 1 || board[row + offset[iterator_i]][col + offset[iterator_j]] == -1)
                     count_active_neighbors++;
             }
         }
-        if(board[row][col]==1)
-        {
-            if(count_active_neighbors<2 || count_active_neighbors>3)
+        if (board[row][col] == 1) {
+            if (count_active_neighbors < 2 || count_active_neighbors > 3)
                 board[row][col] = -1;
-        }
-        else
-        {
-            if(count_active_neighbors==3)
+        } else {
+            if (count_active_neighbors == 3)
                 board[row][col] = 2;
         }
     }
@@ -2513,7 +2386,8 @@ public class LeetCode {
           4   5
         Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
     */
-    int max_dia=0;
+    int max_dia = 0;
+
     public int diameterOfBinaryTree(TreeNode root)
     {
         depth(root);
@@ -2522,12 +2396,12 @@ public class LeetCode {
 
     public int depth(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return 0;
         int lheight = depth(root.left);
         int rheight = depth(root.right);
-        max_dia = Math.max(max_dia,lheight+rheight);
-        return 1+Math.max(lheight,rheight);
+        max_dia = Math.max(max_dia, lheight + rheight);
+        return 1 + Math.max(lheight, rheight);
     }
 
     /*
@@ -2537,23 +2411,21 @@ public class LeetCode {
     */
     public ListNode getIntersectionNode(ListNode headA, ListNode headB)
     {
-        ListNode list1 = headA, list2= headB;
-        if(headA==null || headB==null)
+        ListNode list1 = headA, list2 = headB;
+        if (headA == null || headB == null)
             return null;
         boolean cycle_completed = false;
-        while(list1!=list2)
-        {
-            if(list1.next==null) {
-                if(cycle_completed)
+        while (list1 != list2) {
+            if (list1.next == null) {
+                if (cycle_completed)
                     return null;
                 list1 = headB;
                 cycle_completed = true;
-            }
-            else
+            } else
                 list1 = list1.next;
 
-            if(list2.next==null)
-                list2=headA;
+            if (list2.next == null)
+                list2 = headA;
             else
                 list2 = list2.next;
         }
@@ -2571,12 +2443,11 @@ public class LeetCode {
     */
     public ListNode reverseList_alt(ListNode head) // Iter
     {
-        if(head==null)
+        if (head == null)
             return head;
-        ListNode prev_node = head,next_node = head.next;
+        ListNode prev_node = head, next_node = head.next;
         prev_node.next = null;
-        while(next_node!=null)
-        {
+        while (next_node != null) {
             ListNode temp = next_node.next;
             next_node.next = prev_node;
             prev_node = next_node;
@@ -2587,7 +2458,7 @@ public class LeetCode {
 
     public ListNode reverseList(ListNode head)
     {
-        if(head==null || head.next == null)
+        if (head == null || head.next == null)
             return head;
         ListNode temp = reverseList(head.next);
         head.next.next = head;
@@ -2614,14 +2485,13 @@ public class LeetCode {
     */
     public int rob(int[] nums)
     {
-       int max_prev1 = 0,max_prev2 = 0;
-       for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-       {
-           int temp = max_prev1;
-           max_prev1 = Math.max(max_prev2+nums[iterator_i],max_prev1);
-           max_prev2 = temp;
-       }
-       return max_prev1;
+        int max_prev1 = 0, max_prev2 = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            int temp = max_prev1;
+            max_prev1 = Math.max(max_prev2 + nums[iterator_i], max_prev1);
+            max_prev2 = temp;
+        }
+        return max_prev1;
     }
 
     /*
@@ -2667,11 +2537,10 @@ public class LeetCode {
     public List<Integer> findDisappearedNumbers(int[] nums)
     {
         List<Integer> list = new ArrayList<>();
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-            nums[Math.abs(nums[iterator_i])-1] = Math.min(nums[Math.abs(nums[iterator_i])-1],-nums[Math.abs(nums[iterator_i])-1]);
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(nums[iterator_i]>0) {
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++)
+            nums[Math.abs(nums[iterator_i]) - 1] = Math.min(nums[Math.abs(nums[iterator_i]) - 1], -nums[Math.abs(nums[iterator_i]) - 1]);
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (nums[iterator_i] > 0) {
                 System.out.println(iterator_i);
                 list.add(iterator_i);
             }
@@ -2706,7 +2575,7 @@ public class LeetCode {
     public int findTargetSumWays(int[] nums, int S) // Can also be done as Subset Sum Problem
     {
         // DP Programming
-        return findTargetSumWays_dp(nums,S);
+        return findTargetSumWays_dp(nums, S);
 
 
         // Memoization and Recursion
@@ -2719,57 +2588,52 @@ public class LeetCode {
 //        return findTargetSumWays_rcur(nums,S,0,0);
     }
 
-    public static int findTargetSumWays_rcur(int[] nums,int sum, int position,int current_sum)
+    public static int findTargetSumWays_rcur(int[] nums, int sum, int position, int current_sum)
     {
-        if(position==nums.length)
-        {
+        if (position == nums.length) {
             if (sum == current_sum)
                 return 1;
             return 0;
         }
-        return (findTargetSumWays_rcur(nums,sum,position+1,current_sum+nums[position]) +
-        findTargetSumWays_rcur(nums,sum,position+1,current_sum-nums[position]));
+        return (findTargetSumWays_rcur(nums, sum, position + 1, current_sum + nums[position]) +
+                findTargetSumWays_rcur(nums, sum, position + 1, current_sum - nums[position]));
     }
 
-    public static  int findTargetSumWays_memoization(int nums[],int sum,int position,int current_sum,int[][] mem_arr)
+    public static int findTargetSumWays_memoization(int nums[], int sum, int position, int current_sum, int[][] mem_arr)
     {
-        if(position<nums.length && mem_arr[position][current_sum+1000]!=Integer.MIN_VALUE)
-            return mem_arr[position][current_sum+1000];
-        if(position==nums.length)
-        {
-            if(current_sum==sum)
+        if (position < nums.length && mem_arr[position][current_sum + 1000] != Integer.MIN_VALUE)
+            return mem_arr[position][current_sum + 1000];
+        if (position == nums.length) {
+            if (current_sum == sum)
                 return 1;
             return 0;
         }
-        mem_arr[position][current_sum+1000] = findTargetSumWays_memoization(nums,sum,position+1,current_sum+nums[position],mem_arr)+ findTargetSumWays_memoization(nums,sum,position+1,current_sum-nums[position],mem_arr);
-        return mem_arr[position][current_sum+1000];
+        mem_arr[position][current_sum + 1000] = findTargetSumWays_memoization(nums, sum, position + 1, current_sum + nums[position], mem_arr) + findTargetSumWays_memoization(nums, sum, position + 1, current_sum - nums[position], mem_arr);
+        return mem_arr[position][current_sum + 1000];
     }
 
-    public static int findTargetSumWays_dp(int[] nums,int sum)
+    public static int findTargetSumWays_dp(int[] nums, int sum)
     {
-        int max_sum=0;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        int max_sum = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++)
             max_sum += nums[iterator_i];
-        int dp_prev[] = new int[max_sum*2+1],dp_curr[] = new int[max_sum*2+1];
-        Arrays.fill(dp_prev,Integer.MIN_VALUE);
+        int dp_prev[] = new int[max_sum * 2 + 1], dp_curr[] = new int[max_sum * 2 + 1];
+        Arrays.fill(dp_prev, Integer.MIN_VALUE);
 
-        dp_prev[max_sum+nums[0]] = 1;
-        dp_prev[max_sum-nums[0]] = dp_prev[max_sum-nums[0]]==Integer.MIN_VALUE?1:2;
+        dp_prev[max_sum + nums[0]] = 1;
+        dp_prev[max_sum - nums[0]] = dp_prev[max_sum - nums[0]] == Integer.MIN_VALUE ? 1 : 2;
 
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-        {
-            Arrays.fill(dp_curr,Integer.MIN_VALUE);
-            for(int iterator_j=0;iterator_j<max_sum*2+1;iterator_j++)
-            {
-                if(dp_prev[iterator_j]!=Integer.MIN_VALUE)
-                {
-                    dp_curr[iterator_j + nums[iterator_i]] = ((dp_curr[iterator_j + nums[iterator_i]]==Integer.MIN_VALUE)?dp_prev[iterator_j]:(dp_curr[iterator_j + nums[iterator_i]]+dp_prev[iterator_j]));
-                    dp_curr[iterator_j - nums[iterator_i]] = ((dp_curr[iterator_j - nums[iterator_i]]==Integer.MIN_VALUE)?dp_prev[iterator_j]:(dp_curr[iterator_j - nums[iterator_i]]+dp_prev[iterator_j]));
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++) {
+            Arrays.fill(dp_curr, Integer.MIN_VALUE);
+            for (int iterator_j = 0; iterator_j < max_sum * 2 + 1; iterator_j++) {
+                if (dp_prev[iterator_j] != Integer.MIN_VALUE) {
+                    dp_curr[iterator_j + nums[iterator_i]] = ((dp_curr[iterator_j + nums[iterator_i]] == Integer.MIN_VALUE) ? dp_prev[iterator_j] : (dp_curr[iterator_j + nums[iterator_i]] + dp_prev[iterator_j]));
+                    dp_curr[iterator_j - nums[iterator_i]] = ((dp_curr[iterator_j - nums[iterator_i]] == Integer.MIN_VALUE) ? dp_prev[iterator_j] : (dp_curr[iterator_j - nums[iterator_i]] + dp_prev[iterator_j]));
                 }
             }
-            dp_prev = Arrays.copyOf(dp_curr,dp_curr.length);
+            dp_prev = Arrays.copyOf(dp_curr, dp_curr.length);
         }
-        return ( sum>max_sum || dp_prev[sum+max_sum]==Integer.MIN_VALUE)?0:dp_prev[sum+max_sum];
+        return (sum > max_sum || dp_prev[sum + max_sum] == Integer.MIN_VALUE) ? 0 : dp_prev[sum + max_sum];
     }
 
     /*
@@ -2792,9 +2656,9 @@ public class LeetCode {
     */
     public int maxDepth(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return 0;
-        return 1+ Math.max(maxDepth(root.left),maxDepth(root.right));
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
     }
 
     /*
@@ -2823,9 +2687,11 @@ public class LeetCode {
                   6
     */
     TreeNode curr = null;
-    public void flatten(TreeNode root) {
-        if(root==null)
-            return ;
+
+    public void flatten(TreeNode root)
+    {
+        if (root == null)
+            return;
         flatten(root.left);
         flatten(root.right);
         root.right = curr;
@@ -2856,20 +2722,20 @@ public class LeetCode {
     public List<List<Integer>> subsets(int[] nums)
     {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
-        subsetsSpace(nums,new ArrayList<>(),0,list);
+        subsetsSpace(nums, new ArrayList<>(), 0, list);
         return null;
     }
 
-    public static void subsetsSpace(int[] nums, List<Integer> current_set,int position,List<List<Integer>> list)
+    public static void subsetsSpace(int[] nums, List<Integer> current_set, int position, List<List<Integer>> list)
     {
-        if(position==nums.length) {
-            list.add(new ArrayList<> (current_set));
+        if (position == nums.length) {
+            list.add(new ArrayList<>(current_set));
             return;
         }
-        subsetsSpace(nums,current_set,position+1,list);
+        subsetsSpace(nums, current_set, position + 1, list);
         current_set.add(nums[position]);
-        subsetsSpace(nums,current_set,position+1,list);
-        current_set.remove(current_set.size()-1);
+        subsetsSpace(nums, current_set, position + 1, list);
+        current_set.remove(current_set.size() - 1);
     }
 
     /*
@@ -2879,18 +2745,18 @@ public class LeetCode {
     */
     public boolean isSymmetric(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return true;
-        return isSymmetricHelper(root.left,root.right);
+        return isSymmetricHelper(root.left, root.right);
     }
 
     public boolean isSymmetricHelper(TreeNode left, TreeNode right)
     {
-        if(left==null && right==null)
+        if (left == null && right == null)
             return true;
-        if(left==null||right==null)
+        if (left == null || right == null)
             return false;
-        return isSymmetricHelper(left.left,left.right) && isSymmetricHelper(right.left,right.right) && left.val==right.val;
+        return isSymmetricHelper(left.left, left.right) && isSymmetricHelper(right.left, right.right) && left.val == right.val;
     }
 
     /*
@@ -2915,47 +2781,43 @@ public class LeetCode {
     {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
         Arrays.sort(nums);
-        subsetsWithDupSpace(nums,list,new ArrayList<Integer>(),0);
+        subsetsWithDupSpace(nums, list, new ArrayList<Integer>(), 0);
         return list;
     }
 
 
-    public void subsetsWithDupSpace(int[] nums,List<List<Integer>> list,List<Integer> current_set,int position)
+    public void subsetsWithDupSpace(int[] nums, List<List<Integer>> list, List<Integer> current_set, int position)
     {
-        if(position==nums.length)
-        {
+        if (position == nums.length) {
             list.add(new ArrayList<>(current_set));
             return;
         }
         current_set.add(nums[position]);
-        subsetsWithDupSpace(nums,list,current_set,++position);
-        current_set.remove(current_set.size()-1);
-        while(position<nums.length && nums[position]==nums[position-1])
+        subsetsWithDupSpace(nums, list, current_set, ++position);
+        current_set.remove(current_set.size() - 1);
+        while (position < nums.length && nums[position] == nums[position - 1])
             position++;
-        subsetsWithDupSpace(nums,list,current_set,position);
+        subsetsWithDupSpace(nums, list, current_set, position);
     }
 
     public List<List<Integer>> subsetsWithDup_iter(int[] nums)
     {
-        List<List<Integer>> list= new ArrayList<List<Integer>>();
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
         Arrays.sort(nums);
         list.add(new ArrayList<>());
-        int count=0;
-        for(int i=0;i<nums.length;i+=count)
-        {
-            count=0;
-            while(i+count<nums.length && nums[i+count]==nums[i])
+        int count = 0;
+        for (int i = 0; i < nums.length; i += count) {
+            count = 0;
+            while (i + count < nums.length && nums[i + count] == nums[i])
                 count++;
             int count_prev_sets = list.size();
-            for(int subset_iterator=0;subset_iterator<count_prev_sets;subset_iterator++)
-            {
+            for (int subset_iterator = 0; subset_iterator < count_prev_sets; subset_iterator++) {
                 List<Integer> prev_set = new ArrayList<>(list.get(subset_iterator));
-                for(int addition_iterator=0;addition_iterator<count;addition_iterator++)
-                {
-                    prev_set.add(nums[i+addition_iterator]);
+                for (int addition_iterator = 0; addition_iterator < count; addition_iterator++) {
+                    prev_set.add(nums[i + addition_iterator]);
                     list.add(new ArrayList<>(prev_set));
-                    for(Integer setval:prev_set)
-                        System.out.print(setval+" ");
+                    for (Integer setval : prev_set)
+                        System.out.print(setval + " ");
                     System.out.println();
                 }
             }
@@ -2984,18 +2846,16 @@ public class LeetCode {
     public boolean canJump(int[] nums)
     {
         int zero_pos = 1;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(zero_pos<=iterator_i)
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (zero_pos <= iterator_i)
                 return false;
-            while(zero_pos<nums.length)
-            {
-                if(nums[iterator_i]+iterator_i>=zero_pos)
+            while (zero_pos < nums.length) {
+                if (nums[iterator_i] + iterator_i >= zero_pos)
                     zero_pos++;
                 else
                     break;
             }
-            if(zero_pos==nums.length)
+            if (zero_pos == nums.length)
                 return true;
         }
         return false;
@@ -3019,22 +2879,19 @@ public class LeetCode {
     */
     public List<List<String>> groupAnagrams(String[] strs)
     {
-        HashMap<String,List<String>> hmap = new HashMap<String,List<String>>();
+        HashMap<String, List<String>> hmap = new HashMap<String, List<String>>();
         String key;
         int count[] = new int[26];
-        for(int iterator_i=0;iterator_i<strs.length;iterator_i++)
-        {
-            Arrays.fill(count,0);
-            for(int iterator_j=0;iterator_j<strs[iterator_i].length();iterator_j++)
-                count[strs[iterator_i].charAt(iterator_j)-'a']++;
+        for (int iterator_i = 0; iterator_i < strs.length; iterator_i++) {
+            Arrays.fill(count, 0);
+            for (int iterator_j = 0; iterator_j < strs[iterator_i].length(); iterator_j++)
+                count[strs[iterator_i].charAt(iterator_j) - 'a']++;
             key = Arrays.toString(count);
-            if(hmap.containsKey(key))
-            {
+            if (hmap.containsKey(key)) {
                 List<String> curr_list = hmap.get(key);
                 curr_list.add(strs[iterator_i]);
-            }
-            else
-                hmap.put(key,new ArrayList<>(Arrays.asList(strs[iterator_i])));
+            } else
+                hmap.put(key, new ArrayList<>(Arrays.asList(strs[iterator_i])));
         }
         return new ArrayList<>(hmap.values());
     }
@@ -3066,46 +2923,41 @@ public class LeetCode {
     */
     public int uniquePaths_alt(int m, int n) // TLE
     {
-        int dp_prev[][] = new int[m][n],dp_next[][] = new int[m][n];
+        int dp_prev[][] = new int[m][n], dp_next[][] = new int[m][n];
         dp_prev[0][0] = 1;
-        HashSet<String> current_set = new HashSet<String>(),next_set;
+        HashSet<String> current_set = new HashSet<String>(), next_set;
         current_set.add("00");
-        while(current_set.size()!=1 || !current_set.contains((m-1)+""+(n-1)))
-        {
+        while (current_set.size() != 1 || !current_set.contains((m - 1) + "" + (n - 1))) {
             next_set = new HashSet<String>();
-            for(String s:current_set)
-            {
-                int i = s.charAt(0)-'0',j=s.charAt(1)-'0';
-                if(i<m-1)
-                {
+            for (String s : current_set) {
+                int i = s.charAt(0) - '0', j = s.charAt(1) - '0';
+                if (i < m - 1) {
                     dp_next[i + 1][j] += dp_prev[i][j];
-                    next_set.add(((i+1)+""+j));
+                    next_set.add(((i + 1) + "" + j));
                 }
-                if(j<n-1)
-                {
+                if (j < n - 1) {
                     dp_next[i][j + 1] += dp_prev[i][j];
-                    next_set.add(i+""+(j+1));
+                    next_set.add(i + "" + (j + 1));
                 }
             }
             current_set = (HashSet<String>) next_set.clone();
-            for(int iterator_i=0;iterator_i<m;iterator_i++)
-            {
-                dp_prev[iterator_i] = Arrays.copyOf(dp_next[iterator_i],dp_next[iterator_i].length);
-                Arrays.fill(dp_next[iterator_i],0);
+            for (int iterator_i = 0; iterator_i < m; iterator_i++) {
+                dp_prev[iterator_i] = Arrays.copyOf(dp_next[iterator_i], dp_next[iterator_i].length);
+                Arrays.fill(dp_next[iterator_i], 0);
             }
 
         }
-        return dp_prev[m-1][n-1];
+        return dp_prev[m - 1][n - 1];
     }
 
     public int uniquePaths(int m, int n)
     {
         int curr[] = new int[n];
-        Arrays.fill(curr,1);
-        for(int iterator_i=1;iterator_i<m;iterator_i++)
-            for(int iterator_j=1;iterator_j<n;iterator_j++)
-                curr[iterator_j] = curr[iterator_j] + curr[iterator_j-1];
-        return curr[n-1];
+        Arrays.fill(curr, 1);
+        for (int iterator_i = 1; iterator_i < m; iterator_i++)
+            for (int iterator_j = 1; iterator_j < n; iterator_j++)
+                curr[iterator_j] = curr[iterator_j] + curr[iterator_j - 1];
+        return curr[n - 1];
     }
 
     /*
@@ -3126,15 +2978,14 @@ public class LeetCode {
     */
     public int minPathSum(int[][] grid)
     {
-        int dp_next[] = Arrays.copyOf(grid[0],grid[0].length);
-        for(int iterator_i=1;iterator_i<dp_next.length;iterator_i++)
-            dp_next[iterator_i] += dp_next[iterator_i-1];
-        for(int iterator_i=1;iterator_i<grid.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
-                dp_next[iterator_j] = grid[iterator_i][iterator_j] + Math.min(dp_next[iterator_j],(iterator_j==0?Integer.MAX_VALUE:dp_next[iterator_j-1]));
+        int dp_next[] = Arrays.copyOf(grid[0], grid[0].length);
+        for (int iterator_i = 1; iterator_i < dp_next.length; iterator_i++)
+            dp_next[iterator_i] += dp_next[iterator_i - 1];
+        for (int iterator_i = 1; iterator_i < grid.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < grid[0].length; iterator_j++)
+                dp_next[iterator_j] = grid[iterator_i][iterator_j] + Math.min(dp_next[iterator_j], (iterator_j == 0 ? Integer.MAX_VALUE : dp_next[iterator_j - 1]));
         }
-        return dp_next[dp_next.length-1];
+        return dp_next[dp_next.length - 1];
     }
 
     /*
@@ -3161,20 +3012,17 @@ public class LeetCode {
         Queue<TreeNode> queue = new LinkedList<TreeNode>();
         int nodes_in_level;
         queue.add(root);
-        while(!queue.isEmpty())
-        {
-            int iterator_level=0;
+        while (!queue.isEmpty()) {
+            int iterator_level = 0;
             nodes_in_level = queue.size();
             List<Integer> current_level_list = new ArrayList<Integer>();
-            while(iterator_level<nodes_in_level)
-            {
+            while (iterator_level < nodes_in_level) {
                 TreeNode curr_node = queue.remove();
-                if(curr_node!=null)
-                {
+                if (curr_node != null) {
                     current_level_list.add(curr_node.val);
-                    if(curr_node.left!=null)
+                    if (curr_node.left != null)
                         queue.add(curr_node.left);
-                    if(curr_node.right!=null)
+                    if (curr_node.right != null)
                         queue.add(curr_node.right);
                 }
                 iterator_level++;
@@ -3187,20 +3035,20 @@ public class LeetCode {
     public List<List<Integer>> levelOrder(TreeNode root)
     {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
-        levelOrderRcurSpace(root,list,0);
+        levelOrderRcurSpace(root, list, 0);
         return list;
     }
 
-    public static void levelOrderRcurSpace(TreeNode root,List<List<Integer>> list,int height)
+    public static void levelOrderRcurSpace(TreeNode root, List<List<Integer>> list, int height)
     {
-        if(root==null)
+        if (root == null)
             return;
-        if(height==list.size())
+        if (height == list.size())
             list.add(new ArrayList<>());
         list.get(height).add(root.val);
 
-        levelOrderRcurSpace(root.left,list,height+1);
-        levelOrderRcurSpace(root.right,list,height+1);
+        levelOrderRcurSpace(root.left, list, height + 1);
+        levelOrderRcurSpace(root.right, list, height + 1);
     }
 
     /*
@@ -3214,19 +3062,18 @@ public class LeetCode {
     */
     public boolean isValidBST(TreeNode root)
     {
-        return isValidBSTHelper(root,Long.MAX_VALUE,Long.MIN_VALUE);
+        return isValidBSTHelper(root, Long.MAX_VALUE, Long.MIN_VALUE);
     }
 
-    public static boolean isValidBSTHelper(TreeNode root,long max_allowed,long min_allowed)
+    public static boolean isValidBSTHelper(TreeNode root, long max_allowed, long min_allowed)
     {
-        if(root==null)
+        if (root == null)
             return true;
 
-        if(root.val<max_allowed  && root.val>min_allowed )
-        {
-            Long max_allowed_new =Math.min(max_allowed,root.val);
-            Long min_allowed_new =Math.max(min_allowed,root.val);
-            return isValidBSTHelper(root.left,max_allowed_new,min_allowed) && isValidBSTHelper(root.right,max_allowed,min_allowed_new);
+        if (root.val < max_allowed && root.val > min_allowed) {
+            Long max_allowed_new = Math.min(max_allowed, root.val);
+            Long min_allowed_new = Math.max(min_allowed, root.val);
+            return isValidBSTHelper(root.left, max_allowed_new, min_allowed) && isValidBSTHelper(root.right, max_allowed, min_allowed_new);
         }
         return false;
     }
@@ -3259,24 +3106,22 @@ public class LeetCode {
     */
     public boolean exist(char[][] board, String word)
     {
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<board[0].length;iterator_j++)
-            {
-                if(existRcurSpace(board,word,0,iterator_i,iterator_j))
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++) {
+                if (existRcurSpace(board, word, 0, iterator_i, iterator_j))
                     return true;
             }
         }
         return false;
     }
 
-    public static boolean existRcurSpace(char[][] board,String word,int word_pos,int board_x,int board_y)
+    public static boolean existRcurSpace(char[][] board, String word, int word_pos, int board_x, int board_y)
     {
-        boolean existence_found=false;
-        if(board_x<0||board_x==board.length||board_y<0||board_y==board[0].length||board[board_x][board_y]!=word.charAt(word_pos))
+        boolean existence_found = false;
+        if (board_x < 0 || board_x == board.length || board_y < 0 || board_y == board[0].length || board[board_x][board_y] != word.charAt(word_pos))
             return false;
-        if(word_pos == word.length()-1)
-                return true;
+        if (word_pos == word.length() - 1)
+            return true;
 
         board[board_x][board_y] ^= 256;
         existence_found = (existRcurSpace(board, word, word_pos + 1, board_x - 1, board_y) ||
@@ -3305,8 +3150,8 @@ public class LeetCode {
     public boolean containsDuplicate(int[] nums)
     {
         HashSet<Integer> set = new HashSet<>();
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-            if(!set.add(nums[iterator_i]))
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++)
+            if (!set.add(nums[iterator_i]))
                 return true;
         return false;
     }
@@ -3320,19 +3165,16 @@ public class LeetCode {
             Output: 4
             Explanation: There are 4 prime numbers less than 10, they are 2, 3, 5, 7.
     */
-    public int countPrimes(int n) {
-        if(n<3)
+    public int countPrimes(int n)
+    {
+        if (n < 3)
             return 0;
         boolean prime_arr[] = new boolean[n];
-        int count = n/2;
-        for(int iterator_i=3;iterator_i*iterator_i<n;iterator_i+=2)
-        {
-            if(!prime_arr[iterator_i])
-            {
-                for(int j = iterator_i*iterator_i;j<n;j+=2*iterator_i)
-                {
-                    if(!prime_arr[j])
-                    {
+        int count = n / 2;
+        for (int iterator_i = 3; iterator_i * iterator_i < n; iterator_i += 2) {
+            if (!prime_arr[iterator_i]) {
+                for (int j = iterator_i * iterator_i; j < n; j += 2 * iterator_i) {
+                    if (!prime_arr[j]) {
                         prime_arr[j] = true;
                         count--;
                     }
@@ -3365,30 +3207,27 @@ public class LeetCode {
     */
     public int numIslands(char[][] grid)
     {
-        int count_islands=0;
-        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
-            {
-                if(grid[iterator_i][iterator_j]=='1')
-                {
+        int count_islands = 0;
+        for (int iterator_i = 0; iterator_i < grid.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < grid[0].length; iterator_j++) {
+                if (grid[iterator_i][iterator_j] == '1') {
                     sinkIsland(grid, iterator_i, iterator_j);
                     count_islands++;
                 }
             }
         }
-        return  count_islands;
+        return count_islands;
     }
 
-    public static void sinkIsland(char[][] grid,int pos_row,int pos_col)
+    public static void sinkIsland(char[][] grid, int pos_row, int pos_col)
     {
-        if(pos_col<0 || pos_col==grid[0].length || pos_row<0 || pos_row==grid.length || grid[pos_row][pos_col]=='0')
+        if (pos_col < 0 || pos_col == grid[0].length || pos_row < 0 || pos_row == grid.length || grid[pos_row][pos_col] == '0')
             return;
         grid[pos_row][pos_col] = '0';
-        sinkIsland(grid,pos_row-1,pos_col);
-        sinkIsland(grid,pos_row+1,pos_col);
-        sinkIsland(grid,pos_row,pos_col-1);
-        sinkIsland(grid,pos_row,pos_col+1);
+        sinkIsland(grid, pos_row - 1, pos_col);
+        sinkIsland(grid, pos_row + 1, pos_col);
+        sinkIsland(grid, pos_row, pos_col - 1);
+        sinkIsland(grid, pos_row, pos_col + 1);
     }
 
     /*
@@ -3411,14 +3250,13 @@ public class LeetCode {
     */
     public int findPeakElement(int[] nums)
     {
-        int lb=0,ub=nums.length-1,mid;
-        while(lb<=ub)
-        {
-            mid = (lb+ub)/2;
-            if(mid>0 && nums[mid-1]>nums[mid])
-                ub = mid-1;
-            else if(mid<nums.length-1 && nums[mid+1]>nums[mid])
-                lb = mid+1;
+        int lb = 0, ub = nums.length - 1, mid;
+        while (lb <= ub) {
+            mid = (lb + ub) / 2;
+            if (mid > 0 && nums[mid - 1] > nums[mid])
+                ub = mid - 1;
+            else if (mid < nums.length - 1 && nums[mid + 1] > nums[mid])
+                lb = mid + 1;
             else
                 return mid;
         }
@@ -3455,18 +3293,17 @@ public class LeetCode {
     public List<String> fizzBuzz(int n)
     {
         List<String> list = new ArrayList<>();
-        HashMap<Integer,String> divisibility_ruleset = new HashMap();
-        divisibility_ruleset.put(3,"Fizz");
-        divisibility_ruleset.put(5,"Buzz");
-        for(int i=1;i<=n;i++)
-        {
+        HashMap<Integer, String> divisibility_ruleset = new HashMap();
+        divisibility_ruleset.put(3, "Fizz");
+        divisibility_ruleset.put(5, "Buzz");
+        for (int i = 1; i <= n; i++) {
             String curr_string = "";
-            for(Integer div_rule:divisibility_ruleset.keySet())
-                if(i%div_rule==0)
+            for (Integer div_rule : divisibility_ruleset.keySet())
+                if (i % div_rule == 0)
                     curr_string += divisibility_ruleset.get(div_rule);
 
-            if(curr_string.length()==0)
-                list.add(i+"");
+            if (curr_string.length() == 0)
+                list.add(i + "");
             else
                 list.add(curr_string);
         }
@@ -3493,52 +3330,50 @@ public class LeetCode {
     public int kthSmallest_alt(int[][] matrix, int k)
     {
         PriorityQueue<Tuple> prio_queue = new PriorityQueue<Tuple>();
-        for(int iterator_i=0;iterator_i<matrix[0].length;iterator_i++)
-            prio_queue.add(new Tuple(0,iterator_i,matrix[0][iterator_i]));
+        for (int iterator_i = 0; iterator_i < matrix[0].length; iterator_i++)
+            prio_queue.add(new Tuple(0, iterator_i, matrix[0][iterator_i]));
 
-        for(int iterator_i=1;iterator_i<k;iterator_i++)
-        {
+        for (int iterator_i = 1; iterator_i < k; iterator_i++) {
             Tuple lowestEle = prio_queue.poll();
-            if(lowestEle.pos_x==matrix.length-1)
+            if (lowestEle.pos_x == matrix.length - 1)
                 continue;
-            prio_queue.add(new Tuple(lowestEle.pos_x+1,lowestEle.pos_y,matrix[lowestEle.pos_x+1][lowestEle.pos_y]));
+            prio_queue.add(new Tuple(lowestEle.pos_x + 1, lowestEle.pos_y, matrix[lowestEle.pos_x + 1][lowestEle.pos_y]));
         }
         return prio_queue.peek().val;
     }
 
-    static int closest_val, far_val ;
+    static int closest_val, far_val;
+
     public int kthSmallest(int[][] matrix, int k)
     {
-        int lb=matrix[0][0],ub=matrix[matrix.length-1][matrix[0].length-1],mid,count_lesser;
-        while(lb<ub)
-        {
-            mid = lb +(ub-lb)/2;
-            count_lesser = count_for_kthSmallest(matrix,mid);
-            if(count_lesser>k)
+        int lb = matrix[0][0], ub = matrix[matrix.length - 1][matrix[0].length - 1], mid, count_lesser;
+        while (lb < ub) {
+            mid = lb + (ub - lb) / 2;
+            count_lesser = count_for_kthSmallest(matrix, mid);
+            if (count_lesser > k)
                 ub = mid - closest_val;
-            else if(count_lesser<k)
-                lb = mid+far_val;
+            else if (count_lesser < k)
+                lb = mid + far_val;
             else
                 return mid - closest_val;
         }
         return lb;
     }
 
-    public static int count_for_kthSmallest(int matrix[][],int mid)
+    public static int count_for_kthSmallest(int matrix[][], int mid)
     {
         closest_val = Integer.MAX_VALUE;
         far_val = Integer.MAX_VALUE;
         int count = 0;
-        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
-        {
-            int iterator_j=0;
-            while(iterator_j<matrix[0].length && matrix[iterator_i][iterator_j]<=mid) {
-                closest_val = Math.min(closest_val,mid - matrix[iterator_i][iterator_j]);
+        for (int iterator_i = 0; iterator_i < matrix.length; iterator_i++) {
+            int iterator_j = 0;
+            while (iterator_j < matrix[0].length && matrix[iterator_i][iterator_j] <= mid) {
+                closest_val = Math.min(closest_val, mid - matrix[iterator_i][iterator_j]);
                 iterator_j++;
                 count++;
             }
-            while(iterator_j<matrix[0].length) {
-                far_val = Math.min(far_val,matrix[iterator_i][iterator_j]-mid);
+            while (iterator_j < matrix[0].length) {
+                far_val = Math.min(far_val, matrix[iterator_i][iterator_j] - mid);
                 iterator_j++;
             }
         }
@@ -3565,20 +3400,18 @@ public class LeetCode {
     */
     public ListNode oddEvenList(ListNode head)
     {
-        if(head == null || head.next==null)
+        if (head == null || head.next == null)
             return head;
         int count = 0;
-        ListNode odd_ptr_tail = head, even_ptr_tail = head.next, curr_ptr=head.next.next;
-        while(curr_ptr != null)
-        {
-            if(count%2==0) //Odd Sequence
+        ListNode odd_ptr_tail = head, even_ptr_tail = head.next, curr_ptr = head.next.next;
+        while (curr_ptr != null) {
+            if (count % 2 == 0) //Odd Sequence
             {
                 even_ptr_tail.next = curr_ptr.next;
                 curr_ptr.next = odd_ptr_tail.next;
                 odd_ptr_tail.next = curr_ptr;
                 odd_ptr_tail = odd_ptr_tail.next;
-            }
-            else
+            } else
                 even_ptr_tail = even_ptr_tail.next;
             curr_ptr = even_ptr_tail.next;
             count++;
@@ -3607,16 +3440,14 @@ public class LeetCode {
     public int findDuplicate(int[] nums)
     {
         int slow_ptr = nums[0], fast_ptr = nums[0];
-        do
-        {
+        do {
             slow_ptr = nums[slow_ptr];
             fast_ptr = nums[nums[fast_ptr]];
-        }while(slow_ptr!=fast_ptr);
+        } while (slow_ptr != fast_ptr);
 
         // Since Cycle formed, get point of intersection
         slow_ptr = nums[0];
-        while(slow_ptr!=fast_ptr)
-        {
+        while (slow_ptr != fast_ptr) {
             slow_ptr = nums[slow_ptr];
             fast_ptr = nums[fast_ptr];
         }
@@ -3639,24 +3470,24 @@ public class LeetCode {
         Note:
             You may assume the string contains only lowercase alphabets.
     */
-    public boolean isAnagram(String s, String t) { // Generic Solution Use
-        if(s.length()!=t.length())
+    public boolean isAnagram(String s, String t)
+    { // Generic Solution Use
+        if (s.length() != t.length())
             return false;
-        HashMap<Character,Integer> char_hmap = new HashMap<>();
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-            char_hmap.put(s.charAt(iterator_i),char_hmap.getOrDefault(s.charAt(iterator_i),0)+1);
+        HashMap<Character, Integer> char_hmap = new HashMap<>();
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++)
+            char_hmap.put(s.charAt(iterator_i), char_hmap.getOrDefault(s.charAt(iterator_i), 0) + 1);
 
-        for(int iterator_i=0;iterator_i<t.length();iterator_i++)
-        {
-            int new_val = char_hmap.getOrDefault(t.charAt(iterator_i),-1);
-            if(new_val<=0)
+        for (int iterator_i = 0; iterator_i < t.length(); iterator_i++) {
+            int new_val = char_hmap.getOrDefault(t.charAt(iterator_i), -1);
+            if (new_val <= 0)
                 return false;
-            if(new_val>1)
-                char_hmap.put(t.charAt(iterator_i),new_val-1);
+            if (new_val > 1)
+                char_hmap.put(t.charAt(iterator_i), new_val - 1);
             else
                 char_hmap.remove(t.charAt(iterator_i));
         }
-        if(char_hmap.isEmpty())
+        if (char_hmap.isEmpty())
             return true;
         return false;
     }
@@ -3676,15 +3507,14 @@ public class LeetCode {
     public int[] productExceptSelf(int[] nums)
     {
         int result_arr[] = new int[nums.length];
-        result_arr[0] =1;
+        result_arr[0] = 1;
         // Store product from left of element
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-            result_arr[iterator_i] = result_arr[iterator_i-1]* nums[iterator_i-1];
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++)
+            result_arr[iterator_i] = result_arr[iterator_i - 1] * nums[iterator_i - 1];
 
         // Combine result with right products
         int curr_right_product = 1;
-        for(int iterator_i=nums.length-1;iterator_i>=0;iterator_i--)
-        {
+        for (int iterator_i = nums.length - 1; iterator_i >= 0; iterator_i--) {
             result_arr[iterator_i] *= curr_right_product;
             curr_right_product *= nums[iterator_i];
         }
@@ -3707,7 +3537,8 @@ public class LeetCode {
 
         Note: Your solution should be in logarithmic time complexity.
     */
-    public int trailingZeroes(int n) {
+    public int trailingZeroes(int n)
+    {
         int count = 0;
         while (n != 0) {
             int tmp = n / 5;
@@ -3741,15 +3572,13 @@ public class LeetCode {
         Stack<Integer> operator_stack = new Stack<>();
         Stack<Character> operand_stack = new Stack<>();
         int iterator_i = 0;
-        while(iterator_i<s.length())
-        {
+        while (iterator_i < s.length()) {
             char c = s.charAt(iterator_i);
-            if(c==' '||c=='\t') {
+            if (c == ' ' || c == '\t') {
                 iterator_i++;
                 continue;
             }
-            if(c>='0' && c<='9')
-            {
+            if (c >= '0' && c <= '9') {
                 int next_num = 0;
                 while (iterator_i < s.length() && s.charAt(iterator_i) >= '0' && s.charAt(iterator_i) <= '9') {
                     c = s.charAt(iterator_i);
@@ -3757,15 +3586,12 @@ public class LeetCode {
                     iterator_i++;
                 }
                 operator_stack.push(next_num);
-            }
-            else //Operand
+            } else //Operand
             {
-                if(operand_stack.isEmpty() || isPriorityHigher(operand_stack.peek(),c))
+                if (operand_stack.isEmpty() || isPriorityHigher(operand_stack.peek(), c))
                     operand_stack.push(c);
-                else
-                {
-                    while(!operand_stack.isEmpty() && !isPriorityHigher(operand_stack.peek(),c))
-                    {
+                else {
+                    while (!operand_stack.isEmpty() && !isPriorityHigher(operand_stack.peek(), c)) {
                         int operator2 = operator_stack.pop();
                         int operator1 = operator_stack.pop();
                         char ch = operand_stack.pop();
@@ -3790,7 +3616,7 @@ public class LeetCode {
                 iterator_i++;
             }
         }
-        while(!operand_stack.empty()) {
+        while (!operand_stack.empty()) {
             int operator2 = operator_stack.pop();
             int operator1 = operator_stack.pop();
             char c = operand_stack.pop();
@@ -3812,9 +3638,9 @@ public class LeetCode {
         return operator_stack.pop();
     }
 
-    public static boolean isPriorityHigher(char stack_top,char current_operand)
+    public static boolean isPriorityHigher(char stack_top, char current_operand)
     {
-        if((stack_top=='+'||stack_top=='-')&&(current_operand=='*' || current_operand=='/'))
+        if ((stack_top == '+' || stack_top == '-') && (current_operand == '*' || current_operand == '/'))
             return true;
         return false;
     }
@@ -3822,17 +3648,14 @@ public class LeetCode {
     public int calculate(String s)
     {
         char sign = '+';
-        int result_till_now = 0, prev_add = 0,curr_num=0;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
+        int result_till_now = 0, prev_add = 0, curr_num = 0;
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
             char c = s.charAt(iterator_i);
-            if(Character.isDigit(c))
+            if (Character.isDigit(c))
                 curr_num = curr_num * 10 + (int) (s.charAt(iterator_i) - '0');
 
-            if ("*/+-".contains(c+"")||iterator_i==s.length()-1)
-            {
-                switch (sign)
-                {
+            if ("*/+-".contains(c + "") || iterator_i == s.length() - 1) {
+                switch (sign) {
                     case '+':
                         prev_add = curr_num;
                         break;
@@ -3875,14 +3698,13 @@ public class LeetCode {
     */
     public boolean searchMatrix(int[][] matrix, int target) //BST from top right position
     {
-        if(matrix.length==0 )
+        if (matrix.length == 0)
             return false;
-        int curr_row=0,curr_col = matrix[0].length-1;
-        while(curr_col>=0 && curr_row<matrix.length)
-        {
-            if(target<matrix[curr_row][curr_col])
+        int curr_row = 0, curr_col = matrix[0].length - 1;
+        while (curr_col >= 0 && curr_row < matrix.length) {
+            if (target < matrix[curr_row][curr_col])
                 curr_col--;
-            else if(target>matrix[curr_row][curr_col])
+            else if (target > matrix[curr_row][curr_col])
                 curr_row++;
             else
                 return true;
@@ -3929,33 +3751,29 @@ public class LeetCode {
     {
         int adj_matrix[][] = new int[numCourses][numCourses];
         int in_degree[] = new int[numCourses];
-        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < prerequisites.length; iterator_i++) {
             adj_matrix[prerequisites[iterator_i][1]][prerequisites[iterator_i][0]] = 1;
             in_degree[prerequisites[iterator_i][0]]++;
         }
         Queue bfs_q = new LinkedList();
-        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
-            if(in_degree[iterator_i]==0)
+        for (int iterator_i = 0; iterator_i < numCourses; iterator_i++)
+            if (in_degree[iterator_i] == 0)
                 bfs_q.add(iterator_i);
 
         int count_visited = 0;
-        while(!bfs_q.isEmpty())
-        {
+        while (!bfs_q.isEmpty()) {
             count_visited++;
-            int current_vertex = (int)bfs_q.poll();
-            for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
-            {
-                if(adj_matrix[current_vertex][iterator_i]==1)
-                {
-                    if(in_degree[iterator_i]==1)
+            int current_vertex = (int) bfs_q.poll();
+            for (int iterator_i = 0; iterator_i < numCourses; iterator_i++) {
+                if (adj_matrix[current_vertex][iterator_i] == 1) {
+                    if (in_degree[iterator_i] == 1)
                         bfs_q.add(iterator_i);
                     else
                         in_degree[iterator_i]--;
                 }
             }
         }
-        return count_visited==numCourses;
+        return count_visited == numCourses;
 
     }
 
@@ -3964,28 +3782,24 @@ public class LeetCode {
         int visited[] = new int[numCourses];
         int adj_matrix[][] = new int[numCourses][numCourses];
         boolean checked_for_cycles[] = new boolean[numCourses];
-        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
+        for (int iterator_i = 0; iterator_i < prerequisites.length; iterator_i++)
             adj_matrix[prerequisites[iterator_i][1]][prerequisites[iterator_i][0]] = 1;
 
-        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
-        {
-            if(detectCyclefromvertex(adj_matrix,visited,iterator_i,checked_for_cycles))
+        for (int iterator_i = 0; iterator_i < numCourses; iterator_i++) {
+            if (detectCyclefromvertex(adj_matrix, visited, iterator_i, checked_for_cycles))
                 return false;
         }
         return true;
     }
 
-    public static boolean detectCyclefromvertex(int[][] adj_matrix, int visited[],int current_vertex, boolean checked_for_cycles[])
+    public static boolean detectCyclefromvertex(int[][] adj_matrix, int visited[], int current_vertex, boolean checked_for_cycles[])
     {
-        if(!checked_for_cycles[current_vertex])
-        {
+        if (!checked_for_cycles[current_vertex]) {
             if (visited[current_vertex] == 1)
                 return true;
             visited[current_vertex] = 1;
-            for(int iterator_i=0;iterator_i<visited.length;iterator_i++)
-            {
-                if (adj_matrix[current_vertex][iterator_i] == 1)
-                {
+            for (int iterator_i = 0; iterator_i < visited.length; iterator_i++) {
+                if (adj_matrix[current_vertex][iterator_i] == 1) {
                     if (detectCyclefromvertex(adj_matrix, visited, iterator_i, checked_for_cycles))
                         return true;
                 }
@@ -4000,28 +3814,25 @@ public class LeetCode {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
         int visited[] = new int[numCourses];
         boolean checked_for_cycles[] = new boolean[numCourses];
-        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
+        for (int iterator_i = 0; iterator_i < numCourses; iterator_i++)
             list.add(new ArrayList<>());
-        for(int iterator_i=0;iterator_i<prerequisites.length;iterator_i++)
+        for (int iterator_i = 0; iterator_i < prerequisites.length; iterator_i++)
             list.get(prerequisites[iterator_i][1]).add(prerequisites[iterator_i][0]);
 
-        for(int iterator_i=0;iterator_i<numCourses;iterator_i++)
-        {
-            if(detectCyclefromvertex_list(list,visited,iterator_i,checked_for_cycles))
+        for (int iterator_i = 0; iterator_i < numCourses; iterator_i++) {
+            if (detectCyclefromvertex_list(list, visited, iterator_i, checked_for_cycles))
                 return false;
         }
         return true;
     }
 
-    public static boolean detectCyclefromvertex_list(List<List<Integer>> adj_list, int visited[],int current_vertex, boolean checked_for_cycles[])
+    public static boolean detectCyclefromvertex_list(List<List<Integer>> adj_list, int visited[], int current_vertex, boolean checked_for_cycles[])
     {
-        if(!checked_for_cycles[current_vertex])
-        {
+        if (!checked_for_cycles[current_vertex]) {
             if (visited[current_vertex] == 1)
                 return true;
             visited[current_vertex] = 1;
-            for(int courseId: adj_list.get(current_vertex))
-            {
+            for (int courseId : adj_list.get(current_vertex)) {
                 if (detectCyclefromvertex_list(adj_list, visited, courseId, checked_for_cycles))
                     return true;
             }
@@ -4055,23 +3866,22 @@ public class LeetCode {
     */
     public void solve(char[][] board)
     {
-        if(board.length == 0)
+        if (board.length == 0)
             return;
         for (int iterator_i = 0; iterator_i < board[0].length; iterator_i++)
-            if(board[0][iterator_i]=='O')
+            if (board[0][iterator_i] == 'O')
                 solveDfs(board, 0, iterator_i);
         for (int iterator_i = 0; iterator_i < board[0].length; iterator_i++)
-            if(board[board.length-1][iterator_i]=='O')
-                solveDfs(board, board.length-1, iterator_i);
-        for (int iterator_i = 1; iterator_i < board.length-1; iterator_i++)
-            if(board[iterator_i][0]=='O')
-                solveDfs(board, iterator_i,0);
-        for (int iterator_i = 1; iterator_i < board.length-1; iterator_i++)
-            if(board[iterator_i][board[0].length-1]=='O')
-                solveDfs(board, iterator_i,board[0].length-1);
+            if (board[board.length - 1][iterator_i] == 'O')
+                solveDfs(board, board.length - 1, iterator_i);
+        for (int iterator_i = 1; iterator_i < board.length - 1; iterator_i++)
+            if (board[iterator_i][0] == 'O')
+                solveDfs(board, iterator_i, 0);
+        for (int iterator_i = 1; iterator_i < board.length - 1; iterator_i++)
+            if (board[iterator_i][board[0].length - 1] == 'O')
+                solveDfs(board, iterator_i, board[0].length - 1);
 
-        for(int iterator_i=0;iterator_i<board.length;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < board.length; iterator_i++) {
             for (int iterator_j = 0; iterator_j < board[0].length; iterator_j++) {
                 if (board[iterator_i][iterator_j] == 'Y')
                     board[iterator_i][iterator_j] = 'O';
@@ -4081,17 +3891,17 @@ public class LeetCode {
         }
     }
 
-    public static void solveDfs(char board[][],int x_pos,int y_pos)
+    public static void solveDfs(char board[][], int x_pos, int y_pos)
     {
         board[x_pos][y_pos] = 'Y';
-        if(x_pos+1<board.length-1 && board[x_pos+1][y_pos]=='O')
-            solveDfs(board,x_pos+1,y_pos);
-        if(x_pos-1>0 && board[x_pos-1][y_pos]=='O')
-            solveDfs(board,x_pos-1,y_pos);
-        if(y_pos+1<board[0].length-1 && board[x_pos][y_pos+1]=='O')
-            solveDfs(board,x_pos,y_pos+1);
-        if(y_pos-1>0 && board[x_pos][y_pos-1]=='O')
-            solveDfs(board,x_pos,y_pos-1);
+        if (x_pos + 1 < board.length - 1 && board[x_pos + 1][y_pos] == 'O')
+            solveDfs(board, x_pos + 1, y_pos);
+        if (x_pos - 1 > 0 && board[x_pos - 1][y_pos] == 'O')
+            solveDfs(board, x_pos - 1, y_pos);
+        if (y_pos + 1 < board[0].length - 1 && board[x_pos][y_pos + 1] == 'O')
+            solveDfs(board, x_pos, y_pos + 1);
+        if (y_pos - 1 > 0 && board[x_pos][y_pos - 1] == 'O')
+            solveDfs(board, x_pos, y_pos - 1);
     }
 
     /*
@@ -4106,11 +3916,10 @@ public class LeetCode {
     // you need to treat n as an unsigned value
     public int hammingWeight(int n)
     {
-        int count_ones =0;
-        while(n!=0)
-        {
+        int count_ones = 0;
+        while (n != 0) {
             count_ones++;
-            n = n & (n-1);
+            n = n & (n - 1);
         }
         return count_ones;
     }
@@ -4131,9 +3940,9 @@ public class LeetCode {
     */
     public int titleToNumber(String s)
     {
-        int final_val=0;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-            final_val += Math.pow(26,s.length()-1-iterator_i)*(int)(s.charAt(iterator_i)-'A'+1);
+        int final_val = 0;
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++)
+            final_val += Math.pow(26, s.length() - 1 - iterator_i) * (int) (s.charAt(iterator_i) - 'A' + 1);
         return final_val;
     }
 
@@ -4148,32 +3957,26 @@ public class LeetCode {
     */
     public int maxProduct_complicated(int[] nums)
     {
-        int max_value_till_now=Integer.MIN_VALUE,curr_negative_till_now=Integer.MAX_VALUE,curr_positive_till_now = Integer.MIN_VALUE;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            if(nums[iterator_i]>0 )
-            {
-                curr_positive_till_now = (curr_positive_till_now<0)?nums[iterator_i]:curr_positive_till_now*nums[iterator_i];
-                curr_negative_till_now = (curr_negative_till_now<0)?curr_negative_till_now*nums[iterator_i]:curr_negative_till_now;
-            }
-            else if(nums[iterator_i]<0)
-            {
-                int temp = (curr_positive_till_now<0)?nums[iterator_i]:curr_positive_till_now*nums[iterator_i];
-                if(curr_negative_till_now<0)
-                    curr_positive_till_now = curr_negative_till_now*nums[iterator_i];
+        int max_value_till_now = Integer.MIN_VALUE, curr_negative_till_now = Integer.MAX_VALUE, curr_positive_till_now = Integer.MIN_VALUE;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            if (nums[iterator_i] > 0) {
+                curr_positive_till_now = (curr_positive_till_now < 0) ? nums[iterator_i] : curr_positive_till_now * nums[iterator_i];
+                curr_negative_till_now = (curr_negative_till_now < 0) ? curr_negative_till_now * nums[iterator_i] : curr_negative_till_now;
+            } else if (nums[iterator_i] < 0) {
+                int temp = (curr_positive_till_now < 0) ? nums[iterator_i] : curr_positive_till_now * nums[iterator_i];
+                if (curr_negative_till_now < 0)
+                    curr_positive_till_now = curr_negative_till_now * nums[iterator_i];
                 else
                     curr_positive_till_now = Integer.MIN_VALUE;
                 curr_negative_till_now = temp;
-            }
-            else
-            {
+            } else {
                 curr_positive_till_now = Integer.MIN_VALUE;
                 curr_negative_till_now = Integer.MAX_VALUE;
-                max_value_till_now = Math.max(max_value_till_now,0);
+                max_value_till_now = Math.max(max_value_till_now, 0);
             }
-            max_value_till_now = Math.max(max_value_till_now,curr_positive_till_now);
-            if(curr_negative_till_now<0)
-                max_value_till_now = Math.max(max_value_till_now,curr_negative_till_now);
+            max_value_till_now = Math.max(max_value_till_now, curr_positive_till_now);
+            if (curr_negative_till_now < 0)
+                max_value_till_now = Math.max(max_value_till_now, curr_negative_till_now);
 
         }
         return max_value_till_now;
@@ -4181,39 +3984,35 @@ public class LeetCode {
 
     public int maxProduct_simplified(int[] nums)
     {
-        int final_max = nums[0], curr_positive=nums[0],curr_negative = nums[0],temp;
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-        {
-            if(nums[iterator_i]<0)
-            {
+        int final_max = nums[0], curr_positive = nums[0], curr_negative = nums[0], temp;
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++) {
+            if (nums[iterator_i] < 0) {
                 temp = curr_negative;
                 curr_negative = curr_positive;
                 curr_positive = temp;
             }
-            curr_positive = Math.max(curr_positive*nums[iterator_i],nums[iterator_i]);
-            curr_negative = Math.min(curr_negative*nums[iterator_i],nums[iterator_i]);
+            curr_positive = Math.max(curr_positive * nums[iterator_i], nums[iterator_i]);
+            curr_negative = Math.min(curr_negative * nums[iterator_i], nums[iterator_i]);
 
-            final_max = Math.max(final_max,curr_positive);
+            final_max = Math.max(final_max, curr_positive);
         }
         return final_max;
     }
 
     public int maxProduct(int[] nums) //Do passes from front to end and end to front
     {
-        int final_max = nums[0],current_prod=nums[0];
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-        {
-            current_prod = current_prod*nums[iterator_i];
-            final_max = Math.max(final_max,current_prod);
-            if(current_prod==0)
+        int final_max = nums[0], current_prod = nums[0];
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++) {
+            current_prod = current_prod * nums[iterator_i];
+            final_max = Math.max(final_max, current_prod);
+            if (current_prod == 0)
                 current_prod = 1;
         }
-        current_prod =1;
-        for(int iterator_i=nums.length-1;iterator_i>=0;iterator_i--)
-        {
-            current_prod = current_prod*nums[iterator_i];
-            final_max = Math.max(final_max,current_prod);
-            if(current_prod==0)
+        current_prod = 1;
+        for (int iterator_i = nums.length - 1; iterator_i >= 0; iterator_i--) {
+            current_prod = current_prod * nums[iterator_i];
+            final_max = Math.max(final_max, current_prod);
+            if (current_prod == 0)
                 current_prod = 1;
         }
         return final_max;
@@ -4236,19 +4035,20 @@ public class LeetCode {
            /   /
          -10  5
     */
-    public TreeNode sortedArrayToBST(int[] nums) {
+    public TreeNode sortedArrayToBST(int[] nums)
+    {
 
-        return sortedArrayToBSTHelper(nums,0,nums.length-1);
+        return sortedArrayToBSTHelper(nums, 0, nums.length - 1);
     }
 
-    public TreeNode sortedArrayToBSTHelper(int nums[],int lb,int ub)
+    public TreeNode sortedArrayToBSTHelper(int nums[], int lb, int ub)
     {
-        int mid = lb + (ub-lb)/2;
+        int mid = lb + (ub - lb) / 2;
         TreeNode new_node = new TreeNode(nums[mid]);
-        if(lb<mid)
-            new_node.left = sortedArrayToBSTHelper(nums,lb,mid-1);
-        if(mid<ub)
-            new_node.right = sortedArrayToBSTHelper(nums,mid+1,ub);
+        if (lb < mid)
+            new_node.left = sortedArrayToBSTHelper(nums, lb, mid - 1);
+        if (mid < ub)
+            new_node.right = sortedArrayToBSTHelper(nums, mid + 1, ub);
 
         return new_node;
     }
@@ -4271,8 +4071,7 @@ public class LeetCode {
     public ListNode middleNode(ListNode head)
     {
         ListNode slow_ptr = head, fast_ptr = head;
-        while(fast_ptr!=null && fast_ptr.next!=null)
-        {
+        while (fast_ptr != null && fast_ptr.next != null) {
             slow_ptr = slow_ptr.next;
             fast_ptr = fast_ptr.next.next;
         }
@@ -4290,14 +4089,13 @@ public class LeetCode {
     */
     public void moveZeroes(int[] nums)
     {
-        int zero_ptr=0,scan_ptr=0;
-        while(scan_ptr<nums.length)
-        {
-            if(nums[scan_ptr]!=0)
+        int zero_ptr = 0, scan_ptr = 0;
+        while (scan_ptr < nums.length) {
+            if (nums[scan_ptr] != 0)
                 nums[zero_ptr++] = nums[scan_ptr];
             scan_ptr++;
         }
-        while(zero_ptr<nums.length)
+        while (zero_ptr < nums.length)
             nums[zero_ptr++] = 0;
     }
 
@@ -4319,16 +4117,15 @@ public class LeetCode {
     */
     public int findMaxLength(int[] nums)
     {
-        HashMap<Integer,Integer> hmap=new HashMap<Integer, Integer>();
-        hmap.put(0,-1);
-        int count_zero=0,max_length=0;
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-        {
-            count_zero += (nums[iterator_i]==0)?1:-1;
-            if(hmap.containsKey(count_zero))
-                max_length = Math.max(max_length,iterator_i-hmap.get(count_zero));
+        HashMap<Integer, Integer> hmap = new HashMap<Integer, Integer>();
+        hmap.put(0, -1);
+        int count_zero = 0, max_length = 0;
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++) {
+            count_zero += (nums[iterator_i] == 0) ? 1 : -1;
+            if (hmap.containsKey(count_zero))
+                max_length = Math.max(max_length, iterator_i - hmap.get(count_zero));
             else
-                hmap.put(count_zero,iterator_i);
+                hmap.put(count_zero, iterator_i);
         }
         return max_length;
     }
@@ -4343,7 +4140,7 @@ public class LeetCode {
     public List<List<String>> solveNQueens_alt(int n)
     {
         List<List<String>> list = new ArrayList<List<String>>();
-        solveQueensHelper_alt(list,0,new ArrayList<Integer>(),n);
+        solveQueensHelper_alt(list, 0, new ArrayList<Integer>(), n);
         return list;
     }
 
@@ -4351,9 +4148,9 @@ public class LeetCode {
     {
         List<List<String>> list = new ArrayList<List<String>>();
         boolean visited_col[] = new boolean[n];
-        boolean visited_diag1[] = new boolean[2*n-1];
-        boolean visited_diag2[] = new boolean[2*n-1];
-        solveQueensHelper(list,new ArrayList<Integer>(),n,visited_col,visited_diag1,visited_diag2);
+        boolean visited_diag1[] = new boolean[2 * n - 1];
+        boolean visited_diag2[] = new boolean[2 * n - 1];
+        solveQueensHelper(list, new ArrayList<Integer>(), n, visited_col, visited_diag1, visited_diag2);
         return list;
     }
 
@@ -4361,48 +4158,42 @@ public class LeetCode {
     {
         List<List<String>> list = new ArrayList<List<String>>();
         HashMap<TreeSet<String>, NQueensHashval> hmap = new HashMap<>();
-        hmap.put(new TreeSet<>(),new NQueensHashval(1));
-        int row_count=0;
-        while(row_count<n)
-        {
-            HashMap<TreeSet<String>,NQueensHashval> newmap = new HashMap<>();
+        hmap.put(new TreeSet<>(), new NQueensHashval(1));
+        int row_count = 0;
+        while (row_count < n) {
+            HashMap<TreeSet<String>, NQueensHashval> newmap = new HashMap<>();
             for (TreeSet hset : hmap.keySet()) //Iterate over sets and if intersection is 0 only then do next steps otherwise invalid
             {
-                for(int iterator_i=0;iterator_i<n;iterator_i++)  //Column Values for Current Row
+                for (int iterator_i = 0; iterator_i < n; iterator_i++)  //Column Values for Current Row
                 {
-                    if(hset.contains("c_"+iterator_i) || hset.contains("d1_"+(n+row_count-iterator_i-1)) || hset.contains("d2_"+(row_count+iterator_i)))
+                    if (hset.contains("c_" + iterator_i) || hset.contains("d1_" + (n + row_count - iterator_i - 1)) || hset.contains("d2_" + (row_count + iterator_i)))
                         continue;
                     // Create new set using contained set
-                    TreeSet current_set = (TreeSet)hset.clone();
-                    current_set.add("c_"+iterator_i);
-                    current_set.add("d1_"+(n+row_count-iterator_i-1));
-                    current_set.add("d2_"+(row_count+iterator_i));
+                    TreeSet current_set = (TreeSet) hset.clone();
+                    current_set.add("c_" + iterator_i);
+                    current_set.add("d1_" + (n + row_count - iterator_i - 1));
+                    current_set.add("d2_" + (row_count + iterator_i));
 
-                    if(newmap.containsKey(current_set))
-                    {
-                        LinkedHashSet[] prev_set = (LinkedHashSet[])hmap.get(hset).queen_configuration;
-                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1,hmap.get(hset).val)];
-                        for(int iterator_j=0;iterator_j<Math.max(1,hmap.get(hset).val);iterator_j++)
-                        {
+                    if (newmap.containsKey(current_set)) {
+                        LinkedHashSet[] prev_set = (LinkedHashSet[]) hmap.get(hset).queen_configuration;
+                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1, hmap.get(hset).val)];
+                        for (int iterator_j = 0; iterator_j < Math.max(1, hmap.get(hset).val); iterator_j++) {
                             new_set[iterator_j] = (LinkedHashSet) prev_set[iterator_j].clone();
                             new_set[iterator_j].add(iterator_i);
                         }
                         NQueensHashval newval = newmap.get(current_set);
-                        LinkedHashSet<Integer>[] queen_new_configuration = new LinkedHashSet[Math.max(1,newval.val+prev_set.length)];
-                        for(int iterator_j=0;iterator_j<Math.max(1,newval.val);iterator_j++)
+                        LinkedHashSet<Integer>[] queen_new_configuration = new LinkedHashSet[Math.max(1, newval.val + prev_set.length)];
+                        for (int iterator_j = 0; iterator_j < Math.max(1, newval.val); iterator_j++)
                             queen_new_configuration[iterator_j] = newval.queen_configuration[iterator_j];
-                        for(int iterator_j=Math.max(1,newval.val);iterator_j<Math.max(1,newval.val+prev_set.length);iterator_j++)
-                            queen_new_configuration[iterator_j] = new_set[iterator_j-Math.max(1,newval.val)];
+                        for (int iterator_j = Math.max(1, newval.val); iterator_j < Math.max(1, newval.val + prev_set.length); iterator_j++)
+                            queen_new_configuration[iterator_j] = new_set[iterator_j - Math.max(1, newval.val)];
                         newval.queen_configuration = queen_new_configuration;
-                        newval.val = newval.val+prev_set.length;
-                        newmap.put(current_set,newval);
-                    }
-                    else
-                    {
-                        LinkedHashSet[] prev_set = (LinkedHashSet[])hmap.get(hset).queen_configuration;
-                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1,hmap.get(hset).val)];
-                        for(int iterator_j=0;iterator_j<Math.max(1,hmap.get(hset).val);iterator_j++)
-                        {
+                        newval.val = newval.val + prev_set.length;
+                        newmap.put(current_set, newval);
+                    } else {
+                        LinkedHashSet[] prev_set = (LinkedHashSet[]) hmap.get(hset).queen_configuration;
+                        LinkedHashSet[] new_set = new LinkedHashSet[Math.max(1, hmap.get(hset).val)];
+                        for (int iterator_j = 0; iterator_j < Math.max(1, hmap.get(hset).val); iterator_j++) {
                             new_set[iterator_j] = (LinkedHashSet) prev_set[iterator_j].clone();
                             new_set[iterator_j].add(iterator_i);
                         }
@@ -4416,18 +4207,14 @@ public class LeetCode {
             hmap = newmap;
             row_count++;
         }
-        for(NQueensHashval allval:hmap.values())
-        {
-            for(LinkedHashSet curr_set: allval.queen_configuration)
-            {
+        for (NQueensHashval allval : hmap.values()) {
+            for (LinkedHashSet curr_set : allval.queen_configuration) {
                 List<String> chess_board_config = new ArrayList<>();
-                for(Object col_placed :curr_set)
-                {
-                    String current_row="";
-                    for(int iterator_i=0;iterator_i<n;iterator_i++)
-                    {
-                        if(iterator_i==(Integer)(col_placed))
-                            current_row +='Q';
+                for (Object col_placed : curr_set) {
+                    String current_row = "";
+                    for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+                        if (iterator_i == (Integer) (col_placed))
+                            current_row += 'Q';
                         else
                             current_row += '.';
                     }
@@ -4439,29 +4226,25 @@ public class LeetCode {
         return list;
     }
 
-    public static boolean isValidQueen_alt(List<Integer> current_queen_placement,int col)
+    public static boolean isValidQueen_alt(List<Integer> current_queen_placement, int col)
     {
-        int current_row = 1, placement_row = current_queen_placement.size()+1;
-        for(int queen_col_pos:current_queen_placement)
-        {
-            if(col == queen_col_pos || queen_col_pos+placement_row-current_row==col || queen_col_pos-placement_row+current_row==col)
+        int current_row = 1, placement_row = current_queen_placement.size() + 1;
+        for (int queen_col_pos : current_queen_placement) {
+            if (col == queen_col_pos || queen_col_pos + placement_row - current_row == col || queen_col_pos - placement_row + current_row == col)
                 return false;
             current_row++;
         }
         return true;
     }
 
-    public static void solveQueensHelper_alt(List<List<String>> list,int row_num,List<Integer> current_queen_placement,int n)
+    public static void solveQueensHelper_alt(List<List<String>> list, int row_num, List<Integer> current_queen_placement, int n)
     {
-        if(row_num == n)
-        {
+        if (row_num == n) {
             List<String> newlist = new ArrayList<>();
-            for(int queen_pos:current_queen_placement)
-            {
-                String current_row="";
-                for(int iterator_i=0;iterator_i<n;iterator_i++)
-                {
-                    if(iterator_i!=queen_pos)
+            for (int queen_pos : current_queen_placement) {
+                String current_row = "";
+                for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+                    if (iterator_i != queen_pos)
                         current_row += '.';
                     else
                         current_row += 'Q';
@@ -4469,31 +4252,26 @@ public class LeetCode {
                 newlist.add(current_row);
             }
             list.add(newlist);
-            return ;
+            return;
         }
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
-            if(isValidQueen_alt(current_queen_placement,iterator_i))
-            {
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+            if (isValidQueen_alt(current_queen_placement, iterator_i)) {
                 current_queen_placement.add(iterator_i);
-                solveQueensHelper_alt(list, row_num + 1,current_queen_placement,n);
-                current_queen_placement.remove(current_queen_placement.size()-1);
+                solveQueensHelper_alt(list, row_num + 1, current_queen_placement, n);
+                current_queen_placement.remove(current_queen_placement.size() - 1);
             }
         }
     }
 
-    public static void solveQueensHelper(List<List<String>> list,List<Integer> current_queen_placement,int n,boolean visited_col[],boolean visited_diag1[],boolean visited_diag2[])
+    public static void solveQueensHelper(List<List<String>> list, List<Integer> current_queen_placement, int n, boolean visited_col[], boolean visited_diag1[], boolean visited_diag2[])
     {
-        if(current_queen_placement.size() == n)
-        {
+        if (current_queen_placement.size() == n) {
             List<String> newlist = new ArrayList<>();
-            for(int queen_pos:current_queen_placement)
-            {
-                System.out.print(queen_pos+" ");
-                String current_row="";
-                for(int iterator_i=0;iterator_i<n;iterator_i++)
-                {
-                    if(iterator_i!=queen_pos)
+            for (int queen_pos : current_queen_placement) {
+                System.out.print(queen_pos + " ");
+                String current_row = "";
+                for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+                    if (iterator_i != queen_pos)
                         current_row += '.';
                     else
                         current_row += 'Q';
@@ -4502,23 +4280,21 @@ public class LeetCode {
             }
             System.out.println();
             list.add(newlist);
-            return ;
+            return;
         }
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
-            if(visited_col[iterator_i] || visited_diag1[n+current_queen_placement.size()-iterator_i-1] || visited_diag2[current_queen_placement.size()+iterator_i] )
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+            if (visited_col[iterator_i] || visited_diag1[n + current_queen_placement.size() - iterator_i - 1] || visited_diag2[current_queen_placement.size() + iterator_i])
                 continue;
-            else
-            {
+            else {
                 visited_col[iterator_i] = true;
-                visited_diag1[n+current_queen_placement.size()-iterator_i-1] = true;
-                visited_diag2[current_queen_placement.size()+iterator_i] = true;
+                visited_diag1[n + current_queen_placement.size() - iterator_i - 1] = true;
+                visited_diag2[current_queen_placement.size() + iterator_i] = true;
                 current_queen_placement.add(iterator_i);
-                solveQueensHelper(list, current_queen_placement,n,visited_col,visited_diag1,visited_diag2);
-                current_queen_placement.remove(current_queen_placement.size()-1);
+                solveQueensHelper(list, current_queen_placement, n, visited_col, visited_diag1, visited_diag2);
+                current_queen_placement.remove(current_queen_placement.size() - 1);
                 visited_col[iterator_i] = false;
-                visited_diag1[n+current_queen_placement.size()-iterator_i-1] = false;
-                visited_diag2[current_queen_placement.size()+iterator_i] = false;
+                visited_diag1[n + current_queen_placement.size() - iterator_i - 1] = false;
+                visited_diag2[current_queen_placement.size() + iterator_i] = false;
             }
         }
     }
@@ -4541,73 +4317,57 @@ public class LeetCode {
     */
     public boolean backspaceCompare_space(String S, String T)
     {
-        String final_string1 = "",final_string2="";
-        int count_del =0;
-        for(int iterator_i=S.length()-1;iterator_i>=0;iterator_i--)
-        {
-            if(S.charAt(iterator_i)=='#')
-            {
+        String final_string1 = "", final_string2 = "";
+        int count_del = 0;
+        for (int iterator_i = S.length() - 1; iterator_i >= 0; iterator_i--) {
+            if (S.charAt(iterator_i) == '#') {
                 count_del++;
                 continue;
             }
-            if(count_del>0)
-            {
+            if (count_del > 0) {
                 count_del--;
                 continue;
             }
-            final_string1 = S.charAt(iterator_i)+final_string1;
+            final_string1 = S.charAt(iterator_i) + final_string1;
         }
-        count_del =0;
-        for(int iterator_i=T.length()-1;iterator_i>=0;iterator_i--)
-        {
-            if(T.charAt(iterator_i)=='#')
-            {
+        count_del = 0;
+        for (int iterator_i = T.length() - 1; iterator_i >= 0; iterator_i--) {
+            if (T.charAt(iterator_i) == '#') {
                 count_del++;
                 continue;
             }
-            if(count_del>0)
-            {
+            if (count_del > 0) {
                 count_del--;
                 continue;
             }
-            final_string2 = T.charAt(iterator_i)+final_string2;
+            final_string2 = T.charAt(iterator_i) + final_string2;
         }
-        return final_string1.compareTo(final_string2)==0?true:false;
+        return final_string1.compareTo(final_string2) == 0 ? true : false;
     }
 
-    public boolean backspaceCompare(String S, String T) {
+    public boolean backspaceCompare(String S, String T)
+    {
         int i = S.length() - 1, j = T.length() - 1;
         int skipS = 0, skipT = 0;
 
-        while (i >= 0 || j >= 0)
-        {
-            while (i >= 0)
-            {
-                if (S.charAt(i) == '#')
-                {
+        while (i >= 0 || j >= 0) {
+            while (i >= 0) {
+                if (S.charAt(i) == '#') {
                     skipS++;
                     i--;
-                }
-                else if (skipS > 0)
-                {
+                } else if (skipS > 0) {
                     skipS--;
                     i--;
-                }
-                else break;
+                } else break;
             }
-            while (j >= 0)
-            {
-                if (T.charAt(j) == '#')
-                {
+            while (j >= 0) {
+                if (T.charAt(j) == '#') {
                     skipT++;
                     j--;
-                }
-                else if (skipT > 0)
-                {
+                } else if (skipT > 0) {
                     skipT--;
                     j--;
-                }
-                else break;
+                } else break;
             }
 
             if (i >= 0 && j >= 0 && S.charAt(i) != T.charAt(j))
@@ -4615,7 +4375,8 @@ public class LeetCode {
 
             if ((i >= 0) != (j >= 0))
                 return false;
-            i--; j--;
+            i--;
+            j--;
         }
         return true;
     }
@@ -4649,40 +4410,36 @@ public class LeetCode {
     public int lastStoneWeight_alt(int[] stones)
     {
         PriorityQueue queue = new PriorityQueue(Collections.reverseOrder());
-        for(int stone_val:stones)
+        for (int stone_val : stones)
             queue.add(stone_val);
 
-        while(queue.size()>1)
-            queue.add((int)queue.poll()-(int)queue.poll());
+        while (queue.size() > 1)
+            queue.add((int) queue.poll() - (int) queue.poll());
 
-        return (int)queue.poll();
+        return (int) queue.poll();
     }
 
     public int lastStoneWeight_bucket(int[] stones) //BucketSort
     {
-        int bucket[] = new int[1001],i_val=Integer.MIN_VALUE;
-        for(int stoneval:stones)
-        {
+        int bucket[] = new int[1001], i_val = Integer.MIN_VALUE;
+        for (int stoneval : stones) {
             bucket[stoneval]++;
             i_val = Math.max(i_val, stoneval);
         }
-        while(i_val>0)
-        {
-            if(bucket[i_val]==0)
-            {
+        while (i_val > 0) {
+            if (bucket[i_val] == 0) {
                 i_val--;
                 continue;
             }
-            bucket[i_val] = bucket[i_val]%2;
-            if(bucket[i_val]!=0)
-            {
-                int j_val = i_val-1;
-                while(j_val>0 && bucket[j_val]==0)
-                    if(bucket[j_val]==0)
+            bucket[i_val] = bucket[i_val] % 2;
+            if (bucket[i_val] != 0) {
+                int j_val = i_val - 1;
+                while (j_val > 0 && bucket[j_val] == 0)
+                    if (bucket[j_val] == 0)
                         j_val--;
-                if(j_val==0)
+                if (j_val == 0)
                     return i_val;
-                bucket[i_val-j_val]++;
+                bucket[i_val - j_val]++;
                 bucket[i_val]--;
                 bucket[j_val]--;
             }
@@ -4694,8 +4451,8 @@ public class LeetCode {
     public int lastStoneWeight(int[] stones) //Plain Sorting
     {
         Arrays.sort(stones);
-        for(int i=stones.length-1; i>0; i--) {
-            stones[i-1] = stones[i] - stones[i-1];
+        for (int i = stones.length - 1; i > 0; i--) {
+            stones[i - 1] = stones[i] - stones[i - 1];
             Arrays.sort(stones);
         }
         return stones[0];
@@ -4717,9 +4474,10 @@ public class LeetCode {
           20     13
     */
     int rootval = 0;
+
     public TreeNode convertBST_rcur(TreeNode root) //Recursive
     {
-        if(root==null)
+        if (root == null)
             return null;
         convertBST(root.right);
         root.val += rootval;
@@ -4734,10 +4492,8 @@ public class LeetCode {
         int sum_till_now = 0;
         Stack<TreeNode> stck = new Stack();
 
-        while(!stck.isEmpty() || node!=null)
-        {
-            while(node!=null)
-            {
+        while (!stck.isEmpty() || node != null) {
+            while (node != null) {
                 stck.push(node);
                 node = node.right;
             }
@@ -4754,7 +4510,7 @@ public class LeetCode {
     public TreeNode getSuccessor(TreeNode root) // Reached only if right is present
     {
         TreeNode successor = root.right;
-        while(successor.left!=null && successor.left!=root)
+        while (successor.left != null && successor.left != root)
             successor = successor.left;
         return successor;
     }
@@ -4764,23 +4520,18 @@ public class LeetCode {
         TreeNode node = root;
         int sum_till_now = 0;
 
-        while(node!=null)
-        {
-            if(node.right==null)
-            {
+        while (node != null) {
+            if (node.right == null) {
                 node.val += sum_till_now;
                 sum_till_now = node.val;
                 node = node.left;
-            }
-            else
-            {
+            } else {
                 TreeNode successor = getSuccessor(node);
-                if(successor.left==null) //First Visit Attach Node
+                if (successor.left == null) //First Visit Attach Node
                 {
                     successor.left = node;
                     node = node.right;
-                }
-                else //Modify Node
+                } else //Modify Node
                 {
                     successor.left = null;
                     node.val += sum_till_now;
@@ -4808,16 +4559,16 @@ public class LeetCode {
     */
     public int minDepth(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return 0;
-        if(root.left==null && root.right==null)
+        if (root.left == null && root.right == null)
             return 0;
-        if(root.right==null)
-            return minDepth(root.left)+1;
-        if(root.left==null)
-            return minDepth(root.right)+1;
+        if (root.right == null)
+            return minDepth(root.left) + 1;
+        if (root.left == null)
+            return minDepth(root.right) + 1;
 
-        return Math.min(minDepth(root.left),minDepth(root.right)) + 1;
+        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
     }
 
     /*
@@ -4834,11 +4585,10 @@ public class LeetCode {
     */
     public void reorderList(ListNode head)
     {
-        if(head==null || head.next==null)
+        if (head == null || head.next == null)
             return;
-        ListNode slow_ptr = head,fast_ptr = head;
-        while(fast_ptr!=null && fast_ptr.next!=null)
-        {
+        ListNode slow_ptr = head, fast_ptr = head;
+        while (fast_ptr != null && fast_ptr.next != null) {
             slow_ptr = slow_ptr.next;
             fast_ptr = fast_ptr.next.next;
         }
@@ -4849,17 +4599,15 @@ public class LeetCode {
         slow_ptr = slow_ptr.next;
         prev_ptr.next = null;
         prev_ptr = null;
-        ListNode next_node ;
-        while(slow_ptr!=null)
-        {
+        ListNode next_node;
+        while (slow_ptr != null) {
             next_node = slow_ptr.next;
             slow_ptr.next = prev_ptr;
             prev_ptr = slow_ptr;
             slow_ptr = next_node;
         }
 
-        while(prev_ptr!=null)
-        {
+        while (prev_ptr != null) {
             next_node = prev_ptr.next;
             prev_ptr.next = head.next;
             head.next = prev_ptr;
@@ -4885,15 +4633,13 @@ public class LeetCode {
     {
         Stack<TreeNode> stck = new Stack();
         stck.push(new TreeNode(preorder[0]));
-        for(int iterator_i=1;iterator_i<preorder.length;iterator_i++)
-        {
+        for (int iterator_i = 1; iterator_i < preorder.length; iterator_i++) {
             TreeNode current_node = new TreeNode(preorder[iterator_i]);
-            if(preorder[iterator_i]<stck.peek().val)
+            if (preorder[iterator_i] < stck.peek().val)
                 stck.peek().left = current_node;
-            else
-            {
+            else {
                 TreeNode parent = stck.peek();
-                while(!stck.isEmpty() && stck.peek().val<current_node.val)
+                while (!stck.isEmpty() && stck.peek().val < current_node.val)
                     parent = stck.pop();
                 parent.right = current_node;
             }
@@ -4902,19 +4648,20 @@ public class LeetCode {
         return null;
     }
 
-    int current_item=0;
+    int current_item = 0;
+
     public TreeNode bstFromPreorder(int[] preorder)
     {
-        return bstFromPreorder_helper(preorder,Integer.MAX_VALUE);
+        return bstFromPreorder_helper(preorder, Integer.MAX_VALUE);
     }
 
-    public TreeNode bstFromPreorder_helper(int[] preorder,int current_bound)
+    public TreeNode bstFromPreorder_helper(int[] preorder, int current_bound)
     {
-        if(current_item==preorder.length || preorder[current_item]>current_bound)
+        if (current_item == preorder.length || preorder[current_item] > current_bound)
             return null;
         TreeNode root = new TreeNode(preorder[current_item++]);
-        root.left = bstFromPreorder_helper(preorder,root.val);
-        root.right = bstFromPreorder_helper(preorder,current_bound);
+        root.left = bstFromPreorder_helper(preorder, root.val);
+        root.right = bstFromPreorder_helper(preorder, current_bound);
         return root;
     }
 
@@ -4941,38 +4688,35 @@ public class LeetCode {
     public boolean isSubsequence_full(String s, String t)
     {
         List<Integer> list_character[] = new ArrayList[256]; //ASCII set
-        for(int iterator_i=0;iterator_i<t.length();iterator_i++)
-        {
-            if(list_character[t.charAt(iterator_i)]==null)
+        for (int iterator_i = 0; iterator_i < t.length(); iterator_i++) {
+            if (list_character[t.charAt(iterator_i)] == null)
                 list_character[t.charAt(iterator_i)] = new ArrayList<>();
             list_character[t.charAt(iterator_i)].add(iterator_i);
         }
 
         int current_seeked_position = 0;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            if(current_seeked_position==t.length() || list_character[s.charAt(iterator_i)]==null)
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            if (current_seeked_position == t.length() || list_character[s.charAt(iterator_i)] == null)
                 return false;
-            int current_position_found = Collections.binarySearch(list_character[s.charAt(iterator_i)],current_seeked_position);
-            if(current_position_found<0) // Pos not found . get index of position just greater that it
+            int current_position_found = Collections.binarySearch(list_character[s.charAt(iterator_i)], current_seeked_position);
+            if (current_position_found < 0) // Pos not found . get index of position just greater that it
                 current_position_found = -current_position_found - 1;
-            if(current_position_found == list_character[s.charAt(iterator_i)].size())// Not present in string anymore
+            if (current_position_found == list_character[s.charAt(iterator_i)].size())// Not present in string anymore
                 return false;
-            current_seeked_position = list_character[s.charAt(iterator_i)].get(current_position_found) +1;
-            System.out.println("cpos:"+current_position_found+" seek:"+current_seeked_position);
+            current_seeked_position = list_character[s.charAt(iterator_i)].get(current_position_found) + 1;
+            System.out.println("cpos:" + current_position_found + " seek:" + current_seeked_position);
         }
         return true;
     }
 
     public boolean isSubsequence(String s, String t)
     {
-        int seek_val =0,next_occurence_pos;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            next_occurence_pos = t.indexOf(s.charAt(iterator_i),seek_val);
-            if(next_occurence_pos<0)
+        int seek_val = 0, next_occurence_pos;
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            next_occurence_pos = t.indexOf(s.charAt(iterator_i), seek_val);
+            if (next_occurence_pos < 0)
                 return false;
-            seek_val = next_occurence_pos+1;
+            seek_val = next_occurence_pos + 1;
         }
         return true;
     }
@@ -4997,21 +4741,19 @@ public class LeetCode {
     */
     public boolean detectCapitalUse(String word)
     {
-        if(word.length()<2)
+        if (word.length() < 2)
             return true;
-        boolean allcaps =false;
-        if(Character.isUpperCase(word.charAt(0)) && Character.isUpperCase(word.charAt(1)))
+        boolean allcaps = false;
+        if (Character.isUpperCase(word.charAt(0)) && Character.isUpperCase(word.charAt(1)))
             allcaps = true;
-        else if(Character.isLowerCase(word.charAt(0)))
-        {
-            if(Character.isUpperCase(word.charAt(1)))
+        else if (Character.isLowerCase(word.charAt(0))) {
+            if (Character.isUpperCase(word.charAt(1)))
                 return false;
         }
-        for(int iterator_i=2;iterator_i<word.length();iterator_i++)
-        {
-            if(!allcaps && Character.isUpperCase(word.charAt(iterator_i)))
+        for (int iterator_i = 2; iterator_i < word.length(); iterator_i++) {
+            if (!allcaps && Character.isUpperCase(word.charAt(iterator_i)))
                 return false;
-            if(allcaps && Character.isLowerCase(word.charAt(iterator_i)))
+            if (allcaps && Character.isLowerCase(word.charAt(iterator_i)))
                 return false;
         }
         return true;
@@ -5031,11 +4773,10 @@ public class LeetCode {
     */
     public ListNode sortList_msort(ListNode head) //Recursive Merge Sort
     {
-        if(head==null || head.next==null)
+        if (head == null || head.next == null)
             return head;
-        ListNode slow_ptr=head,fast_ptr=head,prev_ptr=slow_ptr;
-        while(fast_ptr!=null && fast_ptr.next!=null)
-        {
+        ListNode slow_ptr = head, fast_ptr = head, prev_ptr = slow_ptr;
+        while (fast_ptr != null && fast_ptr.next != null) {
             prev_ptr = slow_ptr;
             slow_ptr = slow_ptr.next;
             fast_ptr = fast_ptr.next.next;
@@ -5044,31 +4785,27 @@ public class LeetCode {
         ListNode left_sorted = sortList(head);
         ListNode right_sorted = sortList(slow_ptr);
 
-        return sortList_merge(left_sorted,right_sorted);
+        return sortList_merge(left_sorted, right_sorted);
 
     }
 
-    public ListNode sortList_merge(ListNode left_sorted,ListNode right_sorted)
+    public ListNode sortList_merge(ListNode left_sorted, ListNode right_sorted)
     {
-        ListNode prev_list=null,temp,root;
-        if(left_sorted.val==-85 && right_sorted.val==-85)
-            System.out.println(left_sorted.val+":"+right_sorted.val);
-        if(left_sorted.val>right_sorted.val) //Boundary Condtion Swap for first item
+        ListNode prev_list = null, temp, root;
+        if (left_sorted.val == -85 && right_sorted.val == -85)
+            System.out.println(left_sorted.val + ":" + right_sorted.val);
+        if (left_sorted.val > right_sorted.val) //Boundary Condtion Swap for first item
         {
             temp = right_sorted;
             right_sorted = left_sorted;
             left_sorted = temp;
         }
         root = left_sorted;
-        while(left_sorted!=null && right_sorted!=null)
-        {
-            if(left_sorted.val<=right_sorted.val)
-            {
+        while (left_sorted != null && right_sorted != null) {
+            if (left_sorted.val <= right_sorted.val) {
                 prev_list = left_sorted;
                 left_sorted = left_sorted.next;
-            }
-            else
-            {
+            } else {
                 temp = right_sorted.next;
                 right_sorted.next = left_sorted;
                 prev_list.next = right_sorted;
@@ -5076,32 +4813,26 @@ public class LeetCode {
                 prev_list = prev_list.next;
             }
         }
-        if(left_sorted==null)
+        if (left_sorted == null)
             prev_list.next = right_sorted;
         return root;
     }
 
     public ListNode sortList(ListNode head) //Recursive PartitionSort Important: Duplicate value handling .. can be clubbed along with pivot
     {                                       // Causes huge performance issue otherwise
-        if(head==null || head.next==null)
+        if (head == null || head.next == null)
             return head;
         ListNode pivot = head, left = new ListNode(0), right = new ListNode(0),
-                left_iter = left,right_iter= right,head1 = head;
+                left_iter = left, right_iter = right, head1 = head;
         head = head.next;
-        while(head!=null)
-        {
-            if(head.val<pivot.val)
-            {
+        while (head != null) {
+            if (head.val < pivot.val) {
                 left_iter.next = head;
                 left_iter = left_iter.next;
-            }
-            else if(head.val>pivot.val)
-            {
+            } else if (head.val > pivot.val) {
                 right_iter.next = head;
                 right_iter = right_iter.next;
-            }
-            else
-            {
+            } else {
                 pivot.next = head;
                 pivot = pivot.next;
             }
@@ -5113,7 +4844,7 @@ public class LeetCode {
         left.next = sortList(left.next);
         right.next = sortList(right.next);
         left_iter = left;
-        while(left.next!=null)
+        while (left.next != null)
             left = left.next;
 
         left.next = head1;
@@ -5139,18 +4870,17 @@ public class LeetCode {
     public List<List<Integer>> generate(int numRows)
     {
         List<List<Integer>> final_list = new ArrayList<>();
-        if(numRows==0)
+        if (numRows == 0)
             return final_list;
-        List<Integer> prev_list = new ArrayList<>(),curr_list;
+        List<Integer> prev_list = new ArrayList<>(), curr_list;
         prev_list.add(1);
         final_list.add(prev_list);
-        for(int iterator_i=1;iterator_i<numRows;iterator_i++)
-        {
+        for (int iterator_i = 1; iterator_i < numRows; iterator_i++) {
             curr_list = new ArrayList<>();
-            curr_list.add(final_list.get(final_list.size()-1).get(0));
-            for(int iterator_prev=1; iterator_prev<final_list.get(final_list.size()-1).size();iterator_prev++)
-                curr_list.add(final_list.get(final_list.size()-1).get(iterator_prev-1)+final_list.get(final_list.size()-1).get(iterator_prev));
-            curr_list.add(final_list.get(final_list.size()-1).get(final_list.get(final_list.size()-1).size()-1));
+            curr_list.add(final_list.get(final_list.size() - 1).get(0));
+            for (int iterator_prev = 1; iterator_prev < final_list.get(final_list.size() - 1).size(); iterator_prev++)
+                curr_list.add(final_list.get(final_list.size() - 1).get(iterator_prev - 1) + final_list.get(final_list.size() - 1).get(iterator_prev));
+            curr_list.add(final_list.get(final_list.size() - 1).get(final_list.get(final_list.size() - 1).size() - 1));
             final_list.add(curr_list);
         }
         return final_list;
@@ -5178,25 +4908,25 @@ public class LeetCode {
         Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
              Total amount you can rob = 1 + 3 = 4.
     */
-    public int rob2(int[] nums) {
-        if(nums.length==0)
+    public int rob2(int[] nums)
+    {
+        if (nums.length == 0)
             return 0;
-        if(nums.length==1)
+        if (nums.length == 1)
             return nums[0];
-        return Math.max(rob2_helper(nums,0,nums.length-2),rob2_helper(nums,1,nums.length-1));
+        return Math.max(rob2_helper(nums, 0, nums.length - 2), rob2_helper(nums, 1, nums.length - 1));
     }
 
     public int rob2_helper(int[] nums, int start_index, int end_index)
     {
-        if(start_index>=end_index)
+        if (start_index >= end_index)
             return nums[start_index];
         int dp_max_till_non_adjacent = nums[start_index++];
-        if(start_index==end_index)
-            return Math.max(nums[start_index],dp_max_till_non_adjacent);
-        int dp_max_till_now_prev = Math.max(nums[start_index++],dp_max_till_non_adjacent);
-        for(int iterator_i=start_index;iterator_i<=end_index;iterator_i++)
-        {
-            int current_max = Math.max(dp_max_till_non_adjacent+nums[iterator_i],dp_max_till_now_prev);
+        if (start_index == end_index)
+            return Math.max(nums[start_index], dp_max_till_non_adjacent);
+        int dp_max_till_now_prev = Math.max(nums[start_index++], dp_max_till_non_adjacent);
+        for (int iterator_i = start_index; iterator_i <= end_index; iterator_i++) {
+            int current_max = Math.max(dp_max_till_non_adjacent + nums[iterator_i], dp_max_till_now_prev);
             dp_max_till_non_adjacent = dp_max_till_now_prev;
             dp_max_till_now_prev = current_max;
         }
@@ -5226,16 +4956,14 @@ public class LeetCode {
     */
     public int[][] flipAndInvertImage(int[][] A) // Also can be done vai xor if symmetric elements found. No change required in case dissimilar values found
     {
-        for(int iterator_i=0;iterator_i<A.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<A[0].length/2;iterator_j++)
-            {
-                int temp = A[iterator_i][A[0].length-1-iterator_j];
-                A[iterator_i][A[0].length-1-iterator_j] = (A[iterator_i][iterator_j]==0)?1:0;
-                A[iterator_i][iterator_j] = (temp==0)?1:0;
+        for (int iterator_i = 0; iterator_i < A.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < A[0].length / 2; iterator_j++) {
+                int temp = A[iterator_i][A[0].length - 1 - iterator_j];
+                A[iterator_i][A[0].length - 1 - iterator_j] = (A[iterator_i][iterator_j] == 0) ? 1 : 0;
+                A[iterator_i][iterator_j] = (temp == 0) ? 1 : 0;
             }
-            if(A[0].length %2 !=0 )
-                A[iterator_i][A[0].length /2] = (A[iterator_i][A[0].length /2]==1)?0:1;
+            if (A[0].length % 2 != 0)
+                A[iterator_i][A[0].length / 2] = (A[iterator_i][A[0].length / 2] == 1) ? 0 : 1;
         }
         return A;
     }
@@ -5249,38 +4977,35 @@ public class LeetCode {
     public List<Integer> lexicalOrder_rcur(int n) //Recursive DFS
     {
         List<Integer> list = new ArrayList<>();
-        for(int iterator_i=1;iterator_i<10;iterator_i++)
-            lexicalOrderHelper(iterator_i,n,list);
+        for (int iterator_i = 1; iterator_i < 10; iterator_i++)
+            lexicalOrderHelper(iterator_i, n, list);
         return null;
     }
 
-    public void lexicalOrderHelper(int current_val,int n,List<Integer> list)
+    public void lexicalOrderHelper(int current_val, int n, List<Integer> list)
     {
-        if(current_val>n)
+        if (current_val > n)
             return;
         list.add(current_val);
-        for(int iterator_i = 0;iterator_i<10;iterator_i++)
-        {
-            if(current_val*10+iterator_i>n)
+        for (int iterator_i = 0; iterator_i < 10; iterator_i++) {
+            if (current_val * 10 + iterator_i > n)
                 return;
-            lexicalOrderHelper(current_val*10+iterator_i,n,list);
+            lexicalOrderHelper(current_val * 10 + iterator_i, n, list);
         }
     }
 
     public List<Integer> lexicalOrder(int n)
     {
         List<Integer> list = new ArrayList<>();
-        int current_val=1;
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
+        int current_val = 1;
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
             list.add(current_val);
-            if(current_val*10<=n)
+            if (current_val * 10 <= n)
                 current_val *= 10;
-            else if(current_val%10!=9 && current_val+1<=n)
+            else if (current_val % 10 != 9 && current_val + 1 <= n)
                 current_val++;
-            else
-            {
-                while((current_val/10)%10==9)
+            else {
+                while ((current_val / 10) % 10 == 9)
                     current_val /= 10;
                 current_val++;
             }
@@ -5303,24 +5028,22 @@ public class LeetCode {
     */
     public int maximalSquare(char[][] matrix)
     {
-        if(matrix.length==0)
+        if (matrix.length == 0)
             return 0;
-        int max_len= Integer.MIN_VALUE;
-        char dp_prev[] = matrix[0],dp_curr[] = new char[matrix[0].length];
-        for(int iterator_i=0;iterator_i<dp_prev.length;iterator_i++)
-            max_len = Math.max(dp_prev[iterator_i]-'0',max_len);
-        for(int iterator_i=1;iterator_i<matrix.length;iterator_i++)
-        {
+        int max_len = Integer.MIN_VALUE;
+        char dp_prev[] = matrix[0], dp_curr[] = new char[matrix[0].length];
+        for (int iterator_i = 0; iterator_i < dp_prev.length; iterator_i++)
+            max_len = Math.max(dp_prev[iterator_i] - '0', max_len);
+        for (int iterator_i = 1; iterator_i < matrix.length; iterator_i++) {
             dp_curr = matrix[iterator_i];
-            max_len = Math.max(dp_curr[0]-'0',max_len);
-            for(int iterator_j=1;iterator_j<matrix[0].length;iterator_j++)
-            {
+            max_len = Math.max(dp_curr[0] - '0', max_len);
+            for (int iterator_j = 1; iterator_j < matrix[0].length; iterator_j++) {
                 dp_curr[iterator_j] = dp_curr[iterator_j] == '1' ? ((char) (Math.min((int) dp_prev[iterator_j - 1], Math.min((int) dp_prev[iterator_j], (int) dp_curr[iterator_j - 1])) + 1)) : '0';
-                max_len = Math.max(dp_curr[iterator_j]-'0',max_len);
+                max_len = Math.max(dp_curr[iterator_j] - '0', max_len);
             }
             dp_prev = dp_curr;
         }
-        return max_len*max_len;
+        return max_len * max_len;
     }
 
     /*
@@ -5346,12 +5069,11 @@ public class LeetCode {
     public int numJewelsInStones(String J, String S)
     {
         HashSet jewel_set = new HashSet();
-        for(char c:J.toCharArray())
+        for (char c : J.toCharArray())
             jewel_set.add(c);
         int count = 0;
-        for(char c:S.toCharArray())
-        {
-            if(jewel_set.contains(c))
+        for (char c : S.toCharArray()) {
+            if (jewel_set.contains(c))
                 count++;
         }
         return count;
@@ -5380,41 +5102,39 @@ public class LeetCode {
     public int findMinArrowShots_alt(int[][] points) //Sort using start value
     {
         //Arrays.sort(points,(a,b)->a[0]-b[0]);
-        Arrays.sort(points, new Comparator<int[]>() {
+        Arrays.sort(points, new Comparator<int[]>()
+        {
             @Override
-            public int compare(int[] o1, int[] o2) {
+            public int compare(int[] o1, int[] o2)
+            {
                 return o1[0] - o2[0];
             }
         });
-        int min_end = Integer.MAX_VALUE,count_arrows=0;
-        for(int iterator_i=0;iterator_i<points.length;iterator_i++)
-        {
-            if(points[iterator_i][0]<=min_end)
-                min_end = Math.min(min_end,points[iterator_i][1]);
-            else
-            {
+        int min_end = Integer.MAX_VALUE, count_arrows = 0;
+        for (int iterator_i = 0; iterator_i < points.length; iterator_i++) {
+            if (points[iterator_i][0] <= min_end)
+                min_end = Math.min(min_end, points[iterator_i][1]);
+            else {
                 count_arrows++;
                 min_end = points[iterator_i][1];
             }
         }
-        return count_arrows + ((points.length==0)?0:1);
+        return count_arrows + ((points.length == 0) ? 0 : 1);
     }
 
     public int findMinArrowShots(int[][] points) //Sort using start value
     {
-        if(points.length<2)
+        if (points.length < 2)
             return points.length;
-        Arrays.sort(points,(a,b)->a[1]-b[1]);
-        int count_arrows=1,current_max_end= points[0][1];
-        for(int iterator_i=1;iterator_i<points.length;iterator_i++)
-        {
-            if(points[iterator_i][0] > current_max_end )
-            {
+        Arrays.sort(points, (a, b) -> a[1] - b[1]);
+        int count_arrows = 1, current_max_end = points[0][1];
+        for (int iterator_i = 1; iterator_i < points.length; iterator_i++) {
+            if (points[iterator_i][0] > current_max_end) {
                 count_arrows++;
                 current_max_end = points[iterator_i][1];
             }
         }
-        return count_arrows ;
+        return count_arrows;
     }
 
     /*
@@ -5439,20 +5159,15 @@ public class LeetCode {
     */
     public boolean find132pattern_alt(int[] nums) // Time O(n^2) Space O(1)
     {
-        if(nums.length<3)
+        if (nums.length < 3)
             return false;
         int min_i = nums[0];
-        for(int iterator_j=1;iterator_j<nums.length-1;iterator_j++)
-        {
-            if(min_i>=nums[iterator_j])
-            {
+        for (int iterator_j = 1; iterator_j < nums.length - 1; iterator_j++) {
+            if (min_i >= nums[iterator_j]) {
                 min_i = nums[iterator_j];
-            }
-            else
-            {
-                for(int iterator_k=iterator_j+1;iterator_k<nums.length;iterator_k++)
-                {
-                    if(nums[iterator_k]>min_i && nums[iterator_k]<nums[iterator_j])
+            } else {
+                for (int iterator_k = iterator_j + 1; iterator_k < nums.length; iterator_k++) {
+                    if (nums[iterator_k] > min_i && nums[iterator_k] < nums[iterator_j])
                         return true;
                 }
             }
@@ -5462,21 +5177,19 @@ public class LeetCode {
 
     public boolean find132pattern(int[] nums) // Time O(n) Space O(n) Set approach to store possible k values
     {
-        if(nums.length<3)
+        if (nums.length < 3)
             return false;
         int min_i_arr[] = new int[nums.length];
         min_i_arr[0] = nums[0];
-        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
-            min_i_arr[iterator_i] = Math.min(min_i_arr[iterator_i-1],nums[iterator_i]);
+        for (int iterator_i = 1; iterator_i < nums.length; iterator_i++)
+            min_i_arr[iterator_i] = Math.min(min_i_arr[iterator_i - 1], nums[iterator_i]);
         Stack<Integer> stck_k = new Stack();
 
-        for(int iterator_j=nums.length-1;iterator_j>=0;iterator_j--)
-        {
-            if(nums[iterator_j]>min_i_arr[iterator_j])
-            {
-                while(!stck_k.isEmpty() && stck_k.peek()<= min_i_arr[iterator_j])
+        for (int iterator_j = nums.length - 1; iterator_j >= 0; iterator_j--) {
+            if (nums[iterator_j] > min_i_arr[iterator_j]) {
+                while (!stck_k.isEmpty() && stck_k.peek() <= min_i_arr[iterator_j])
                     stck_k.pop();
-                if(!stck_k.isEmpty() && stck_k.peek()<nums[iterator_j])
+                if (!stck_k.isEmpty() && stck_k.peek() < nums[iterator_j])
                     return true;
                 stck_k.push(nums[iterator_j]);
             }
@@ -5520,26 +5233,20 @@ public class LeetCode {
     */
     public boolean lemonadeChange(int[] bills)
     {
-        int five_counter=0,ten_counter=0;
-        for(int iterator_i=0;iterator_i<bills.length;iterator_i++)
-        {
-            if(bills[iterator_i]==5)
+        int five_counter = 0, ten_counter = 0;
+        for (int iterator_i = 0; iterator_i < bills.length; iterator_i++) {
+            if (bills[iterator_i] == 5)
                 five_counter++;
-            else if(bills[iterator_i]==10)
-            {
-                if(five_counter<1)
+            else if (bills[iterator_i] == 10) {
+                if (five_counter < 1)
                     return false;
                 ten_counter++;
                 five_counter--;
-            }
-            else if(bills[iterator_i]==20)
-            {
-                if(ten_counter>0 && five_counter>0)
-                {
+            } else if (bills[iterator_i] == 20) {
+                if (ten_counter > 0 && five_counter > 0) {
                     ten_counter--;
                     five_counter--;
-                }
-                else if(five_counter>=3)
+                } else if (five_counter >= 3)
                     five_counter -= 3;
                 else
                     return false;
@@ -5576,56 +5283,50 @@ public class LeetCode {
     */
     public boolean checkValidString_alt(String s) //Greedy Approach
     {
-        int min_valid_open_brackets=0,maximum_closed_brackets=0;
-        for(char c: s.toCharArray())
-        {
-            if(c == '(')
+        int min_valid_open_brackets = 0, maximum_closed_brackets = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(')
                 min_valid_open_brackets++;
             else
                 min_valid_open_brackets--;
 
-            if(c==')')
+            if (c == ')')
                 maximum_closed_brackets--;
             else
                 maximum_closed_brackets++;
 
-            if(maximum_closed_brackets<0)
+            if (maximum_closed_brackets < 0)
                 return false;
-            min_valid_open_brackets = Math.max(min_valid_open_brackets,0);
+            min_valid_open_brackets = Math.max(min_valid_open_brackets, 0);
         }
-        return min_valid_open_brackets==0;
+        return min_valid_open_brackets == 0;
     }
 
     public boolean checkValidString(String s) //Dynamic Approach
     {
         boolean dp[][] = new boolean[s.length()][s.length()];
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            if(s.charAt(iterator_i)=='*')
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            if (s.charAt(iterator_i) == '*')
                 dp[iterator_i][iterator_i] = true;
         }
 
-        for(int iterator_i=1;iterator_i<s.length();iterator_i++)
-        {
+        for (int iterator_i = 1; iterator_i < s.length(); iterator_i++) {
             int iterator_j = 0;
-            while(iterator_j+iterator_i<s.length())
-            {
-                if(s.charAt(iterator_j)=='*' && dp[iterator_j+1][iterator_j+iterator_i]==true)
-                    dp[iterator_j][iterator_j+iterator_i] = true;
-                else if(s.charAt(iterator_j)=='(' || s.charAt(iterator_j)=='*')
-                {
-                    for(int iterator_k = iterator_j+1;iterator_k<=iterator_j+iterator_i;iterator_k++)
-                    {
-                        if((s.charAt(iterator_k)==')' || s.charAt(iterator_k)=='*') // midpointcheck
-                        && (iterator_k == iterator_j+1 || dp[iterator_j][iterator_k]==true) //less than midpoint valid
-                        && (iterator_k == iterator_j+iterator_i || dp[iterator_k+1][iterator_j+iterator_i]==true))
-                            dp[iterator_j][iterator_j+iterator_i] = true;
+            while (iterator_j + iterator_i < s.length()) {
+                if (s.charAt(iterator_j) == '*' && dp[iterator_j + 1][iterator_j + iterator_i] == true)
+                    dp[iterator_j][iterator_j + iterator_i] = true;
+                else if (s.charAt(iterator_j) == '(' || s.charAt(iterator_j) == '*') {
+                    for (int iterator_k = iterator_j + 1; iterator_k <= iterator_j + iterator_i; iterator_k++) {
+                        if ((s.charAt(iterator_k) == ')' || s.charAt(iterator_k) == '*') // midpointcheck
+                                && (iterator_k == iterator_j + 1 || dp[iterator_j][iterator_k] == true) //less than midpoint valid
+                                && (iterator_k == iterator_j + iterator_i || dp[iterator_k + 1][iterator_j + iterator_i] == true))
+                            dp[iterator_j][iterator_j + iterator_i] = true;
                     }
                 }
                 iterator_j++;
             }
         }
-        return dp[0][s.length()-1];
+        return dp[0][s.length() - 1];
     }
 
     /*
@@ -5653,14 +5354,13 @@ public class LeetCode {
     */
     public int arrangeCoins(int n)
     {
-        int lb = 0, ub = n,mid=0;
-        while(lb<ub)
-        {
-            mid = lb + (int)Math.ceil((ub-lb)/2.0);
-            if(mid/2.0*(mid+1)<=n)
+        int lb = 0, ub = n, mid = 0;
+        while (lb < ub) {
+            mid = lb + (int) Math.ceil((ub - lb) / 2.0);
+            if (mid / 2.0 * (mid + 1) <= n)
                 lb = mid;
             else
-                ub = mid-1;
+                ub = mid - 1;
         }
         return lb;
     }
@@ -5706,19 +5406,16 @@ public class LeetCode {
     */
     public char[][] updateBoard(char[][] board, int[] click)
     {
-        if(board[click[0]][click[1]] == 'M' || board[click[0]][click[1]] == 'X') {
+        if (board[click[0]][click[1]] == 'M' || board[click[0]][click[1]] == 'X') {
             board[click[0]][click[1]] = 'X';
             return board;
         }
-        if(!checkAdjacentMines(board,click))
-        {
-            for(int iterator_i=-1;iterator_i<2;iterator_i++)
-            {
-                for(int iterator_j=-1;iterator_j<2;iterator_j++)
-                {
-                    int row = click[0]+iterator_i, col = click[1]+iterator_j;
-                    if(row>-1 && row<board.length && col>-1 && col<board[0].length && board[row][col]=='E')
-                        updateBoard(board,new int[]{row,col});
+        if (!checkAdjacentMines(board, click)) {
+            for (int iterator_i = -1; iterator_i < 2; iterator_i++) {
+                for (int iterator_j = -1; iterator_j < 2; iterator_j++) {
+                    int row = click[0] + iterator_i, col = click[1] + iterator_j;
+                    if (row > -1 && row < board.length && col > -1 && col < board[0].length && board[row][col] == 'E')
+                        updateBoard(board, new int[]{row, col});
                 }
             }
         }
@@ -5728,16 +5425,14 @@ public class LeetCode {
     public boolean checkAdjacentMines(char board[][], int click[])
     {
         int count_mines = 0;
-        for(int iterator_i=-1;iterator_i<2;iterator_i++)
-        {
-            for(int iterator_j=-1;iterator_j<2;iterator_j++)
-            {
-                int row = click[0]+iterator_i, col = click[1]+iterator_j;
-                if(row>-1 && row<board.length && col>-1 && col<board[0].length && board[row][col]=='M')
+        for (int iterator_i = -1; iterator_i < 2; iterator_i++) {
+            for (int iterator_j = -1; iterator_j < 2; iterator_j++) {
+                int row = click[0] + iterator_i, col = click[1] + iterator_j;
+                if (row > -1 && row < board.length && col > -1 && col < board[0].length && board[row][col] == 'M')
                     count_mines++;
             }
         }
-        if(count_mines>0) {
+        if (count_mines > 0) {
             board[click[0]][click[1]] = (char) (count_mines + '0');
             return true;
         }
@@ -5761,18 +5456,17 @@ public class LeetCode {
     */
     public boolean isPerfectSquare(int num)
     {
-        if(num==0)
+        if (num == 0)
             return true;
         int lb = 0, ub = num;
-        while(lb<=ub)
-        {
-            int mid = lb + (ub-lb)/2;
-            if(1.0*mid == 1.0*num/mid)
+        while (lb <= ub) {
+            int mid = lb + (ub - lb) / 2;
+            if (1.0 * mid == 1.0 * num / mid)
                 return true;
-            else if(1.0*mid < 1.0*num/mid)
-                lb = mid+1;
+            else if (1.0 * mid < 1.0 * num / mid)
+                lb = mid + 1;
             else
-                ub = mid-1;
+                ub = mid - 1;
         }
         return false;
     }
@@ -5787,29 +5481,27 @@ public class LeetCode {
     public int totalNQueens(int n)
     {
         boolean visited_col[] = new boolean[n];
-        boolean visited_diag1[] = new boolean[2*n-1];
-        boolean visited_diag2[] = new boolean[2*n-1];
-        return totalNQueensHelper(n,visited_col,visited_diag1,visited_diag2,0);
+        boolean visited_diag1[] = new boolean[2 * n - 1];
+        boolean visited_diag2[] = new boolean[2 * n - 1];
+        return totalNQueensHelper(n, visited_col, visited_diag1, visited_diag2, 0);
     }
 
-    public int totalNQueensHelper(int n,boolean[] visited_col,boolean[] visited_diag1,boolean[] visited_diag2,int current_row)
+    public int totalNQueensHelper(int n, boolean[] visited_col, boolean[] visited_diag1, boolean[] visited_diag2, int current_row)
     {
         int count_states = 0;
-        if(current_row == n)
+        if (current_row == n)
             return 1;
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
-            if(visited_col[iterator_i] || visited_diag1[n+current_row-1-iterator_i] || visited_diag2[current_row+iterator_i])
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
+            if (visited_col[iterator_i] || visited_diag1[n + current_row - 1 - iterator_i] || visited_diag2[current_row + iterator_i])
                 continue;
-            else
-            {
+            else {
                 visited_col[iterator_i] = true;
-                visited_diag1[n+current_row-1-iterator_i] = true;
-                visited_diag2[current_row+iterator_i] = true;
-                count_states += totalNQueensHelper(n,visited_col,visited_diag1,visited_diag2,current_row+1);
+                visited_diag1[n + current_row - 1 - iterator_i] = true;
+                visited_diag2[current_row + iterator_i] = true;
+                count_states += totalNQueensHelper(n, visited_col, visited_diag1, visited_diag2, current_row + 1);
                 visited_col[iterator_i] = false;
-                visited_diag1[n+current_row-1-iterator_i] = false;
-                visited_diag2[current_row+iterator_i] = false;
+                visited_diag1[n + current_row - 1 - iterator_i] = false;
+                visited_diag2[current_row + iterator_i] = false;
             }
         }
         return count_states;
@@ -5829,11 +5521,10 @@ public class LeetCode {
     */
     public ListNode deleteDuplicates(ListNode head)
     {
-        ListNode curr_unique,final_head=head;
-        while(head!=null)
-        {
+        ListNode curr_unique, final_head = head;
+        while (head != null) {
             curr_unique = head;
-            while(head!=null && head.val == curr_unique.val)
+            while (head != null && head.val == curr_unique.val)
                 head = head.next;
             curr_unique.next = head;
         }
@@ -5856,32 +5547,26 @@ public class LeetCode {
     */
     public ListNode deleteDuplicates2(ListNode head)
     {
-        if(head==null)
+        if (head == null)
             return head;
-        ListNode final_head=null,curr_unique=head,prev_unique=null;
-        while(head!=null)
-        {
-            while(head!=null && head.val==curr_unique.val)
-            {
+        ListNode final_head = null, curr_unique = head, prev_unique = null;
+        while (head != null) {
+            while (head != null && head.val == curr_unique.val) {
                 head = head.next;
             }
-            if(curr_unique.next!=head)
+            if (curr_unique.next != head)
                 curr_unique = head;
-            else
-            {
-                if(prev_unique==null)
-                {
+            else {
+                if (prev_unique == null) {
                     final_head = curr_unique;
                     prev_unique = curr_unique;
-                }
-                else
-                {
+                } else {
                     prev_unique.next = curr_unique;
                     prev_unique = prev_unique.next;
                 }
             }
         }
-        if(prev_unique!=null)
+        if (prev_unique != null)
             prev_unique.next = null;
         return final_head;
     }
@@ -5897,22 +5582,18 @@ public class LeetCode {
     */
     public ListNode partition(ListNode head, int x)
     {
-        ListNode header = new ListNode(0),partition_less_node = header,partition_greater_node= header;
-        while(head!=null)
-        {
-            if(head.val<x)
-            {
-                ListNode next_head = head.next,partion_less_next = partition_less_node.next;
-                if(partition_greater_node==partition_less_node)
+        ListNode header = new ListNode(0), partition_less_node = header, partition_greater_node = header;
+        while (head != null) {
+            if (head.val < x) {
+                ListNode next_head = head.next, partion_less_next = partition_less_node.next;
+                if (partition_greater_node == partition_less_node)
                     partition_greater_node = head;
 
                 partition_less_node.next = head;
                 partition_less_node = head;
                 partition_less_node.next = partion_less_next;
                 head = next_head;
-            }
-            else
-            {
+            } else {
                 partition_greater_node.next = head;
                 partition_greater_node = head;
                 head = head.next;
@@ -5938,38 +5619,33 @@ public class LeetCode {
     */
     public int maximalRectangle(char[][] matrix)
     {
-        if(matrix.length==0)
+        if (matrix.length == 0)
             return 0;
-        int left_boundary[] = new int[matrix[0].length], right_boundary[] = new int[matrix[0].length],height_till_row[] = new int[matrix[0].length],max_area = Integer.MIN_VALUE;
-        Arrays.fill(right_boundary,matrix[0].length);
+        int left_boundary[] = new int[matrix[0].length], right_boundary[] = new int[matrix[0].length], height_till_row[] = new int[matrix[0].length], max_area = Integer.MIN_VALUE;
+        Arrays.fill(right_boundary, matrix[0].length);
 
-        for(int iterator_row=0;iterator_row<matrix.length;iterator_row++)
-        {
+        for (int iterator_row = 0; iterator_row < matrix.length; iterator_row++) {
             int curr_left_count = 0, curr_right_count = matrix[0].length;
-            for(int iterator_j = 0;iterator_j<matrix[0].length;iterator_j++)
-            {
+            for (int iterator_j = 0; iterator_j < matrix[0].length; iterator_j++) {
                 //Left Boundary for Row iterator_row. Get rightmost boundary if 1 present in prev rows
-                if(matrix[iterator_row][iterator_j]=='1')
-                    left_boundary[iterator_j] = Math.max(left_boundary[iterator_j],curr_left_count);
-                else
-                {
+                if (matrix[iterator_row][iterator_j] == '1')
+                    left_boundary[iterator_j] = Math.max(left_boundary[iterator_j], curr_left_count);
+                else {
                     left_boundary[iterator_j] = 0;
-                    curr_left_count = iterator_j+1;
+                    curr_left_count = iterator_j + 1;
                 }
 
                 // Right Boundary Minimal if connected across previous rows
-                if(matrix[iterator_row][matrix[0].length-1-iterator_j] == '1')
-                    right_boundary[matrix[0].length-1-iterator_j] = Math.min(right_boundary[matrix[0].length-1-iterator_j],curr_right_count);
-                else
-                {
-                    right_boundary[matrix[0].length-1-iterator_j] = matrix[0].length;
+                if (matrix[iterator_row][matrix[0].length - 1 - iterator_j] == '1')
+                    right_boundary[matrix[0].length - 1 - iterator_j] = Math.min(right_boundary[matrix[0].length - 1 - iterator_j], curr_right_count);
+                else {
+                    right_boundary[matrix[0].length - 1 - iterator_j] = matrix[0].length;
                     curr_right_count = matrix[0].length - 1 - iterator_j;
                 }
 
             }
             //Compute height for current row. Also update max area if encountered
-            for(int iterator_j=0;iterator_j<matrix[0].length;iterator_j++)
-            {
+            for (int iterator_j = 0; iterator_j < matrix[0].length; iterator_j++) {
                 if (matrix[iterator_row][iterator_j] == '1')
                     height_till_row[iterator_j]++;
                 else
@@ -5991,23 +5667,23 @@ public class LeetCode {
         Output: 1->4->3->2->5->NULL
     */
     ListNode non_reversed_node = null;
+
     public ListNode reverseBetween_rcur(ListNode head, int m, int n) //Recursive logic
     {
-        if(m==1)
-            return reverseTillN(head,n);
-        ListNode last = reverseBetween_rcur(head.next,m-1,n-1);
+        if (m == 1)
+            return reverseTillN(head, n);
+        ListNode last = reverseBetween_rcur(head.next, m - 1, n - 1);
         head.next = last;
         return head;
     }
 
     public ListNode reverseTillN(ListNode head, int n)
     {
-        if(n==1)
-        {
+        if (n == 1) {
             non_reversed_node = head.next;
             return head;
         }
-        ListNode lastNode = reverseTillN(head.next,n-1);
+        ListNode lastNode = reverseTillN(head.next, n - 1);
         head.next.next = head;
         head.next = non_reversed_node;
         return lastNode;
@@ -6018,14 +5694,13 @@ public class LeetCode {
         ListNode final_header = new ListNode(0);
         final_header.next = head;
         head = final_header;
-        n=n-m;
-        for(int iterator_i=2;iterator_i<=m;iterator_i++)
+        n = n - m;
+        for (int iterator_i = 2; iterator_i <= m; iterator_i++)
             head = head.next;
 
-        ListNode prev_node = head,last_unsorted_node = prev_node;
+        ListNode prev_node = head, last_unsorted_node = prev_node;
         head = head.next;
-        for(int iterator_i=0;iterator_i<=n;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i <= n; iterator_i++) {
             ListNode next_node = head.next;
             head.next = prev_node;
             prev_node = head;
@@ -6053,7 +5728,7 @@ public class LeetCode {
     {
         int min_sum = 0;
         Arrays.sort(nums);
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i+=2)
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i += 2)
             min_sum += nums[iterator_i];
 
         return min_sum;
@@ -6061,19 +5736,17 @@ public class LeetCode {
 
     public int arrayPairSum(int[] nums) //Buckets
     {
-        int bucket_arr[] = new int[20001],max_bucket_non_zero=0,min_bucket_non_zero=20000,min_sum=0;
-        for(int num_val:nums) {
+        int bucket_arr[] = new int[20001], max_bucket_non_zero = 0, min_bucket_non_zero = 20000, min_sum = 0;
+        for (int num_val : nums) {
             bucket_arr[num_val + 10000]++;
-            max_bucket_non_zero = Math.max(max_bucket_non_zero,num_val+10000);
-            min_bucket_non_zero = Math.min(min_bucket_non_zero,num_val+10000);
+            max_bucket_non_zero = Math.max(max_bucket_non_zero, num_val + 10000);
+            min_bucket_non_zero = Math.min(min_bucket_non_zero, num_val + 10000);
         }
         boolean is_min_in_pair = true; //First is always in pair
-        for(int iterator_i=min_bucket_non_zero;iterator_i<=max_bucket_non_zero;iterator_i++)
-        {
-            while(bucket_arr[iterator_i]>0)
-            {
-                if(is_min_in_pair)
-                    min_sum += iterator_i-10000;
+        for (int iterator_i = min_bucket_non_zero; iterator_i <= max_bucket_non_zero; iterator_i++) {
+            while (bucket_arr[iterator_i] > 0) {
+                if (is_min_in_pair)
+                    min_sum += iterator_i - 10000;
                 is_min_in_pair = !is_min_in_pair;
                 bucket_arr[iterator_i]--;
             }
@@ -6101,40 +5774,37 @@ public class LeetCode {
     */
     public int nthSuperUglyNumber_alt(int n, int[] primes) // Can also be done using priority queue for next_value_for_prime
     {
-        int ugly_arr[] = new int[n],next_value_for_prime[] = new int[primes.length], current_prime_multiplication_index[]= new int[primes.length];
-        Arrays.fill(next_value_for_prime,1);
+        int ugly_arr[] = new int[n], next_value_for_prime[] = new int[primes.length], current_prime_multiplication_index[] = new int[primes.length];
+        Arrays.fill(next_value_for_prime, 1);
         int next = 1;
-        for(int iterator_i=0;iterator_i<n;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < n; iterator_i++) {
             ugly_arr[iterator_i] = next;
             next = Integer.MAX_VALUE;
-            for(int iterator_j=0;iterator_j<primes.length;iterator_j++)
-            {
+            for (int iterator_j = 0; iterator_j < primes.length; iterator_j++) {
                 if (next_value_for_prime[iterator_j] == ugly_arr[iterator_i])
                     next_value_for_prime[iterator_j] = primes[iterator_j] * ugly_arr[current_prime_multiplication_index[iterator_j]++];
                 next = Math.min(next, next_value_for_prime[iterator_j]);
             }
         }
-        return ugly_arr[n-1];
+        return ugly_arr[n - 1];
     }
 
     public int nthSuperUglyNumber(int n, int[] primes)
     {
         PriorityQueue<UglyNum> ugly_queue = new PriorityQueue();
-        int ugly[] = new int[n],next=1;ugly[0] = 1;
+        int ugly[] = new int[n], next = 1;
+        ugly[0] = 1;
         for (int i = 0; i < primes.length; i++)
-            ugly_queue.add(new UglyNum(1, primes[i],primes[i]));
-        for(int iterator_i=1;iterator_i<n;iterator_i++)
-        {
+            ugly_queue.add(new UglyNum(1, primes[i], primes[i]));
+        for (int iterator_i = 1; iterator_i < n; iterator_i++) {
             UglyNum popped = ugly_queue.peek();
             ugly[iterator_i] = popped.current_prime_val;
-            while (ugly_queue.peek().current_prime_val == ugly[iterator_i])
-            {
+            while (ugly_queue.peek().current_prime_val == ugly[iterator_i]) {
                 popped = ugly_queue.poll();
                 ugly_queue.add(new UglyNum(popped.prev_ugly_index + 1, popped.prime * ugly[popped.prev_ugly_index], popped.prime));
             }
         }
-        return ugly[n-1];
+        return ugly[n - 1];
     }
 
     /*
@@ -6161,24 +5831,21 @@ public class LeetCode {
     */
     public int[][] imageSmoother(int[][] M)
     {
-        if(M.length==0)
+        if (M.length == 0)
             return M;
         int final_matrix[][] = new int[M.length][M[0].length];
-        int directions[][] = {{-1,-1},{-1,0},{-1,1},{1,-1},{1,1},{1,0},{0,-1},{0,1}};
-        for(int iterator_i=0;iterator_i<M.length;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j<M[0].length;iterator_j++)
-            {
-                int valid_pixels=1,final_pixel_val=M[iterator_i][iterator_j];
-                for(int[] direction:directions)
-                {
-                    int curr_row = iterator_i+direction[0],curr_col = iterator_j+direction[1];
-                    if(curr_row<0|| curr_row>=M.length || curr_col<0 || curr_col>=M[0].length)
+        int directions[][] = {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 1}, {1, 0}, {0, -1}, {0, 1}};
+        for (int iterator_i = 0; iterator_i < M.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < M[0].length; iterator_j++) {
+                int valid_pixels = 1, final_pixel_val = M[iterator_i][iterator_j];
+                for (int[] direction : directions) {
+                    int curr_row = iterator_i + direction[0], curr_col = iterator_j + direction[1];
+                    if (curr_row < 0 || curr_row >= M.length || curr_col < 0 || curr_col >= M[0].length)
                         continue;
                     valid_pixels++;
                     final_pixel_val += M[curr_row][curr_col];
                 }
-                final_matrix[iterator_i][iterator_j] = final_pixel_val/valid_pixels;
+                final_matrix[iterator_i][iterator_j] = final_pixel_val / valid_pixels;
             }
         }
         return final_matrix;
@@ -6207,7 +5874,8 @@ public class LeetCode {
         1. The sum of node values in any subtree won't exceed the range of 32-bit integer.
         2. All the tilt values won't exceed the range of 32-bit integer.
     */
-    int tilt=0;
+    int tilt = 0;
+
     public int findTilt(TreeNode root)
     {
         findTiltHelper(root);
@@ -6216,12 +5884,12 @@ public class LeetCode {
 
     public int findTiltHelper(TreeNode root)
     {
-        if(root==null)
+        if (root == null)
             return 0;
         int leftSum = findTiltHelper(root.left);
         int rightSum = findTiltHelper(root.right);
-        tilt += Math.abs(leftSum-rightSum);
-        return leftSum+rightSum+root.val;
+        tilt += Math.abs(leftSum - rightSum);
+        return leftSum + rightSum + root.val;
     }
 
     /*
@@ -6252,9 +5920,8 @@ public class LeetCode {
     {
         int count_candies = 1;
         Arrays.sort(candies);
-        for(int iterator_i=1;iterator_i<candies.length && count_candies<candies.length/2;iterator_i++)
-        {
-            if(candies[iterator_i]>candies[iterator_i-1])
+        for (int iterator_i = 1; iterator_i < candies.length && count_candies < candies.length / 2; iterator_i++) {
+            if (candies[iterator_i] > candies[iterator_i - 1])
                 count_candies++;
         }
         return count_candies;
@@ -6263,7 +5930,7 @@ public class LeetCode {
     public int distributeCandies_alt1(int[] candies) //Time O(n) Space O(n)
     {
         HashSet<Integer> hset = new HashSet();
-        for(int iterator_i=0;iterator_i<candies.length &&hset.size()<candies.length/2;iterator_i++)
+        for (int iterator_i = 0; iterator_i < candies.length && hset.size() < candies.length / 2; iterator_i++)
             hset.add(candies[iterator_i]);
 
         return hset.size();
@@ -6272,12 +5939,11 @@ public class LeetCode {
     public int distributeCandies(int[] candies) //Buckets
     {
         boolean bucket[] = new boolean[200001];
-        int unique_val=0;
-        for(int iterator_i=0;iterator_i<candies.length && unique_val<candies.length/2;iterator_i++)
-        {
-            if(bucket[100000+candies[iterator_i]]==false)
+        int unique_val = 0;
+        for (int iterator_i = 0; iterator_i < candies.length && unique_val < candies.length / 2; iterator_i++) {
+            if (bucket[100000 + candies[iterator_i]] == false)
                 unique_val++;
-            bucket[100000+candies[iterator_i]] = true;
+            bucket[100000 + candies[iterator_i]] = true;
         }
         return unique_val;
     }
@@ -6296,40 +5962,37 @@ public class LeetCode {
     */
     public int trap_alt(int[] height) // Time O(n) Space O(n)
     {
-        if(height.length==0)
+        if (height.length == 0)
             return 0;
-        int left_max[] = new int[height.length], right_max[] = new int[height.length],total_area=0;
+        int left_max[] = new int[height.length], right_max[] = new int[height.length], total_area = 0;
         left_max[0] = height[0];
-        right_max[height.length-1] = height[height.length-1];
-        for(int iterator_i=1;iterator_i<height.length;iterator_i++)
-        {
-            left_max[iterator_i] = Math.max(left_max[iterator_i-1],height[iterator_i]);
-            right_max[height.length-iterator_i-1] = Math.max(right_max[height.length-iterator_i],height[height.length-iterator_i-1]);
+        right_max[height.length - 1] = height[height.length - 1];
+        for (int iterator_i = 1; iterator_i < height.length; iterator_i++) {
+            left_max[iterator_i] = Math.max(left_max[iterator_i - 1], height[iterator_i]);
+            right_max[height.length - iterator_i - 1] = Math.max(right_max[height.length - iterator_i], height[height.length - iterator_i - 1]);
         }
-        for(int iterator_i=0;iterator_i<height.length;iterator_i++)
-            total_area += Math.min(left_max[iterator_i],right_max[iterator_i]) - height[iterator_i];
+        for (int iterator_i = 0; iterator_i < height.length; iterator_i++)
+            total_area += Math.min(left_max[iterator_i], right_max[iterator_i]) - height[iterator_i];
         return total_area;
     }
 
     public int trap(int[] height) // Time O(n) Space O(1)
     {
-        int max_left_till_now = 0,max_right_till_now=0,left_pointer=0,right_pointer=height.length-1,total_area=0;
-        while(left_pointer<right_pointer)
-        {
-            if(height[left_pointer]<height[right_pointer]) // Trap bounded by max left val and current height itself since right is greater
+        int max_left_till_now = 0, max_right_till_now = 0, left_pointer = 0, right_pointer = height.length - 1, total_area = 0;
+        while (left_pointer < right_pointer) {
+            if (height[left_pointer] < height[right_pointer]) // Trap bounded by max left val and current height itself since right is greater
             {
-                if(height[left_pointer]>max_left_till_now)
+                if (height[left_pointer] > max_left_till_now)
                     max_left_till_now = height[left_pointer];
                 else
-                    total_area += max_left_till_now-height[left_pointer];
+                    total_area += max_left_till_now - height[left_pointer];
                 left_pointer++;
-            }
-            else //Trap bounded by right max since left is greater than current val
+            } else //Trap bounded by right max since left is greater than current val
             {
-                if(height[right_pointer]>max_right_till_now)
+                if (height[right_pointer] > max_right_till_now)
                     max_right_till_now = height[right_pointer];
                 else
-                    total_area += max_right_till_now-height[right_pointer];
+                    total_area += max_right_till_now - height[right_pointer];
                 right_pointer--;
             }
         }
@@ -6351,10 +6014,10 @@ public class LeetCode {
     public int firstUniqChar(String s)
     {
         int isEncountered[] = new int[26];
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-            isEncountered[s.charAt(iterator_i)-'a']++;
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-            if(isEncountered[s.charAt(iterator_i)-'a']==1)
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++)
+            isEncountered[s.charAt(iterator_i) - 'a']++;
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++)
+            if (isEncountered[s.charAt(iterator_i) - 'a'] == 1)
                 return iterator_i;
         return -1;
     }
@@ -6375,20 +6038,19 @@ public class LeetCode {
     */
     public int numSquares_alt(int n) //dynamic programming
     {
-        int dp_arr[] = new int[n+1];
-        Arrays.fill(dp_arr,Integer.MAX_VALUE);
-        for(int iterator_i=1;1.0*iterator_i<=1.0*n/iterator_i;iterator_i++)
-            dp_arr[iterator_i*iterator_i] = 1;
+        int dp_arr[] = new int[n + 1];
+        Arrays.fill(dp_arr, Integer.MAX_VALUE);
+        for (int iterator_i = 1; 1.0 * iterator_i <= 1.0 * n / iterator_i; iterator_i++)
+            dp_arr[iterator_i * iterator_i] = 1;
 
-        for(int iterator_i=2;iterator_i<=n;iterator_i++) // Corresponds to each dp_arr
+        for (int iterator_i = 2; iterator_i <= n; iterator_i++) // Corresponds to each dp_arr
         {
-            if(dp_arr[iterator_i]==1)
+            if (dp_arr[iterator_i] == 1)
                 continue;
             //Check if any j exists such i = j*j +k , dp[k_val] should be >0 (also a square)
-            for(int iterator_j=1;iterator_j*iterator_j<iterator_i;iterator_j++)
-            {
-                if(dp_arr[iterator_i-iterator_j*iterator_j]!=Integer.MAX_VALUE)
-                    dp_arr[iterator_i] = Math.min(dp_arr[iterator_i],dp_arr[iterator_i-iterator_j*iterator_j]+1);
+            for (int iterator_j = 1; iterator_j * iterator_j < iterator_i; iterator_j++) {
+                if (dp_arr[iterator_i - iterator_j * iterator_j] != Integer.MAX_VALUE)
+                    dp_arr[iterator_i] = Math.min(dp_arr[iterator_i], dp_arr[iterator_i - iterator_j * iterator_j] + 1);
             }
         }
         return dp_arr[n];
@@ -6396,34 +6058,30 @@ public class LeetCode {
 
     public int numSquares_alt1(int n) //BFS Add primes to queue and continue search from there updating count array for reaching particular number
     {
-        int count_arr[] = new int[n+1];
-        Arrays.fill(count_arr,Integer.MAX_VALUE);
+        int count_arr[] = new int[n + 1];
+        Arrays.fill(count_arr, Integer.MAX_VALUE);
         List<Integer> squares_list = new ArrayList<>();
         Queue<Integer> bfs_q = new LinkedList<>();
-        for(int iterator_i=1;1.0*iterator_i<=1.0*n/iterator_i;iterator_i++)
-        {
-            squares_list.add(iterator_i*iterator_i);
+        for (int iterator_i = 1; 1.0 * iterator_i <= 1.0 * n / iterator_i; iterator_i++) {
+            squares_list.add(iterator_i * iterator_i);
             count_arr[iterator_i * iterator_i] = 1;
-            bfs_q.add(iterator_i*iterator_i);
+            bfs_q.add(iterator_i * iterator_i);
         }
         // If n is basic square
-        if(count_arr[n]==1)
+        if (count_arr[n] == 1)
             return 1;
 
-        while(!bfs_q.isEmpty())
-        {
+        while (!bfs_q.isEmpty()) {
             int current_val = bfs_q.poll();
-            for(Integer basicSquares:squares_list)
-            {
-                if(current_val+basicSquares>n)
+            for (Integer basicSquares : squares_list) {
+                if (current_val + basicSquares > n)
                     break;
-                if(current_val+basicSquares<n && count_arr[current_val+basicSquares]==Integer.MAX_VALUE) //Push value
+                if (current_val + basicSquares < n && count_arr[current_val + basicSquares] == Integer.MAX_VALUE) //Push value
                 {
-                    count_arr[current_val + basicSquares] = count_arr[current_val]+1;
-                    bfs_q.add(current_val+basicSquares);
-                }
-                else if(current_val+basicSquares==n) // Since BFS will have least squares
-                    return count_arr[current_val]+1;
+                    count_arr[current_val + basicSquares] = count_arr[current_val] + 1;
+                    bfs_q.add(current_val + basicSquares);
+                } else if (current_val + basicSquares == n) // Since BFS will have least squares
+                    return count_arr[current_val] + 1;
             }
         }
         return -1;
@@ -6432,23 +6090,22 @@ public class LeetCode {
     public int numSquares(int n) // Lagrange's four square theorem
     {
         //Check for basic prime count == 1
-        int sqrt_num = (int)Math.sqrt(n);
-        if(sqrt_num*sqrt_num == n)
+        int sqrt_num = (int) Math.sqrt(n);
+        if (sqrt_num * sqrt_num == n)
             return 1;
 
         // Lagrange 3 square theorem : if for 4^k(8m+7) then count == 4
         int n_cpy = n;
-        while(n%4==0)
-            n = n/4;
-        if(n%8 == 7)
+        while (n % 4 == 0)
+            n = n / 4;
+        if (n % 8 == 7)
             return 4;
 
         // Check if count == 2
-        for(int iterator_i=1;iterator_i<Math.sqrt(n_cpy);iterator_i++)
-        {
-            int complement = n - iterator_i*iterator_i;
-            sqrt_num = (int)Math.sqrt(complement);
-            if(sqrt_num*sqrt_num==complement)
+        for (int iterator_i = 1; iterator_i < Math.sqrt(n_cpy); iterator_i++) {
+            int complement = n - iterator_i * iterator_i;
+            sqrt_num = (int) Math.sqrt(complement);
+            if (sqrt_num * sqrt_num == complement)
                 return 2;
         }
 
@@ -6479,11 +6136,10 @@ public class LeetCode {
 
     public boolean hasPathSum(TreeNode root, int sum)
     {
-        if(root==null)
+        if (root == null)
             return false;
-        if(root.right==null && root.left==null)
-        {
-            if(root.val == sum)
+        if (root.right == null && root.left == null) {
+            if (root.val == sum)
                 return true;
             return false;
         }
@@ -6493,19 +6149,18 @@ public class LeetCode {
 
     public boolean hasPathSum_alt(TreeNode root, int sum) //Reduce recursion stack for root==null
     {
-        if(root==null)
+        if (root == null)
             return false;
-        return hasPathSumHelper(root,sum);
+        return hasPathSumHelper(root, sum);
 
     }
 
     public boolean hasPathSumHelper(TreeNode root, int sum)
     {
-        if(root==null)
+        if (root == null)
             return false;
-        if(root.right==null && root.left==null)
-        {
-            if(root.val == sum)
+        if (root.right == null && root.left == null) {
+            if (root.val == sum)
                 return true;
             return false;
         }
@@ -6528,23 +6183,17 @@ public class LeetCode {
     public ListNode mergeKLists_alt(ListNode[] lists) // Sort k lists 2 at a time using one with the least as result node Time O(nk) Space O(1)
     {
         ListNode result_node = new ListNode(Integer.MIN_VALUE);
-        for(int iterator_i=0;iterator_i<lists.length;iterator_i++)
-        {
-            ListNode result_node_ptr = result_node.next,result_node_prev=result_node,curr_list_ptr=lists[iterator_i];
-            while(curr_list_ptr!=null)
-            {
-                while(result_node_ptr!=null && result_node_ptr.val<curr_list_ptr.val)
-                {
+        for (int iterator_i = 0; iterator_i < lists.length; iterator_i++) {
+            ListNode result_node_ptr = result_node.next, result_node_prev = result_node, curr_list_ptr = lists[iterator_i];
+            while (curr_list_ptr != null) {
+                while (result_node_ptr != null && result_node_ptr.val < curr_list_ptr.val) {
                     result_node_prev = result_node_ptr;
                     result_node_ptr = result_node_ptr.next;
                 }
-                if(result_node_ptr==null)
-                {
+                if (result_node_ptr == null) {
                     result_node_prev.next = curr_list_ptr;
                     curr_list_ptr = null;
-                }
-                else
-                {
+                } else {
                     result_node_prev.next = curr_list_ptr;
                     curr_list_ptr = curr_list_ptr.next;
                     result_node_prev.next.next = result_node_ptr;
@@ -6559,58 +6208,52 @@ public class LeetCode {
     {
         PriorityQueue<ListNodeQueue> pq = new PriorityQueue();
         // Enter all starting nodes as initialization
-        for(int iterator_i=0;iterator_i<lists.length;iterator_i++)
-        {
-            if(lists[iterator_i]!=null)
-                pq.add(new ListNodeQueue(lists[iterator_i].val,lists[iterator_i]));
+        for (int iterator_i = 0; iterator_i < lists.length; iterator_i++) {
+            if (lists[iterator_i] != null)
+                pq.add(new ListNodeQueue(lists[iterator_i].val, lists[iterator_i]));
         }
         ListNode result_node = new ListNode(0), result_node_ptr = result_node;
-        while(!pq.isEmpty())
-        {
+        while (!pq.isEmpty()) {
             ListNodeQueue popped = pq.poll();
             result_node.next = popped.node;
             result_node = result_node.next;
-            if(popped.node.next!=null)
-                pq.add(new ListNodeQueue(popped.node.next.val,popped.node.next));
+            if (popped.node.next != null)
+                pq.add(new ListNodeQueue(popped.node.next.val, popped.node.next));
         }
         return result_node_ptr.next;
     }
 
     public ListNode mergeKLists(ListNode[] lists) //Divide and Conquer using MergeSort Time: O(nlogk) Space O(1)
     {
-       return mergeKListsDistributer(lists,0,lists.length-1);
+        return mergeKListsDistributer(lists, 0, lists.length - 1);
     }
 
-    public ListNode mergeKListsDistributer(ListNode[] lists,int lb, int ub)
+    public ListNode mergeKListsDistributer(ListNode[] lists, int lb, int ub)
     {
-        if(lb==ub)
+        if (lb == ub)
             return lists[lb];
 
-        int mid = (lb+ub)/2;
-        ListNode leftSortedList = mergeKListsDistributer(lists,lb,mid);
-        ListNode rightSortedList = mergeKListsDistributer(lists,mid+1,ub);
+        int mid = (lb + ub) / 2;
+        ListNode leftSortedList = mergeKListsDistributer(lists, lb, mid);
+        ListNode rightSortedList = mergeKListsDistributer(lists, mid + 1, ub);
 
-        return mergeKListsMerger(leftSortedList,rightSortedList);
+        return mergeKListsMerger(leftSortedList, rightSortedList);
     }
 
-    public ListNode mergeKListsMerger(ListNode list1,ListNode list2)
+    public ListNode mergeKListsMerger(ListNode list1, ListNode list2)
     {
-        ListNode result_node = new ListNode(0),result_node_cpy = result_node;
-        while(list1!=null && list2!=null)
-        {
-            if(list1.val<=list2.val)
-            {
+        ListNode result_node = new ListNode(0), result_node_cpy = result_node;
+        while (list1 != null && list2 != null) {
+            if (list1.val <= list2.val) {
                 result_node.next = list1;
                 list1 = list1.next;
-            }
-            else
-            {
+            } else {
                 result_node.next = list2;
                 list2 = list2.next;
             }
             result_node = result_node.next;
         }
-        if(list1==null)
+        if (list1 == null)
             result_node.next = list2;
         else
             result_node.next = list1;
@@ -6646,36 +6289,33 @@ public class LeetCode {
     */
     public int longestIncreasingPath(int[][] matrix)
     {
-        if(matrix.length==0)
+        if (matrix.length == 0)
             return 0;
-        int memoization_arr[][] = new int[matrix.length][matrix[0].length],max_increasing_length=0;
-        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
-            Arrays.fill(memoization_arr[iterator_i],-1);
-        for(int iterator_i=0;iterator_i<matrix.length;iterator_i++)
-        {
-            for (int iterator_j = 0; iterator_j < matrix[0].length; iterator_j++)
-            {
+        int memoization_arr[][] = new int[matrix.length][matrix[0].length], max_increasing_length = 0;
+        for (int iterator_i = 0; iterator_i < matrix.length; iterator_i++)
+            Arrays.fill(memoization_arr[iterator_i], -1);
+        for (int iterator_i = 0; iterator_i < matrix.length; iterator_i++) {
+            for (int iterator_j = 0; iterator_j < matrix[0].length; iterator_j++) {
                 longestIncreasingPathHelper(matrix, iterator_i, iterator_j, memoization_arr);
-                max_increasing_length = Math.max(max_increasing_length,memoization_arr[iterator_i][iterator_j]);
+                max_increasing_length = Math.max(max_increasing_length, memoization_arr[iterator_i][iterator_j]);
             }
         }
         return max_increasing_length;
     }
 
-    public int longestIncreasingPathHelper(int[][] matrix,int row,int col,int[][] memoization_arr)
+    public int longestIncreasingPathHelper(int[][] matrix, int row, int col, int[][] memoization_arr)
     {
-        if(memoization_arr[row][col]>=0)
+        if (memoization_arr[row][col] >= 0)
             return memoization_arr[row][col];
-        int directions[][] = new int[][] {{1,0},{-1,0},{0,1},{0,-1}};
+        int directions[][] = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         int max_path_len = 0;
-        for(int[] direction:directions)
-        {
-            int curr_row = row+direction[0], curr_col = col+direction[1];
-            if(curr_row<0 || curr_row>=matrix.length || curr_col<0 || curr_col>=matrix[0].length || matrix[row][col] >= matrix[curr_row][curr_col])
+        for (int[] direction : directions) {
+            int curr_row = row + direction[0], curr_col = col + direction[1];
+            if (curr_row < 0 || curr_row >= matrix.length || curr_col < 0 || curr_col >= matrix[0].length || matrix[row][col] >= matrix[curr_row][curr_col])
                 continue;
-            max_path_len = Math.max(max_path_len,longestIncreasingPathHelper(matrix,curr_row,curr_col,memoization_arr));
+            max_path_len = Math.max(max_path_len, longestIncreasingPathHelper(matrix, curr_row, curr_col, memoization_arr));
         }
-        memoization_arr[row][col] = max_path_len+1;
+        memoization_arr[row][col] = max_path_len + 1;
         return memoization_arr[row][col];
     }
 
@@ -6701,22 +6341,20 @@ public class LeetCode {
     */
     public int[] intersect(int[] nums1, int[] nums2)
     {
-        if(nums1.length<nums2.length)
-            return intersect(nums2,nums1);
-        HashMap<Integer,Integer> hmap = new HashMap();
-        for(int iterator_i=0;iterator_i<nums1.length;iterator_i++)
-            hmap.put(nums1[iterator_i],hmap.getOrDefault(nums1[iterator_i],0)+1);
+        if (nums1.length < nums2.length)
+            return intersect(nums2, nums1);
+        HashMap<Integer, Integer> hmap = new HashMap();
+        for (int iterator_i = 0; iterator_i < nums1.length; iterator_i++)
+            hmap.put(nums1[iterator_i], hmap.getOrDefault(nums1[iterator_i], 0) + 1);
 
-        int result_index=0;
-        for(int iterator_i=0;iterator_i<nums2.length;iterator_i++)
-        {
-            if(hmap.getOrDefault(nums2[iterator_i],0)>0)
-            {
+        int result_index = 0;
+        for (int iterator_i = 0; iterator_i < nums2.length; iterator_i++) {
+            if (hmap.getOrDefault(nums2[iterator_i], 0) > 0) {
                 nums1[result_index++] = nums2[iterator_i];
-                hmap.put(nums2[iterator_i],hmap.get(nums2[iterator_i])-1);
+                hmap.put(nums2[iterator_i], hmap.get(nums2[iterator_i]) - 1);
             }
         }
-        return Arrays.copyOf(nums1,result_index);
+        return Arrays.copyOf(nums1, result_index);
     }
 
     /*
@@ -6735,11 +6373,10 @@ public class LeetCode {
     */
     public void reverseString(char[] s)
     {
-        for(int iterator_i=0;iterator_i<s.length/2;iterator_i++)
-        {
+        for (int iterator_i = 0; iterator_i < s.length / 2; iterator_i++) {
             char temp = s[iterator_i];
-            s[iterator_i] = s[s.length-1-iterator_i];
-            s[s.length-1-iterator_i] = temp;
+            s[iterator_i] = s[s.length - 1 - iterator_i];
+            s[s.length - 1 - iterator_i] = temp;
         }
     }
 
@@ -6759,24 +6396,22 @@ public class LeetCode {
     */
     public int[][] merge(int[][] intervals)
     {
-        if(intervals.length==0)
+        if (intervals.length == 0)
             return intervals;
-        Arrays.sort(intervals,(a,b)->a[0]-b[0]);
-        int iterator_i = 1,current_max = intervals[0][1],current_min = intervals[0][0];
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        int iterator_i = 1, current_max = intervals[0][1], current_min = intervals[0][0];
         LinkedList<int[]> result_list = new LinkedList<>();
-        while(iterator_i<intervals.length)
-        {
-            if(intervals[iterator_i][0]<=current_max)
-                current_max = Math.max(current_max,intervals[iterator_i][1]);
-            else
-            {
-                result_list.add(new int[]{current_min,current_max});
+        while (iterator_i < intervals.length) {
+            if (intervals[iterator_i][0] <= current_max)
+                current_max = Math.max(current_max, intervals[iterator_i][1]);
+            else {
+                result_list.add(new int[]{current_min, current_max});
                 current_min = intervals[iterator_i][0];
                 current_max = intervals[iterator_i][1];
             }
             iterator_i++;
         }
-        result_list.add(new int[]{current_min,current_max});
+        result_list.add(new int[]{current_min, current_max});
         // make copy of result
         return result_list.toArray(new int[result_list.size()][]);
     }
@@ -6800,63 +6435,54 @@ public class LeetCode {
         */
     public double findMedianSortedArrays(int[] nums1, int[] nums2)
     {
-        if(nums1.length<nums2.length) // Swap bcuz of cornercase when no elements present in nums1
+        if (nums1.length < nums2.length) // Swap bcuz of cornercase when no elements present in nums1
         {
             int temp[] = nums1;
             nums1 = nums2;
             nums2 = temp;
         }
-        int lb_arr1=0,ub_arr1=nums1.length-1;
-        int elements_in_median = (int)Math.ceil((nums1.length+nums2.length+1)/2.0);
-        while(lb_arr1<=ub_arr1)
-        {
-            int elements_in_nums1 = Math.min((lb_arr1+ub_arr1+2)/2,elements_in_median);
-            int elements_in_nums2 = elements_in_median-elements_in_nums1;
+        int lb_arr1 = 0, ub_arr1 = nums1.length - 1;
+        int elements_in_median = (int) Math.ceil((nums1.length + nums2.length + 1) / 2.0);
+        while (lb_arr1 <= ub_arr1) {
+            int elements_in_nums1 = Math.min((lb_arr1 + ub_arr1 + 2) / 2, elements_in_median);
+            int elements_in_nums2 = elements_in_median - elements_in_nums1;
 
-            if(elements_in_nums2>nums2.length)
-            {
+            if (elements_in_nums2 > nums2.length) {
                 lb_arr1 = elements_in_nums1;// Increase elements chosen from first arr
                 continue;
             }
-            if(elements_in_nums1>nums1.length)
-            {
-                ub_arr1 = elements_in_nums1-1;// Decrease elements chosen from first arr
+            if (elements_in_nums1 > nums1.length) {
+                ub_arr1 = elements_in_nums1 - 1;// Decrease elements chosen from first arr
                 continue;
             }
 
-            int last_chosen_nums1 = elements_in_nums1>0?nums1[elements_in_nums1-1]:Integer.MIN_VALUE;
-            int last_chosen_nums2 = elements_in_nums2>0?nums2[elements_in_nums2-1]:Integer.MIN_VALUE;
-            int last_nums1 = elements_in_nums1>=nums1.length?Integer.MAX_VALUE:nums1[elements_in_nums1];
-            int last_nums2 = elements_in_nums2>=nums2.length?Integer.MAX_VALUE:nums2[elements_in_nums2];
+            int last_chosen_nums1 = elements_in_nums1 > 0 ? nums1[elements_in_nums1 - 1] : Integer.MIN_VALUE;
+            int last_chosen_nums2 = elements_in_nums2 > 0 ? nums2[elements_in_nums2 - 1] : Integer.MIN_VALUE;
+            int last_nums1 = elements_in_nums1 >= nums1.length ? Integer.MAX_VALUE : nums1[elements_in_nums1];
+            int last_nums2 = elements_in_nums2 >= nums2.length ? Integer.MAX_VALUE : nums2[elements_in_nums2];
 
-            if(elements_in_nums2<nums2.length && elements_in_nums1>=0 && last_chosen_nums1>last_nums2)
-                ub_arr1 = elements_in_nums1-1;
-            else if(elements_in_nums1<nums1.length && elements_in_nums2>=0 && last_chosen_nums2>last_nums1)
+            if (elements_in_nums2 < nums2.length && elements_in_nums1 >= 0 && last_chosen_nums1 > last_nums2)
+                ub_arr1 = elements_in_nums1 - 1;
+            else if (elements_in_nums1 < nums1.length && elements_in_nums2 >= 0 && last_chosen_nums2 > last_nums1)
                 lb_arr1 = elements_in_nums1;
-            else
-            {
-                if((nums1.length+nums2.length)%2!=0)
-                {
+            else {
+                if ((nums1.length + nums2.length) % 2 != 0) {
                     if (last_chosen_nums1 > last_chosen_nums2)
                         return last_chosen_nums1;
                     else
                         return last_chosen_nums2;
-                }
-                else
-                {
-                    int total_med=0,max2 =last_chosen_nums1;
-                    if(last_chosen_nums1>last_chosen_nums2)
-                    {
+                } else {
+                    int total_med = 0, max2 = last_chosen_nums1;
+                    if (last_chosen_nums1 > last_chosen_nums2) {
                         max2 = last_chosen_nums2;
                         total_med += last_chosen_nums1;
-                    }
-                    else
+                    } else
                         total_med += last_chosen_nums2;
-                    if(elements_in_nums1-1>0)
-                        max2 = Math.max(max2,nums1[elements_in_nums1-2]);
-                    if(elements_in_nums2-1>0)
-                        max2 = Math.max(max2,nums2[elements_in_nums2-2]);
-                    return (total_med+max2)/2.0;
+                    if (elements_in_nums1 - 1 > 0)
+                        max2 = Math.max(max2, nums1[elements_in_nums1 - 2]);
+                    if (elements_in_nums2 - 1 > 0)
+                        max2 = Math.max(max2, nums2[elements_in_nums2 - 2]);
+                    return (total_med + max2) / 2.0;
                 }
             }
 
@@ -6865,7 +6491,7 @@ public class LeetCode {
     }
 
     /*
-    146. PROBLEM DESCRIPTION (https://leetcode.com/problems/median-of-two-sorted-arrays/)
+    146. PROBLEM DESCRIPTION (https://leetcode.com/problems/excel-sheet-column-title/)
         Given a positive integer, return its corresponding column title as appear in an Excel sheet.
 
         For example:
@@ -6893,10 +6519,9 @@ public class LeetCode {
     public String convertToTitle(int n)
     {
         String final_str = "";
-        while(n!=0)
-        {
-            final_str = (char)((n-1)%26  + 'A') + final_str;
-            n = (n-1)/26;
+        while (n != 0) {
+            final_str = (char) ((n - 1) % 26 + 'A') + final_str;
+            n = (n - 1) / 26;
         }
         return final_str;
     }
@@ -6919,15 +6544,14 @@ public class LeetCode {
     */
     public int[] twoSum2(int[] numbers, int target)
     {
-        int left_ptr=0,right_ptr=numbers.length-1;
-        while(left_ptr<right_ptr)
-        {
-            if(numbers[left_ptr]+numbers[right_ptr]<target)
+        int left_ptr = 0, right_ptr = numbers.length - 1;
+        while (left_ptr < right_ptr) {
+            if (numbers[left_ptr] + numbers[right_ptr] < target)
                 left_ptr++;
-            else if((numbers[left_ptr]+numbers[right_ptr]>target))
+            else if ((numbers[left_ptr] + numbers[right_ptr] > target))
                 right_ptr--;
             else
-                return new int[]{left_ptr+1,right_ptr+1};
+                return new int[]{left_ptr + 1, right_ptr + 1};
         }
         return null;
     }
@@ -6960,38 +6584,34 @@ public class LeetCode {
     */
     public String convert_alt(String s, int numRows)
     {
-        String separate_rows[] = new String[numRows],result_str="";
-        if(numRows==1)
+        String separate_rows[] = new String[numRows], result_str = "";
+        if (numRows == 1)
             return s;
-        for(int iterator_i=0;iterator_i<separate_rows.length;iterator_i++)
+        for (int iterator_i = 0; iterator_i < separate_rows.length; iterator_i++)
             separate_rows[iterator_i] = "";
-        for(int iterator_i=0;iterator_i<s.length();iterator_i++)
-        {
-            int pattern_mod_val = (iterator_i)%(2*numRows-2);
-            if(pattern_mod_val<numRows)
+        for (int iterator_i = 0; iterator_i < s.length(); iterator_i++) {
+            int pattern_mod_val = (iterator_i) % (2 * numRows - 2);
+            if (pattern_mod_val < numRows)
                 separate_rows[pattern_mod_val] += s.charAt(iterator_i);
-            else
-            {
-                separate_rows[2*numRows-2-pattern_mod_val] += s.charAt(iterator_i);
+            else {
+                separate_rows[2 * numRows - 2 - pattern_mod_val] += s.charAt(iterator_i);
             }
         }
-        for(String row_string:separate_rows)
+        for (String row_string : separate_rows)
             result_str += row_string;
         return result_str;
     }
 
     public String convert(String s, int numRows) // use String Builder to avoid String arrays. Process row at a time
     {
-        if(numRows==1)
+        if (numRows == 1)
             return s;
         StringBuilder result = new StringBuilder();
-        for(int iterator_i=0;iterator_i<numRows;iterator_i++)
-        {
-            for(int iterator_j=0;iterator_j+iterator_i<s.length();iterator_j+=(2*numRows-2))
-            {
-                result.append(s.charAt(iterator_i+iterator_j));
-                if(iterator_i!=0 && iterator_i!=(numRows-1) && (iterator_j-iterator_i+2*numRows-2)<s.length())
-                    result.append(s.charAt(iterator_j-iterator_i+2*numRows-2));
+        for (int iterator_i = 0; iterator_i < numRows; iterator_i++) {
+            for (int iterator_j = 0; iterator_j + iterator_i < s.length(); iterator_j += (2 * numRows - 2)) {
+                result.append(s.charAt(iterator_i + iterator_j));
+                if (iterator_i != 0 && iterator_i != (numRows - 1) && (iterator_j - iterator_i + 2 * numRows - 2) < s.length())
+                    result.append(s.charAt(iterator_j - iterator_i + 2 * numRows - 2));
             }
         }
         return result.toString();
@@ -7030,15 +6650,16 @@ public class LeetCode {
     */
     public int sumNumbers(TreeNode root)
     {
-        return sumNumbersHelper(root,0);
+        return sumNumbersHelper(root, 0);
     }
-    public int sumNumbersHelper(TreeNode root,int sum_till_now)
+
+    public int sumNumbersHelper(TreeNode root, int sum_till_now)
     {
-        if(root==null)
+        if (root == null)
             return 0;
-        if(root.left==null && root.right==null)
-            return sum_till_now*10 + root.val;
-        return sumNumbersHelper(root.left,sum_till_now*10+root.val) + sumNumbersHelper(root.right,sum_till_now*10+root.val);
+        if (root.left == null && root.right == null)
+            return sum_till_now * 10 + root.val;
+        return sumNumbersHelper(root.left, sum_till_now * 10 + root.val) + sumNumbersHelper(root.right, sum_till_now * 10 + root.val);
     }
 
     /*
@@ -7060,25 +6681,24 @@ public class LeetCode {
     */
     public int maxCoins_alt(int[] nums) //Recursion with memoization
     {
-        int extended_balloons[] = new int[nums.length+2],memoization_arr[][] = new int[nums.length+2][nums.length+2];
-        for(int iterator_i=1;iterator_i<=nums.length;iterator_i++)
-            extended_balloons[iterator_i] = nums[iterator_i-1];
-        extended_balloons[0] = extended_balloons[nums.length+1] = 1;
-        return maxCoinsHelper(extended_balloons,0,extended_balloons.length-1,memoization_arr);
+        int extended_balloons[] = new int[nums.length + 2], memoization_arr[][] = new int[nums.length + 2][nums.length + 2];
+        for (int iterator_i = 1; iterator_i <= nums.length; iterator_i++)
+            extended_balloons[iterator_i] = nums[iterator_i - 1];
+        extended_balloons[0] = extended_balloons[nums.length + 1] = 1;
+        return maxCoinsHelper(extended_balloons, 0, extended_balloons.length - 1, memoization_arr);
 
     }
 
-    public int maxCoinsHelper(int[] balloons,int lb,int ub,int[][] memoization_arr) // lb and ub are boundaries will not be bursted
+    public int maxCoinsHelper(int[] balloons, int lb, int ub, int[][] memoization_arr) // lb and ub are boundaries will not be bursted
     {
-        if(lb+1==ub) //No balloon to burst
+        if (lb + 1 == ub) //No balloon to burst
             return 0;
-        if(memoization_arr[lb][ub]>0)
+        if (memoization_arr[lb][ub] > 0)
             return memoization_arr[lb][ub];
         int max_till_now = Integer.MIN_VALUE;
-        for(int iterator_i=lb+1;iterator_i<ub;iterator_i++)
-        {
-            max_till_now = Math.max(max_till_now, balloons[lb]*balloons[iterator_i]*balloons[ub]+
-                    maxCoinsHelper(balloons,lb,iterator_i,memoization_arr)+maxCoinsHelper(balloons,iterator_i,ub,memoization_arr));
+        for (int iterator_i = lb + 1; iterator_i < ub; iterator_i++) {
+            max_till_now = Math.max(max_till_now, balloons[lb] * balloons[iterator_i] * balloons[ub] +
+                    maxCoinsHelper(balloons, lb, iterator_i, memoization_arr) + maxCoinsHelper(balloons, iterator_i, ub, memoization_arr));
         }
         memoization_arr[lb][ub] = max_till_now;
         return max_till_now;
@@ -7086,25 +6706,22 @@ public class LeetCode {
 
     public int maxCoins(int[] nums) //Dp approach Start with size 3 sets since size 2 is 0
     {
-        int extended_balloons[] = new int[nums.length+2],dp_arr[][] = new int[nums.length+2][nums.length+2];
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-            extended_balloons[iterator_i+1] = nums[iterator_i];
-        extended_balloons[0] = extended_balloons[nums.length+1] = 1;
+        int extended_balloons[] = new int[nums.length + 2], dp_arr[][] = new int[nums.length + 2][nums.length + 2];
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++)
+            extended_balloons[iterator_i + 1] = nums[iterator_i];
+        extended_balloons[0] = extended_balloons[nums.length + 1] = 1;
 
-        for(int iterator_size_interval=2;iterator_size_interval<extended_balloons.length;iterator_size_interval++)
-        {
-            for(int iterator_left = 0; iterator_left+iterator_size_interval<extended_balloons.length;iterator_left++)
-            {
-                int right_balloon = iterator_left+iterator_size_interval,maxCoin= Integer.MIN_VALUE;
-                for(int iterator_dp=iterator_left+1;iterator_dp<right_balloon;iterator_dp++)
-                {
-                    maxCoin = Math.max((dp_arr[iterator_left][iterator_dp]+dp_arr[iterator_dp][right_balloon]
-                            +extended_balloons[iterator_left]*extended_balloons[iterator_dp]*extended_balloons[right_balloon]),maxCoin);
+        for (int iterator_size_interval = 2; iterator_size_interval < extended_balloons.length; iterator_size_interval++) {
+            for (int iterator_left = 0; iterator_left + iterator_size_interval < extended_balloons.length; iterator_left++) {
+                int right_balloon = iterator_left + iterator_size_interval, maxCoin = Integer.MIN_VALUE;
+                for (int iterator_dp = iterator_left + 1; iterator_dp < right_balloon; iterator_dp++) {
+                    maxCoin = Math.max((dp_arr[iterator_left][iterator_dp] + dp_arr[iterator_dp][right_balloon]
+                            + extended_balloons[iterator_left] * extended_balloons[iterator_dp] * extended_balloons[right_balloon]), maxCoin);
                 }
                 dp_arr[iterator_left][right_balloon] = maxCoin;
             }
         }
-        return dp_arr[0][dp_arr.length-1];
+        return dp_arr[0][dp_arr.length - 1];
     }
 
     /*
@@ -7132,13 +6749,12 @@ public class LeetCode {
     */
     public boolean isIsomorphic(String s, String t)
     {
-        int mapping_s[] = new int[256],mapping_t[] = new int[256]; //Extended Ascii
-        Arrays.fill(mapping_s,-1);
-        Arrays.fill(mapping_t,-1);
+        int mapping_s[] = new int[256], mapping_t[] = new int[256]; //Extended Ascii
+        Arrays.fill(mapping_s, -1);
+        Arrays.fill(mapping_t, -1);
 
-        for(int iterator_s=0;iterator_s<s.length();iterator_s++)
-        {
-            if(mapping_s[s.charAt(iterator_s)]!=mapping_t[t.charAt(iterator_s)])
+        for (int iterator_s = 0; iterator_s < s.length(); iterator_s++) {
+            if (mapping_s[s.charAt(iterator_s)] != mapping_t[t.charAt(iterator_s)])
                 return false;
             mapping_s[s.charAt(iterator_s)] = s.charAt(iterator_s);
             mapping_t[t.charAt(iterator_s)] = s.charAt(iterator_s);
@@ -7172,16 +6788,15 @@ public class LeetCode {
     */
     public boolean isUgly(int num)
     {
-        if(num<=0)
+        if (num <= 0)
             return false;
-        int primes_for_ugly[] = new int[]{2,3,5}, prime_iterator=0;
-        while(num!=1 && prime_iterator<primes_for_ugly.length)
-        {
+        int primes_for_ugly[] = new int[]{2, 3, 5}, prime_iterator = 0;
+        while (num != 1 && prime_iterator < primes_for_ugly.length) {
             int current_prime = primes_for_ugly[prime_iterator++];
-            while(num%current_prime==0)
+            while (num % current_prime == 0)
                 num /= current_prime;
         }
-        if(num==1)
+        if (num == 1)
             return true;
         return false;
     }
@@ -7198,25 +6813,21 @@ public class LeetCode {
     public List<String> restoreIpAddresses(String s)
     {
         List<String> list = new ArrayList<>();
-        for(int len1=1;len1<4 && len1<=s.length();len1++)
-        {
-            if((len1>1 && s.charAt(0)=='0') || (len1==3 && Integer.parseInt(s.substring(0,len1))>255))
+        for (int len1 = 1; len1 < 4 && len1 <= s.length(); len1++) {
+            if ((len1 > 1 && s.charAt(0) == '0') || (len1 == 3 && Integer.parseInt(s.substring(0, len1)) > 255))
                 continue;
-            for(int len2=1;len2<4 && len1+len2<=s.length();len2++)
-            {
-                if((len2>1 && s.charAt(len1)=='0') || (len2==3 && Integer.parseInt(s.substring(len1,len1+len2))>255))
+            for (int len2 = 1; len2 < 4 && len1 + len2 <= s.length(); len2++) {
+                if ((len2 > 1 && s.charAt(len1) == '0') || (len2 == 3 && Integer.parseInt(s.substring(len1, len1 + len2)) > 255))
                     continue;
-                for(int len3=1;len3<4 && len1+len2+len3<=s.length();len3++)
-                {
-                    if((len3>1 && s.charAt(len1+len2)=='0')  || (len3==3 && Integer.parseInt(s.substring(len1+len2,len1+len2+len3))>255))
+                for (int len3 = 1; len3 < 4 && len1 + len2 + len3 <= s.length(); len3++) {
+                    if ((len3 > 1 && s.charAt(len1 + len2) == '0') || (len3 == 3 && Integer.parseInt(s.substring(len1 + len2, len1 + len2 + len3)) > 255))
                         continue;
-                    int len4 = s.length()-len1-len2-len3;
-                    if(len4>0 && len4<4)
-                    {
-                        if((len4>1 && s.charAt(len1+len2+len3)=='0') || (len4==3 && Integer.parseInt(s.substring(len1+len2+len3,len1+len2+len3+len4))>255))
+                    int len4 = s.length() - len1 - len2 - len3;
+                    if (len4 > 0 && len4 < 4) {
+                        if ((len4 > 1 && s.charAt(len1 + len2 + len3) == '0') || (len4 == 3 && Integer.parseInt(s.substring(len1 + len2 + len3, len1 + len2 + len3 + len4)) > 255))
                             continue;
-                        list.add(s.substring(0,len1)+"."+s.substring(len1,len1+len2)+"."+s.substring(len1+len2,len1+len2+len3)+"."+
-                                s.substring(len1+len2+len3,len1+len2+len3+len4));
+                        list.add(s.substring(0, len1) + "." + s.substring(len1, len1 + len2) + "." + s.substring(len1 + len2, len1 + len2 + len3) + "." +
+                                s.substring(len1 + len2 + len3, len1 + len2 + len3 + len4));
                     }
                 }
             }
@@ -7242,17 +6853,16 @@ public class LeetCode {
     */
     public int minimumTotal(List<List<Integer>> triangle)
     {
-        if(triangle.size()==0)
+        if (triangle.size() == 0)
             return 0;
-        int dp_current_row[] = triangle.get(triangle.size()-1).stream().mapToInt(i->i).toArray();
+        int dp_current_row[] = triangle.get(triangle.size() - 1).stream().mapToInt(i -> i).toArray();
 
-        for(int iterator_row = triangle.size()-2;iterator_row>=0;iterator_row--)
-        {
+        for (int iterator_row = triangle.size() - 2; iterator_row >= 0; iterator_row--) {
             List<Integer> current_list = triangle.get(iterator_row);
-            for(int iterator_list=dp_current_row.length-1;iterator_list>=triangle.size()-iterator_row-1;iterator_list--)
-                dp_current_row[iterator_list] = Math.min(dp_current_row[iterator_list-1],dp_current_row[iterator_list]) + current_list.get(iterator_list-(triangle.size()-iterator_row-1));
+            for (int iterator_list = dp_current_row.length - 1; iterator_list >= triangle.size() - iterator_row - 1; iterator_list--)
+                dp_current_row[iterator_list] = Math.min(dp_current_row[iterator_list - 1], dp_current_row[iterator_list]) + current_list.get(iterator_list - (triangle.size() - iterator_row - 1));
         }
-        return dp_current_row[dp_current_row.length-1];
+        return dp_current_row[dp_current_row.length - 1];
     }
 
     /*
@@ -7275,25 +6885,24 @@ public class LeetCode {
     public List<String> binaryTreePaths(TreeNode root)
     {
         List<String> list = new ArrayList<>();
-        binaryTreePathsHelper(root,list,new StringBuilder());
+        binaryTreePathsHelper(root, list, new StringBuilder());
         return list;
     }
 
-    public void binaryTreePathsHelper(TreeNode root,List<String> list,StringBuilder current_path)
+    public void binaryTreePathsHelper(TreeNode root, List<String> list, StringBuilder current_path)
     {
-        if(root==null)
+        if (root == null)
             return;
         int len = current_path.length();
         current_path.append(root.val);
-        if(root.left==null && root.right==null)
-        {
+        if (root.left == null && root.right == null) {
             list.add(current_path.toString());
             current_path.setLength(len);
             return;
         }
         current_path.append("->");
-        binaryTreePathsHelper(root.left,list,current_path);
-        binaryTreePathsHelper(root.right,list,current_path);
+        binaryTreePathsHelper(root.left, list, current_path);
+        binaryTreePathsHelper(root.right, list, current_path);
         current_path.setLength(len);
     }
 
@@ -7315,62 +6924,56 @@ public class LeetCode {
     public List<Integer> countSmaller(int[] nums) //Using MergeSort Implementation
     {
         List<Integer> count_smaller_right = new ArrayList<>();
-        if(nums.length==0)
+        if (nums.length == 0)
             return count_smaller_right;
         countSmallerTuple num_arr[] = new countSmallerTuple[nums.length];
-        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
-            num_arr[iterator_i] = new countSmallerTuple(nums[iterator_i],iterator_i);
+        for (int iterator_i = 0; iterator_i < nums.length; iterator_i++)
+            num_arr[iterator_i] = new countSmallerTuple(nums[iterator_i], iterator_i);
         int count_arr[] = new int[nums.length];
-        countSmallerMergeSort(num_arr,count_arr,0,nums.length-1);
-        return Arrays.stream( count_arr ).boxed().collect( Collectors.toList() );
+        countSmallerMergeSort(num_arr, count_arr, 0, nums.length - 1);
+        return Arrays.stream(count_arr).boxed().collect(Collectors.toList());
     }
 
-    public void countSmallerMergeSort(countSmallerTuple[] nums,int[] count_arr,int lb,int ub)
+    public void countSmallerMergeSort(countSmallerTuple[] nums, int[] count_arr, int lb, int ub)
     {
-        if(lb<ub)
-        {
+        if (lb < ub) {
             int mid = lb + (ub - lb) / 2;
-            countSmallerMergeSort(nums,count_arr,lb,mid);
-            countSmallerMergeSort(nums,count_arr,mid+1,ub);
-            countSmallerMerge(nums,count_arr,lb,mid,ub);
+            countSmallerMergeSort(nums, count_arr, lb, mid);
+            countSmallerMergeSort(nums, count_arr, mid + 1, ub);
+            countSmallerMerge(nums, count_arr, lb, mid, ub);
         }
     }
 
-    public void countSmallerMerge(countSmallerTuple[] nums,int[] count_arr,int lb,int mid,int ub)
+    public void countSmallerMerge(countSmallerTuple[] nums, int[] count_arr, int lb, int mid, int ub)
     {
-        int index_left = mid, index_right=ub,sorted_index=ub-lb,current_increment = ub-mid;//Total elements in right subarray
-        countSmallerTuple sorted_result[] = new countSmallerTuple[ub-lb+1];
-        while(index_left>=lb && index_right>mid)
-        {
-            if(nums[index_left].arr_val>nums[index_right].arr_val)// greater than all elements in right subarray
+        int index_left = mid, index_right = ub, sorted_index = ub - lb, current_increment = ub - mid;//Total elements in right subarray
+        countSmallerTuple sorted_result[] = new countSmallerTuple[ub - lb + 1];
+        while (index_left >= lb && index_right > mid) {
+            if (nums[index_left].arr_val > nums[index_right].arr_val)// greater than all elements in right subarray
             {
                 sorted_result[sorted_index] = nums[index_left];
                 count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index] + current_increment;
                 index_left--;
-            }
-            else
-            {
+            } else {
                 sorted_result[sorted_index] = nums[index_right];
                 count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
                 current_increment--;
                 index_right--;
             }
         }
-        while(index_right>mid)
-        {
+        while (index_right > mid) {
             sorted_result[sorted_index] = nums[index_right];
             count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
             index_right--;
         }
-        while(index_left>=lb)
-        {
+        while (index_left >= lb) {
             sorted_result[sorted_index] = nums[index_left];
             count_arr[sorted_result[sorted_index].index] = count_arr[sorted_result[sorted_index--].index];
             index_left--;
         }
 
-        for(int iterator_i=lb;iterator_i<=ub;iterator_i++)
-            nums[iterator_i] = sorted_result[iterator_i-lb];
+        for (int iterator_i = lb; iterator_i <= ub; iterator_i++)
+            nums[iterator_i] = sorted_result[iterator_i - lb];
     }
 
     /*
@@ -7391,21 +6994,19 @@ public class LeetCode {
     */
     public int[] intersection(int[] nums1, int[] nums2)
     {
-        if(nums1.length<nums2.length)
-            intersection(nums2,nums1);
+        if (nums1.length < nums2.length)
+            intersection(nums2, nums1);
         HashSet hset = new HashSet();
-        for(int numval:nums1)
+        for (int numval : nums1)
             hset.add(numval);
-        int counter_index=0;
-        for(int numval:nums2)
-        {
-            if(hset.contains(numval))
-            {
+        int counter_index = 0;
+        for (int numval : nums2) {
+            if (hset.contains(numval)) {
                 nums1[counter_index++] = numval;
                 hset.remove(numval);
             }
         }
-        return Arrays.copyOf(nums1,counter_index);
+        return Arrays.copyOf(nums1, counter_index);
     }
 
     /*
@@ -7438,35 +7039,29 @@ public class LeetCode {
     {
         List<int[]> height_changes = new ArrayList<>();
         List<List<Integer>> outline = new ArrayList<>();
-        for(int[] building:buildings)
-        {
-            height_changes.add(new int[]{building[0],-building[2]});
-            height_changes.add(new int[]{building[1],building[2]});
+        for (int[] building : buildings) {
+            height_changes.add(new int[]{building[0], -building[2]});
+            height_changes.add(new int[]{building[1], building[2]});
         }
-        Collections.sort(height_changes,(a,b)->(a[0] == b[0]?(a[1] - b[1]):(a[0] - b[0])));
+        Collections.sort(height_changes, (a, b) -> (a[0] == b[0] ? (a[1] - b[1]) : (a[0] - b[0])));
 
-        TreeMap<Integer,Integer> tmap = new TreeMap<>(Collections.reverseOrder());
-        tmap.put(0,1);
+        TreeMap<Integer, Integer> tmap = new TreeMap<>(Collections.reverseOrder());
+        tmap.put(0, 1);
         int previous_height = 0;
-        for(int[] height_encountered:height_changes)
-        {
-            if(height_encountered[1]<0)
-            {
+        for (int[] height_encountered : height_changes) {
+            if (height_encountered[1] < 0) {
                 Integer mapval = tmap.get(-height_encountered[1]);
-                int count = mapval==null?1:mapval+1;
-                tmap.put(-height_encountered[1],count);
-            }
-            else
-            {
+                int count = mapval == null ? 1 : mapval + 1;
+                tmap.put(-height_encountered[1], count);
+            } else {
                 Integer mapval = tmap.get(height_encountered[1]);
-                if(mapval==1)
+                if (mapval == 1)
                     tmap.remove(height_encountered[1]);
                 else
-                    tmap.put(height_encountered[1],mapval-1);
+                    tmap.put(height_encountered[1], mapval - 1);
             }
             int current_max_height = tmap.firstKey();
-            if(current_max_height!=previous_height)
-            {
+            if (current_max_height != previous_height) {
                 List<Integer> new_addition = new ArrayList<>();
                 new_addition.add(height_encountered[0]);
                 new_addition.add(current_max_height);
@@ -7479,17 +7074,16 @@ public class LeetCode {
 
     public List<List<Integer>> getSkyline(int[][] buildings) //Merge Sort logic
     {
-        if(buildings.length==0)
+        if (buildings.length == 0)
             return new ArrayList<>();
-        List<List<Integer>> finlist =  getSkylineMergeHelper(buildings,0,buildings.length-1);
+        List<List<Integer>> finlist = getSkylineMergeHelper(buildings, 0, buildings.length - 1);
         return finlist;
     }
 
-    public List<List<Integer>> getSkylineMergeHelper(int[][] buildings,int lb,int ub)
+    public List<List<Integer>> getSkylineMergeHelper(int[][] buildings, int lb, int ub)
     {
         List<List<Integer>> result = new ArrayList<>();
-        if(ub==lb)
-        {
+        if (ub == lb) {
             List<Integer> outline = new ArrayList<>();
             outline.add(buildings[lb][0]);
             outline.add(buildings[lb][2]);
@@ -7501,36 +7095,30 @@ public class LeetCode {
             return result;
         }
 
-        int mid = lb +(ub-lb)/2;
-        List<List<Integer>> left_outline = getSkylineMergeHelper(buildings,lb,mid);
-        List<List<Integer>> right_outline = getSkylineMergeHelper(buildings,mid+1,ub);
+        int mid = lb + (ub - lb) / 2;
+        List<List<Integer>> left_outline = getSkylineMergeHelper(buildings, lb, mid);
+        List<List<Integer>> right_outline = getSkylineMergeHelper(buildings, mid + 1, ub);
 
-        return getSkylineMerge(left_outline,right_outline);
+        return getSkylineMerge(left_outline, right_outline);
     }
 
-    public List<List<Integer>> getSkylineMerge(List<List<Integer>> left,List<List<Integer>> right)
+    public List<List<Integer>> getSkylineMerge(List<List<Integer>> left, List<List<Integer>> right)
     {
         List<List<Integer>> result = new ArrayList<>();
-        int current_x=0,height_left=0,height_right=0,curr_height=0,left_ptr=0,right_ptr=0;
-        while(left_ptr<left.size() && right_ptr <right.size())
-        {
+        int current_x = 0, height_left = 0, height_right = 0, curr_height = 0, left_ptr = 0, right_ptr = 0;
+        while (left_ptr < left.size() && right_ptr < right.size()) {
             List<Integer> l1 = left.get(left_ptr);
             List<Integer> l2 = right.get(right_ptr);
 
-            if(l1.get(0)<l2.get(0))
-            {
+            if (l1.get(0) < l2.get(0)) {
                 current_x = l1.get(0);
                 height_left = l1.get(1);
                 left_ptr++;
-            }
-            else if(l1.get(0)>l2.get(0))
-            {
+            } else if (l1.get(0) > l2.get(0)) {
                 current_x = l2.get(0);
                 height_right = l2.get(1);
                 right_ptr++;
-            }
-            else
-            {
+            } else {
                 current_x = l1.get(0);
                 height_right = l2.get(1);
                 height_left = l1.get(1);
@@ -7539,22 +7127,19 @@ public class LeetCode {
             }
 
             //Check if new height recorded
-            if(curr_height!=Math.max(height_left,height_right))
-            {
-                curr_height = Math.max(height_left,height_right);
+            if (curr_height != Math.max(height_left, height_right)) {
+                curr_height = Math.max(height_left, height_right);
                 List<Integer> new_add = new ArrayList<>();
                 new_add.add(current_x);
                 new_add.add(curr_height);
                 result.add(new_add);
             }
         }
-        while(left_ptr<left.size())
-        {
+        while (left_ptr < left.size()) {
             result.add(left.get(left_ptr));
             left_ptr++;
         }
-        while(right_ptr<right.size())
-        {
+        while (right_ptr < right.size()) {
             result.add(right.get(right_ptr));
             right_ptr++;
         }
@@ -7581,12 +7166,12 @@ public class LeetCode {
     */
     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q)
     {
-        if(root==null)
+        if (root == null)
             return root;
-        if(p.val>root.val && q.val>root.val)
-            return lowestCommonAncestor2(root.right,p,q);
-        else if(p.val<root.val && q.val<root.val)
-            return lowestCommonAncestor2(root.left,p,q);
+        if (p.val > root.val && q.val > root.val)
+            return lowestCommonAncestor2(root.right, p, q);
+        else if (p.val < root.val && q.val < root.val)
+            return lowestCommonAncestor2(root.left, p, q);
         return root;
     }
 
@@ -7608,28 +7193,25 @@ public class LeetCode {
     public int hIndex_sort(int[] citations) //Using sort
     {
         Arrays.sort(citations);
-        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
-        {
-            if(citations[iterator_i]>=(citations.length-iterator_i))
-                return citations.length-iterator_i;
+        for (int iterator_i = 0; iterator_i < citations.length; iterator_i++) {
+            if (citations[iterator_i] >= (citations.length - iterator_i))
+                return citations.length - iterator_i;
         }
         return 0;
     }
 
     public int hIndex_bucket(int[] citations) //Buckets Approach
     {
-        int buckets[] = new int[citations.length+1];
-        for(int citation:citations)
-        {
+        int buckets[] = new int[citations.length + 1];
+        for (int citation : citations) {
             if (citation <= citations.length)
                 buckets[citation]++;
             else
                 buckets[buckets.length - 1]++;
         }
-        for(int iterator_i=buckets.length-1,count_till_now=0;iterator_i>=0;iterator_i--)
-        {
+        for (int iterator_i = buckets.length - 1, count_till_now = 0; iterator_i >= 0; iterator_i--) {
             count_till_now += buckets[iterator_i];
-            if(count_till_now >= iterator_i)
+            if (count_till_now >= iterator_i)
                 return iterator_i;
         }
         return 0;
@@ -7637,31 +7219,27 @@ public class LeetCode {
 
     public int hIndex(int[] citations) //In Place Bucket Sort Approach
     {
-        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
-        {
-            int current_citation = citations[iterator_i],next_citation=0;
-            if(current_citation<0) // Already accounted for
+        for (int iterator_i = 0; iterator_i < citations.length; iterator_i++) {
+            int current_citation = citations[iterator_i], next_citation = 0;
+            if (current_citation < 0) // Already accounted for
                 continue;
             citations[iterator_i] = -1; // No entries in this bucket till now
-            if(current_citation<citations.length)
-            {
-                while((next_citation=citations[current_citation])>-1)
-                {
+            if (current_citation < citations.length) {
+                while ((next_citation = citations[current_citation]) > -1) {
                     citations[current_citation] = -2;//Since positive and this is first occurrence encountered
-                    if(next_citation>=citations.length)
+                    if (next_citation >= citations.length)
                         break;
                     current_citation = next_citation;
                 }
-                if(next_citation<citations.length)
+                if (next_citation < citations.length)
                     citations[current_citation]--; // Increase count of occurrence
             }
         }
 
-        int count_till_now=0;
-        for(int iterator_i=0;iterator_i<citations.length;iterator_i++)
-        {
-            count_till_now += Math.max(-citations[iterator_i]-1,0);
-            if(count_till_now>=citations.length-iterator_i)
+        int count_till_now = 0;
+        for (int iterator_i = 0; iterator_i < citations.length; iterator_i++) {
+            count_till_now += Math.max(-citations[iterator_i] - 1, 0);
+            if (count_till_now >= citations.length - iterator_i)
                 return iterator_i;
         }
         return citations.length;
@@ -7683,36 +7261,34 @@ public class LeetCode {
     */
     public int sumOfLeftLeaves_alt(TreeNode root) //With Helper
     {
-        if(root==null)
+        if (root == null)
             return 0;
-        return sumOfLeftLeavesHelper(root,false);
+        return sumOfLeftLeavesHelper(root, false);
     }
 
     public int sumOfLeftLeavesHelper(TreeNode root, boolean isLeft)
     {
-        if(root.left==null && root.right==null)
-        {
-            if(isLeft)
+        if (root.left == null && root.right == null) {
+            if (isLeft)
                 return root.val;
             return 0;
         }
-        return (root.left!=null?sumOfLeftLeavesHelper(root.left,true):0)+(root.right!=null?sumOfLeftLeavesHelper(root.right,false):0);
+        return (root.left != null ? sumOfLeftLeavesHelper(root.left, true) : 0) + (root.right != null ? sumOfLeftLeavesHelper(root.right, false) : 0);
     }
 
     public int sumOfLeftLeaves(TreeNode root) //Without Helper
     {
-        int sum=0;
-        if(root==null)
+        int sum = 0;
+        if (root == null)
             return sum;
-        if(root.left!=null)
-        {
-            if(root.left.left==null && root.left.right==null)
+        if (root.left != null) {
+            if (root.left.left == null && root.left.right == null)
                 sum += root.left.val;
             else
                 sum += sumOfLeftLeaves(root.left);
         }
 
-        return sum+sumOfLeftLeaves(root.right);
+        return sum + sumOfLeftLeaves(root.right);
     }
 
     /*
@@ -7736,12 +7312,11 @@ public class LeetCode {
     public boolean canConstruct(String ransomNote, String magazine)
     {
         int count_characters[] = new int[26];//Ascii Set
-        for(char c:magazine.toCharArray())
-            count_characters[c-'a']++;
-        for(char c:ransomNote.toCharArray())
-        {
-            int curr_val = --count_characters[c-'a'];
-            if(curr_val<0)
+        for (char c : magazine.toCharArray())
+            count_characters[c - 'a']++;
+        for (char c : ransomNote.toCharArray()) {
+            int curr_val = --count_characters[c - 'a'];
+            if (curr_val < 0)
                 return false;
         }
         return true;
@@ -7769,40 +7344,41 @@ public class LeetCode {
     */
     public List<String> findItinerary_bfs(List<List<String>> tickets) //BFS
     {
-        HashMap<String,PriorityQueue<String>> hmap = new HashMap<>();
-        for(int iterator_i=0;iterator_i<tickets.size();iterator_i++)
-            hmap.computeIfAbsent(tickets.get(iterator_i).get(0),a->new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
+        HashMap<String, PriorityQueue<String>> hmap = new HashMap<>();
+        for (int iterator_i = 0; iterator_i < tickets.size(); iterator_i++)
+            hmap.computeIfAbsent(tickets.get(iterator_i).get(0), a -> new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
 
         Stack<String> output_stck = new Stack<>();
         LinkedList<String> final_list = new LinkedList<>();
         output_stck.push("JFK");
         String next_stop = "";
-        while(!output_stck.isEmpty())
-        {
-            while((hmap.get(output_stck.peek())!=null) && (next_stop= hmap.get(output_stck.peek()).poll())!=null)
+        while (!output_stck.isEmpty()) {
+            while ((hmap.get(output_stck.peek()) != null) && (next_stop = hmap.get(output_stck.peek()).poll()) != null)
                 output_stck.push(next_stop);
 
-            final_list.add(0,output_stck.pop());
+            final_list.add(0, output_stck.pop());
         }
         return final_list;
     }
 
     public List<String> findItinerary(List<List<String>> tickets) //DFS
     {
-        HashMap<String,PriorityQueue<String>> hmap = new HashMap<>();
-        for(int iterator_i=0;iterator_i<tickets.size();iterator_i++)
-            hmap.computeIfAbsent(tickets.get(iterator_i).get(0),a->new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
+        HashMap<String, PriorityQueue<String>> hmap = new HashMap<>();
+        for (int iterator_i = 0; iterator_i < tickets.size(); iterator_i++)
+            hmap.computeIfAbsent(tickets.get(iterator_i).get(0), a -> new PriorityQueue<>()).add(tickets.get(iterator_i).get(1));
 
         LinkedList<String> final_string = new LinkedList<>();
-        findItinerary_dfsHelper(final_string,"JFK",hmap);
+        findItinerary_dfsHelper(final_string, "JFK", hmap);
         return final_string;
     }
 
-    public void findItinerary_dfsHelper(LinkedList<String> final_string,String airport,HashMap<String,PriorityQueue<String>> hmap)
+    public void findItinerary_dfsHelper(LinkedList<String> final_string, String airport, HashMap<String, PriorityQueue<String>> hmap)
     {
-        String next_airport="";
-        while(hmap.get(airport)!=null && (next_airport=hmap.get(airport).poll())!=null)
-            findItinerary_dfsHelper(final_string,next_airport,hmap);
-        final_string.add(0,airport);
+        String next_airport = "";
+        while (hmap.get(airport) != null && (next_airport = hmap.get(airport).poll()) != null)
+            findItinerary_dfsHelper(final_string, next_airport, hmap);
+        final_string.add(0, airport);
     }
+
+
 }
