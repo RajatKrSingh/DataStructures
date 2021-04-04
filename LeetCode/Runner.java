@@ -1333,8 +1333,8 @@ public class Runner {
         /** Driver Code for Q160.hIndex
          *
          */
-        int input_citations[] = obj.create_array_int(sc);
-        System.out.println(obj.hIndex(input_citations));
+//        int input_citations[] = obj.create_array_int(sc);
+//        System.out.println(obj.hIndex(input_citations));
 
         /** Driver Code for Q161.sumOfLeftLeaves
          *
@@ -1376,5 +1376,129 @@ public class Runner {
 //        TreeNode inputtree=null;
 //        inputtree = create_binary_tree(inputtree,sc);
 //        System.out.println(obj.sumRootToLeaf(inputtree));
+
+        /** Driver Code for Q165.minRefuelStops
+         *
+         */
+//        System.out.println("Enter target and startFuel");
+//        int target = sc.nextInt(),startFuel = sc.nextInt();
+//        System.out.println("Enter number of stations");
+//        int num_stations = sc.nextInt(),station[][] = new int[num_stations][2];
+//        for(int iterator_i=0;iterator_i<num_stations;iterator_i++)
+//        {
+//            station[iterator_i][0] = sc.nextInt();
+//            station[iterator_i][1] = sc.nextInt();
+//        }
+//        System.out.println(obj.minRefuelStops(target,startFuel,station));
+
+        /** Driver Code for Q166.largestRectangleArea
+         *
+         */
+//        int input_height[] = obj.create_array_int(sc);
+//        System.out.println(obj.largestRectangleArea(input_height));
+
+        /** Driver Code for Q167.largestRectangleArea
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        System.out.println(obj.countNodes(input_tree));
+
+        /** Driver Code for Q168.maxSlidingWindow
+         *
+         */
+//        System.out.println("Enter k");
+//        int k = sc.nextInt(), input_arr[]=obj.create_array_int(sc);
+//        obj.maxSlidingWindow(input_arr,k);
+
+        /** Driver Code for Q169.summaryRanges
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj.summaryRanges(input_arr);
+
+        /** Driver Code for Q170.summaryRanges
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.firstMissingPositive(input_arr));
+
+        /** Driver Code for Q171.decodeString
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println(obj.decodeString(sc.next()));
+
+        /** Driver Code for Q172.missingNumber
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.missingNumber(input_arr));
+
+        /** Driver Code for Q173.kthSmallestHelper
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        System.out.println("Enter value for k");
+//        int k = sc.nextInt();
+//        System.out.println(obj.kthSmallest(input_tree,k));
+
+        /** Driver Code for Q174.lengthOfLIS
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.lengthOfLIS(input_arr));
+
+        /** Driver Code for Q175.coinChange
+         *
+         */
+//        int input_coins[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        System.out.println(obj.coinChange(input_coins,sc.nextInt()));
+
+        /** Driver Code for Q176.minDiffInBST
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        System.out.println(obj.minDiffInBST(input_tree));
+
+        /** Driver Code for Q177.spiralOrder
+         *
+         */
+//        System.out.println("Enter n, m and array");
+//        int n= sc.nextInt(),m=sc.nextInt(), input_arr[][] = new int[n][m];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                input_arr[iterator_i][iterator_j] = sc.nextInt();
+//
+//        obj.spiralOrder(input_arr);
+
+        /** Driver Code for Q178.ladderLength
+         *
+         */
+//        System.out.println("Enter beginWord and endWord");
+//        String beginWord = sc.next(), endWord = sc.next();
+//        List<String> wordList = new ArrayList();
+//        System.out.println("Enter length of wordList and wordList");
+//        int n= sc.nextInt();
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            wordList.add(sc.next());
+//        System.out.println(obj.ladderLength(beginWord,endWord,wordList));
+
+        /** Driver Code for Q179.containsNearbyDuplicate
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        System.out.println(obj.containsNearbyDuplicate(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q180.longestConsecutive
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.longestConsecutive(input_arr));
+
     }
 }

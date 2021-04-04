@@ -7380,5 +7380,1045 @@ public class LeetCode
         final_string.add(0, airport);
     }
 
+    /*
+    164. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-number-of-refueling-stops/)
+        A car travels from a starting position to a destination which is target miles east of the starting position.
+        Along the way, there are gas stations.  Each station[i] represents a gas station that is station[i][0] miles east of
+        the starting position, and has station[i][1] liters of gas. The car starts with an infinite tank of gas, which
+        initially has startFuel liters of fuel in it.  It uses 1 liter of gas per 1 mile that it drives. When the car
+        reaches a gas station, it may stop and refuel, transferring all the gas from the station into the car. What is the
+        least number of refueling stops the car must make in order to reach its destination?  If it cannot reach the destination, return -1.
+
+        Note that if the car reaches a gas station with 0 fuel left, the car can still refuel there.
+        If the car reaches the destination with 0 fuel left, it is still considered to have arrived.
+
+        Example 1:
+            Input: target = 1, startFuel = 1, stations = []
+            Output: 0
+            Explanation: We can reach the target without refueling.
+
+        Example 2:
+            Input: target = 100, startFuel = 1, stations = [[10,100]]
+            Output: -1
+            Explanation: We can't reach the target (or even the first gas station).
+
+        Example 3:
+            Input: target = 100, startFuel = 10, stations = [[10,60],[20,30],[30,30],[60,40]]
+            Output: 2
+            Explanation:
+            We start with 10 liters of fuel.
+            We drive to position 10, expending 10 liters of fuel.  We refuel from 0 liters to 60 liters of gas.
+            Then, we drive from position 10 to position 60 (expending 50 liters of fuel),
+            and refuel from 10 liters to 50 liters of gas.  We then drive to and reach the target.
+            We made 2 refueling stops along the way, so we return 2.
+
+        Note:
+            1 <= target, startFuel, stations[i][1] <= 10^9
+            0 <= stations.length <= 500
+            0 < stations[0][0] < stations[1][0] < ... < stations[stations.length-1][0] < target
+    */
+    public int minRefuelStops_dp(int target, int startFuel, int[][] stations)
+    {
+        int dp_arr[] = new int[stations.length+1]; // Store maximum distance reached using index stops(0 to num_stations)
+        dp_arr[0] = startFuel;
+
+        for(int iterator_station=0;iterator_station<stations.length;iterator_station++)
+        {
+            for (int iterator_refuels = iterator_station; iterator_refuels >= 0; iterator_refuels--)
+            {
+                if(dp_arr[iterator_refuels]>=stations[iterator_station][0])
+                    dp_arr[iterator_refuels + 1] = Math.max(dp_arr[iterator_refuels + 1], dp_arr[iterator_refuels] + stations[iterator_station][1]);
+            }
+        }
+
+        for(int iterator_i=0;iterator_i<=stations.length;iterator_i++)
+            if(dp_arr[iterator_i]>=target)
+                return iterator_i;
+        return -1;
+    }
+
+    public int minRefuelStops(int target, int startFuel, int[][] stations)
+    {
+        PriorityQueue<Integer> fuel_capacity_passed = new PriorityQueue(Collections.reverseOrder());
+        int iterator_index = 0, prev_distance_covered = 0, refuel_stops=0,current_fuel=startFuel;
+        while(iterator_index<stations.length)
+        {
+            current_fuel = current_fuel -(stations[iterator_index][0]-prev_distance_covered); // current fuel capaity after reaching station i
+            while(!fuel_capacity_passed.isEmpty() && current_fuel<0)
+            {
+                current_fuel += fuel_capacity_passed.poll();
+                refuel_stops++;
+            }
+
+            if(current_fuel<0)
+                return -1;
+
+            prev_distance_covered = stations[iterator_index][0];
+            fuel_capacity_passed.add(stations[iterator_index++][1]);
+        }
+
+        while(!fuel_capacity_passed.isEmpty()  && current_fuel<target-prev_distance_covered)
+        {
+            current_fuel += fuel_capacity_passed.poll();
+            refuel_stops++;
+        }
+        return current_fuel>=target-prev_distance_covered?refuel_stops:-1;
+
+    }
+
+    /*
+    165. PROBLEM DESCRIPTION (https://leetcode.com/problems/largest-rectangle-in-histogram/)
+        Given an array of integers heights representing the histogram's bar height where the width of each bar is 1,
+        return the area of the largest rectangle in the histogram.
+
+        Example 1:
+        Input: heights = [2,1,5,6,2,3]
+        Output: 10
+        Explanation: The above is a histogram where width of each bar is 1.
+        The largest rectangle is shown in the red area, which has an area = 10 units.
+
+        Example 2:
+        Input: heights = [2,4]
+        Output: 4
+
+        Constraints:
+            1 <= heights.length <= 105
+            0 <= heights[i] <= 104
+
+    */
+    public int largestRectangleArea_eac(int[] heights) // Expand from center TLE
+    {
+        int lower_bound=0,upper_bound=0,current_height=0, max_area=0;
+        for(int iterator_i=0;iterator_i<heights.length;iterator_i++)
+        {
+            lower_bound = iterator_i;
+            upper_bound = iterator_i;
+            current_height = heights[iterator_i];
+            while(lower_bound>=0 && heights[lower_bound]>=current_height)
+                lower_bound--;
+            while(upper_bound<heights.length && heights[upper_bound]>=current_height)
+                upper_bound++;
+            max_area = Math.max((upper_bound-lower_bound-1)*current_height, max_area);
+        }
+        return max_area;
+    }
+    public int largestRectangleArea_dp(int[] heights) //DP Approach
+    {
+        int left_boundary[] = new int[heights.length], right_boundary[] = new int[heights.length],max_area=0;
+        for(int iterator_i=0;iterator_i<heights.length;iterator_i++)
+        {
+            int prev_boundary = iterator_i-1;
+            while(prev_boundary>-1 && heights[prev_boundary]>=heights[iterator_i])
+                prev_boundary = left_boundary[prev_boundary];
+            left_boundary[iterator_i] = prev_boundary;
+        }
+
+        for(int iterator_i=heights.length-1;iterator_i>=0;iterator_i--)
+        {
+            int prev_boundary = iterator_i+1;
+            while(prev_boundary<heights.length && heights[prev_boundary]>=heights[iterator_i])
+                prev_boundary = right_boundary[prev_boundary];
+            right_boundary[iterator_i] = prev_boundary;
+        }
+        for(int iterator_i=0;iterator_i<heights.length;iterator_i++)
+            max_area = Math.max(max_area,(right_boundary[iterator_i]-left_boundary[iterator_i]-1)*heights[iterator_i]);
+
+        return max_area;
+    }
+
+    public int largestRectangleArea_stack(int[] heights) // Using Stacks
+    {
+        Stack<Integer> index_stck= new Stack();
+        int curr_index=0,max_area=0;
+        while(!index_stck.isEmpty() || curr_index!=heights.length)
+        {
+            int current_height = curr_index==heights.length?0:heights[curr_index];
+            while(!index_stck.isEmpty() && current_height<=heights[index_stck.peek()])
+            {
+                int popped_index = index_stck.pop();
+                max_area = Math.max(max_area,(curr_index-(index_stck.isEmpty()?0:index_stck.peek()+1))*heights[popped_index]);
+            }
+            if(curr_index<heights.length)
+                index_stck.push(curr_index++);
+        }
+        return max_area;
+    }
+
+    public int largestRectangleArea(int[] heights) // Array based stacks
+    {
+        int curr_index=0, stck_arr[] = new int[heights.length],max_area=0,top=-1;
+        while(top!=-1 || curr_index!=heights.length)
+        {
+            int current_height = curr_index==heights.length?0:heights[curr_index];
+            while(top!=-1 && heights[stck_arr[top]]>=current_height)
+            {
+                int popped_index = stck_arr[top--];
+                max_area = Math.max(max_area,(curr_index-(top==-1?0:stck_arr[top]+1))*heights[popped_index]);
+            }
+            if(curr_index<heights.length)
+                stck_arr[++top] = curr_index++;
+        }
+        return max_area;
+    }
+
+
+    /*
+    166. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-complete-tree-nodes/)
+        Given the root of a complete binary tree, return the number of the nodes in the tree.
+        According to Wikipedia, every level, except possibly the last, is completely filled in a complete binary tree,
+        and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the
+        last level h.
+
+        Example 1:
+            Input: root = [1,2,3,4,5,6]
+            Output: 6
+
+        Example 2:
+            Input: root = []
+            Output: 0
+
+        Example 3:
+            Input: root = [1]
+            Output: 1
+
+        Constraints:
+            1 <= heights.length <= 105
+            0 <= heights[i] <= 104
+
+    */
+    public int countNodes(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        int height_root = countNodesHeight(root);
+        int height_right = countNodesHeight(root.right);
+        return (height_right == height_root-1)?(int)Math.pow(2,height_root-1) + countNodes(root.right):
+                (int)Math.pow(2,height_right)+countNodes(root.left);
+    }
+
+    public int countNodesHeight(TreeNode root)
+    {
+        int height = 0;
+        while(root!=null)
+        {
+            root = root.left;
+            height++;
+        }
+        return height;
+    }
+
+    /*
+    167. PROBLEM DESCRIPTION (https://leetcode.com/problems/sliding-window-maximum/)
+        You are given an array of integers nums, there is a sliding window of size k which is moving from the very left
+        of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves
+        right by one position.
+
+        Return the max sliding window.
+
+        Example 1:
+            Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
+            Output: [3,3,5,5,6,7]
+
+        Example 2:
+            Input: nums = [1], k = 1
+            Output: [1]
+
+        Example 3:
+            Input: nums = [1,-1], k = 1
+            Output: [1,-1]
+
+        Example 4:
+            Input: nums = [9,11], k = 2
+            Output: [11]
+
+        Example 5:
+            Input: nums = [4,-2], k = 2
+            Output: [4]
+
+        Constraints:
+            1 <= nums.length <= 105
+            -104 <= nums[i] <= 104
+            1 <= k <= nums.length
+
+    */
+    public int[] maxSlidingWindow_linklst(int[] nums, int k)// Using LinkedList or Deque
+    {
+        LinkedList<Integer> index_queue = new LinkedList();
+        int max_window[] = new int[nums.length-k+1], result_index=0;
+
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(!index_queue.isEmpty() && iterator_i-k==index_queue.peek())
+                index_queue.poll();
+            // Remove less than current values
+            while(!index_queue.isEmpty() &&  nums[iterator_i]>=nums[index_queue.peekLast()])
+                index_queue.pollLast();
+
+            index_queue.offer(iterator_i);
+            if(iterator_i>=k-1)
+                max_window[result_index++] = nums[index_queue.peek()];
+        }
+
+        return max_window;
+    }
+
+    public int[] maxSlidingWindow(int[] nums, int k)
+    {
+        int sliding_deque[] = new int[nums.length],result_max[] = new int[nums.length-k+1], first_index=0,last_index=-1,result_index=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(last_index>=first_index &&  (iterator_i-k)==sliding_deque[first_index])
+                first_index++;
+            while(last_index>=first_index && nums[iterator_i]>=nums[sliding_deque[last_index]])
+                last_index--;
+            sliding_deque[++last_index] = iterator_i;
+            if(iterator_i>=k-1)
+                result_max[result_index++] = nums[sliding_deque[first_index]];
+        }
+        return result_max;
+    }
+
+    /*
+    168. PROBLEM DESCRIPTION (https://leetcode.com/problems/summary-ranges/)
+        You are given a sorted unique integer array nums.
+        Return the smallest sorted list of ranges that cover all the numbers in the array exactly. That is, each element
+        of nums is covered by exactly one of the ranges, and there is no integer x such that x is in one of the ranges
+        but not in nums.
+
+        Each range [a,b] in the list should be output as:
+            "a->b" if a != b
+            "a" if a == b
+
+        Example 1:
+            Input: nums = [0,1,2,4,5,7]
+            Output: ["0->2","4->5","7"]
+            Explanation: The ranges are:
+
+
+        Constraints:
+            0 <= nums.length <= 20
+            -231 <= nums[i] <= 231 - 1
+            All the values of nums are unique.
+            nums is sorted in ascending order.
+
+    */
+    public List<String> summaryRanges(int[] nums)
+    {
+        List<String> result_string = new ArrayList();
+        int iterator_index=0;
+        while(iterator_index<nums.length)
+        {
+            StringBuffer sb = new StringBuffer();
+            int range_start = nums[iterator_index];
+            sb.append(range_start);
+            while(iterator_index<nums.length-1 && (nums[iterator_index+1] == nums[iterator_index]+1))
+                iterator_index++;
+            if(nums[iterator_index]!=range_start)
+                sb.append("->").append(nums[iterator_index]);
+            result_string.add(sb.toString());
+            iterator_index++;
+        }
+        return result_string;
+    }
+
+    /*
+    169. PROBLEM DESCRIPTION (https://leetcode.com/problems/first-missing-positive/)
+        Given an unsorted integer array nums, find the smallest missing positive integer.
+
+        Example 1:
+            Input: nums = [1,2,0]
+            Output: 3
+
+        Example 2:
+            Input: nums = [3,4,-1,1]
+            Output: 2
+
+        Example 3:
+            Input: nums = [7,8,9,11,12]
+            Output: 1
+
+        Constraints:
+            0 <= nums.length <= 300
+            -231 <= nums[i] <= 231 - 1
+
+        Follow up: Could you implement an algorithm that runs in O(n) time and uses constant extra space?
+    */
+    public int firstMissingPositive_alt(int[] nums)
+    {
+        int current_index;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            current_index = iterator_i;
+            while(nums[current_index]>0 && nums[current_index]<nums.length && nums[current_index] != current_index+1 && nums[current_index]!=nums[nums[current_index]-1])
+            {
+                int temp = nums[current_index];
+                nums[current_index] = nums[nums[current_index]-1];
+                nums[temp-1] = temp;
+            }
+        }
+
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            if(nums[iterator_i]!=iterator_i+1)
+                return iterator_i+1;
+
+        return nums.length;
+    }
+
+    public int firstMissingPositive(int[] nums)
+    {
+        int nums_cpy[] = Arrays.copyOf(nums,nums.length+1),n=nums_cpy.length;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            if(nums_cpy[iterator_i]<0 || nums_cpy[iterator_i]>nums.length)
+                nums_cpy[iterator_i]=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            nums_cpy[(nums_cpy[iterator_i])%n]+=n;
+
+        for(int iterator_i=1;iterator_i<=nums.length;iterator_i++)
+            if(nums_cpy[iterator_i]<n)
+                return iterator_i;
+
+        return n;
+    }
+
+    /*
+    170. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-maximum-path-sum/)
+        A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting
+        them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
+        The path sum of a path is the sum of the node's values in the path. Given the root of a binary tree, return the
+        maximum path sum of any path.
+
+        Example 1:
+            Input: root = [1,2,3]
+            Output: 6
+            Explanation: The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+
+        Example 2:
+            Input: root = [-10,9,20,null,null,15,7]
+            Output: 42
+            Explanation: The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
+
+
+        Constraints:
+            The number of nodes in the tree is in the range [1, 3 * 104].
+            -1000 <= Node.val <= 1000
+    */
+    int binary_maxpathsum=Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root)
+    {
+        maxPathSumHelper(root);
+        return binary_maxpathsum;
+    }
+
+    public int maxPathSumHelper(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        int left_sum = maxPathSumHelper(root.left);
+        int right_sum = maxPathSumHelper(root.right);
+
+        binary_maxpathsum = Math.max(root.val,Math.max(binary_maxpathsum,left_sum+right_sum+root.val));
+        if(root.val>=0)
+            binary_maxpathsum = Math.max(binary_maxpathsum, Math.max(left_sum,right_sum) + root.val);
+
+        return Math.max(root.val,Math.max(left_sum,right_sum)+root.val);
+    }
+
+    /*
+    171. PROBLEM DESCRIPTION (https://leetcode.com/problems/decode-string/)
+        Given an encoded string, return its decoded string.
+        The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated
+        exactly k times. Note that k is guaranteed to be a positive integer.
+        You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed,etc.
+        Furthermore, you may assume that the original data does not contain any digits and that digits are only for those
+        repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+        Example 1:
+            Input: s = "3[a]2[bc]"
+            Output: "aaabcbc"
+
+        Example 2:
+            Input: s = "3[a2[c]]"
+            Output: "accaccacc"
+
+        Example 3:
+            Input: s = "2[abc]3[cd]ef"
+            Output: "abcabccdcdcdef"
+
+        Example 4:
+            Input: s = "abc3[cd]xyz"
+            Output: "abccdcdcdxyz"
+    */
+    public String decodeString(String s)
+    {
+        StringBuffer stack_arr[] = new StringBuffer[s.length()];
+        int stack_top=-1,iterator_index=0;
+        while(iterator_index<s.length())
+        {
+            StringBuffer sb = new StringBuffer();
+            char current_char = s.charAt(iterator_index);
+            if(Character.isDigit(current_char))
+            {
+                while(Character.isDigit(s.charAt(iterator_index)))
+                    sb.append(s.charAt(iterator_index++));
+                stack_arr[++stack_top] = sb;
+            }
+            else if(Character.isLetter(current_char))
+            {
+                while(iterator_index<s.length() && Character.isLetter(s.charAt(iterator_index)))
+                    sb.append(s.charAt(iterator_index++));
+                try
+                {
+                    int prev_value = Integer.parseInt(stack_arr[stack_top].toString());
+                    stack_arr[++stack_top] = sb;
+                }
+                catch (Exception e)
+                {
+                    if(stack_top==-1)
+                        stack_arr[++stack_top] = sb;
+                    else
+                        stack_arr[stack_top].append(sb);
+                }
+
+            }
+            else if(current_char == '[')
+            {
+                //stack_arr[++stack_top] = new StringBuffer().append(current_char);
+                iterator_index++;
+            }
+            else if(current_char == ']')
+            {
+                StringBuffer decoded_string = new StringBuffer();
+                StringBuffer str_to_decode = stack_arr[stack_top--];
+                System.out.println(stack_arr[stack_top]);
+                int repetition = Integer.parseInt(stack_arr[stack_top--].toString());
+                for(int iterator_i=0;iterator_i<repetition;iterator_i++)
+                    decoded_string.append(str_to_decode);
+                boolean new_value =false;
+                try
+                {
+                    int prev_value = Integer.parseInt(stack_arr[stack_top].toString());
+                    new_value = true;
+                }
+                catch (Exception e)
+                {
+                }
+
+                if(stack_top!=-1 && !new_value)
+                    stack_arr[stack_top].append(decoded_string);
+                else
+                    stack_arr[++stack_top] = decoded_string;
+                iterator_index++;
+            }
+        }
+        return stack_arr[0].toString();
+    }
+
+    /*
+    172. PROBLEM DESCRIPTION (https://leetcode.com/problems/missing-number/)
+        Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that
+        is missing from the array.
+        Follow up: Could you implement a solution using only O(1) extra space complexity and O(n) runtime complexity?
+
+        Example 1:
+            Input: nums = [3,0,1]
+            Output: 2
+            Explanation: n = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 2 is the missing number
+            in the range since it does not appear in nums.
+
+        Example 2:
+            Input: nums = [0,1]
+            Output: 2
+            Explanation: n = 2 since there are 2 numbers, so all numbers are in the range [0,2]. 2 is the missing number
+            in the range since it does not appear in nums.
+
+        Example 3:
+            Input: nums = [9,6,4,2,3,5,7,0,1]
+            Output: 8
+            Explanation: n = 9 since there are 9 numbers, so all numbers are in the range [0,9]. 8 is the missing number
+            in the range since it does not appear in nums.
+
+        Example 4:
+            Input: nums = [0]
+            Output: 1
+            Explanation: n = 1 since there is 1 number, so all numbers are in the range [0,1]. 1 is the missing number in
+            the range since it does not appear in nums.
+    */
+    public int missingNumber(int[] nums)
+    {
+        int sum = 0,n=nums.length;
+        for(int num:nums)
+            sum += num;
+        return n*(n+1)/2 -sum;
+    }
+
+    /*
+    173. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-smallest-element-in-a-bst/)
+        Given the root of a binary search tree, and an integer k, return the kth (1-indexed) smallest element in the tree.
+        Example 1:
+            Input: root = [3,1,4,null,2], k = 1
+            Output: 1
+
+        Example 2:
+            Input: root = [5,3,6,2,4,null,null,1], k = 3
+            Output: 3
+
+        Constraints:
+            The number of nodes in the tree is n.
+            1 <= k <= n <= 104
+            0 <= Node.val <= 104
+
+        Follow up: If the BST is modified often (i.e., we can do insert and delete operations) and you need to find the
+        kth smallest frequently, how would you optimize?
+    */
+    int kthSmallest_val = 0;
+    public int kthSmallest(TreeNode root, int k)
+    {
+        return kthSmallestHelper(root,k).val;
+    }
+    public TreeNode kthSmallestHelper(TreeNode root,int k)
+    {
+        if(root==null)
+            return null;
+        TreeNode left_val = kthSmallestHelper(root.left,k);
+        if(left_val!=null)
+            return left_val;
+        kthSmallest_val++;
+        if(kthSmallest_val == k)
+            return root;
+        return kthSmallestHelper(root.right,k);
+    }
+    // Interesting followup for optimizing add/delete/search(kth smalllest) using doubly linked queue(increasing)
+
+    /*
+    174. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-increasing-subsequence/)
+        Given an integer array nums, return the length of the longest strictly increasing subsequence.
+        A subsequence is a sequence that can be derived from an array by deleting some or no elements without changing
+        the order of the remaining elements. For example, [3,6,2,7] is a subsequence of the array [0,3,1,6,2,2,7].
+
+        Example 1:
+            Input: nums = [10,9,2,5,3,7,101,18]
+            Output: 4
+            Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+
+        Example 2:
+            Input: nums = [0,1,0,3,2,3]
+            Output: 4
+
+        Example 3:
+            Input: nums = [7,7,7,7,7,7,7]
+            Output: 1
+
+        Constraints:
+            1 <= nums.length <= 2500
+            -104 <= nums[i] <= 104
+
+
+        Follow up:
+            Could you come up with the O(n2) solution?
+            Could you improve it to O(n log(n)) time complexity?
+    */
+    public int lengthOfLIS_dp(int[] nums) // O(n^2) General DP solution
+    {
+        int dp_length[] = new int[nums.length],max_length=1;
+        Arrays.fill(dp_length,1);
+
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            int curr_ele = nums[iterator_i];
+            for(int iterator_j =iterator_i-1;iterator_j>=0;iterator_j--)
+            {
+                if(curr_ele>nums[iterator_j])
+                    dp_length[iterator_i] = Math.max(dp_length[iterator_i],dp_length[iterator_j]+1);
+            }
+            max_length = Math.max(dp_length[iterator_i],max_length);
+        }
+        return max_length;
+    }
+
+    public int lengthOfLIS(int nums[]) // Patience sort O(nlog(n))
+    {
+        int piles_arr[] = new int[nums.length],n=nums.length,curr_num;
+        int piles_len = 0;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            curr_num=nums[iterator_i];
+            int search_index = Arrays.binarySearch(piles_arr,0,piles_len,curr_num);
+            if(search_index<0)
+                search_index = -(search_index+1);
+            piles_arr[search_index] = curr_num;
+            if(search_index==piles_len)
+                piles_len++;
+        }
+        return piles_len;
+    }
+
+    /*
+    175. PROBLEM DESCRIPTION (https://leetcode.com/problems/coin-change/)
+        You are given an integer array coins representing coins of different denominations and an integer amount
+        representing a total amount of money. Return the fewest number of coins that you need to make up that amount.
+        If that amount of money cannot be made up by any combination of the coins, return -1.
+
+        You may assume that you have an infinite number of each kind of coin.
+
+        Example 1:
+            Input: coins = [1,2,5], amount = 11
+            Output: 3
+            Explanation: 11 = 5 + 5 + 1
+
+        Example 2:
+            Input: coins = [2], amount = 3
+            Output: -1
+
+        Example 3:
+            Input: coins = [1], amount = 0
+            Output: 0
+
+        Example 4:
+            Input: coins = [1], amount = 1
+            Output: 1
+
+        Example 5:
+            Input: coins = [1], amount = 2
+            Output: 2
+
+        Constraints:
+            1 <= coins.length <= 12
+            1 <= coins[i] <= 231 - 1
+            0 <= amount <= 104
+    */
+    public int coinChange_dp(int[] coins, int amount)
+    {
+        int dp_arr[] = new int[amount+1],min_coin_value=Integer.MAX_VALUE;
+        Arrays.fill(dp_arr,Integer.MAX_VALUE);
+        dp_arr[0] = 0;
+        for(int iterator_coins=0;iterator_coins< coins.length;iterator_coins++)
+        {
+            int current_coin = coins[iterator_coins];
+            for(int iterator_amount=current_coin;iterator_amount<=amount;iterator_amount++)
+                dp_arr[iterator_amount] = Math.min(dp_arr[iterator_amount],dp_arr[iterator_amount-current_coin]+1);
+        }
+
+        return dp_arr[amount]==Integer.MAX_VALUE?-1:dp_arr[amount];
+    }
+
+    public int coinChange(int[] coins, int amount)
+    {
+        return coinChangeHelper(coins,amount,new int[amount+1]);
+    }
+
+    public int coinChangeHelper(int[] coins,int remaining_amount, int memoization_arr[])
+    {
+        if(remaining_amount<0)
+            return -1;
+        if(remaining_amount==0)
+            return 0;
+        if(memoization_arr[remaining_amount]!=0)
+            return memoization_arr[remaining_amount];
+
+        int min_length = Integer.MAX_VALUE;
+
+        for(int coint_iterator=0;coint_iterator<coins.length;coint_iterator++)
+        {
+            int result_child = coinChangeHelper(coins,remaining_amount-coins[coint_iterator],memoization_arr);
+            if(result_child+1<min_length && result_child>=0)
+                min_length = result_child+1;
+        }
+        memoization_arr[remaining_amount] = min_length==Integer.MAX_VALUE?-1:min_length;
+        return memoization_arr[remaining_amount];
+    }
+
+    /*
+    176. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-distance-between-bst-nodes/)
+        Given the root of a Binary Search Tree (BST), return the minimum difference between the values of any two different
+        nodes in the tree.
+        Note: This question is the same as 530: https://leetcode.com/problems/minimum-absolute-difference-in-bst/
+
+        Example 1:
+            Input: root = [4,2,6,1,3]
+            Output: 1
+
+        Example 2:
+            Input: root = [1,0,48,null,null,12,49]
+            Output: 1
+
+        Constraints:
+            The number of nodes in the tree is in the range [2, 100].
+            0 <= Node.val <= 105
+    */
+    int min_diffBST = Integer.MAX_VALUE;
+    TreeNode max_leftBST = null;
+    public int minDiffInBST(TreeNode root)
+    {
+        minDiffInBSTHelper(root);
+        return min_diffBST;
+    }
+
+    public void minDiffInBSTHelper(TreeNode root)
+    {
+        if(root==null)
+            return;
+        minDiffInBSTHelper(root.left);
+        if(max_leftBST!=null)
+            min_diffBST = Math.min(min_diffBST,root.val - max_leftBST.val);
+        max_leftBST = root;
+        minDiffInBSTHelper(root.right);
+    }
+
+    /*
+    177. PROBLEM DESCRIPTION (https://leetcode.com/problems/spiral-matrix/)
+        Given an m x n matrix, return all elements of the matrix in spiral order.
+
+        Example 1:
+            Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+            Output: [1,2,3,6,9,8,7,4,5]
+
+        Example 2:
+            Input: matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+            Output: [1,2,3,4,8,12,11,10,9,5,6,7]
+
+        Constraints:
+            m == matrix.length
+            n == matrix[i].length
+            1 <= m, n <= 10
+            -100 <= matrix[i][j] <= 100
+    */
+    public List<Integer> spiralOrder(int[][] matrix)
+    {
+        List<Integer> result_list = new ArrayList();
+        int current_row=0,current_col=0,n = matrix.length,m=matrix[0].length,spiral_index=0;
+
+        while(current_col<m-spiral_index)
+        {
+            while(current_col<m-spiral_index)
+                result_list.add(matrix[current_row][current_col++]);
+            current_col--;
+            current_row++;
+            if(current_row>=n-spiral_index)
+                break;
+            while(current_row<n-spiral_index)
+                result_list.add(matrix[current_row++][current_col]);
+            current_row--;
+            current_col--;
+            if(current_col<spiral_index)
+                break;
+            while(current_col>=spiral_index)
+                result_list.add(matrix[current_row][current_col--]);
+            current_col++;
+            current_row--;
+            if(current_row<=spiral_index)
+                break;
+            while(current_row>spiral_index)
+                result_list.add(matrix[current_row--][current_col]);
+            current_row++;
+            current_col++;
+            spiral_index++;
+        }
+        return result_list;
+    }
+
+    /*
+    178. PROBLEM DESCRIPTION (https://leetcode.com/problems/word-ladder/)
+        A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words
+        beginWord -> s1 -> s2 -> ... -> sk such that:
+            Every adjacent pair of words differs by a single letter.
+            Every si for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
+            sk == endWord
+
+        Given two words, beginWord and endWord, and a dictionary wordList, return the number of words in the shortest
+        transformation sequence from beginWord to endWord, or 0 if no such sequence exists.
+
+        Example 1:
+            Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+            Output: 5
+            Explanation: One shortest transformation sequence is "hit" -> "hot" -> "dot" -> "dog" -> cog", which is 5 words long.
+
+        Example 2:
+            Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+            Output: 0
+            Explanation: The endWord "cog" is not in wordList, therefore there is no valid transformation sequence.
+
+        Constraints:
+            1 <= beginWord.length <= 10
+            endWord.length == beginWord.length
+            1 <= wordList.length <= 5000
+            wordList[i].length == beginWord.length
+            beginWord, endWord, and wordList[i] consist of lowercase English letters.
+            beginWord != endWord
+            All the words in wordList are unique.
+    */
+
+    public class wordListClass implements Comparable<wordListClass>
+    {
+        String target_str;
+        int difference;
+        public wordListClass(String target_str, int difference)
+        {
+            this.target_str = target_str;
+            this.difference = difference;
+        }
+        @Override
+        public int compareTo(wordListClass obj)
+        {
+            return Integer.compare(difference,obj.difference);
+        }
+    }
+
+    public int ladderLength_alt(String beginWord, String endWord, List<String> wordList)
+    {
+        HashMap<String,List<String>> hmap = new HashMap();
+        wordList.add(beginWord);
+        boolean transformation_flag = true;
+        for(String src_str: wordList)
+        {
+            if(src_str.equals(endWord))
+            {
+                transformation_flag = false;
+                continue;
+            }
+            for(String target_str: wordList)
+            {
+                int difference_between_words=0;
+                for(int iterator_i=0;iterator_i<src_str.length();iterator_i++)
+                    if(src_str.charAt(iterator_i)!=target_str.charAt(iterator_i))
+                        difference_between_words++;
+                if(difference_between_words==1)
+                    hmap.computeIfAbsent(src_str,a->new ArrayList<>()).add(target_str);
+            }
+        }
+        if(transformation_flag)
+            return 0;
+        PriorityQueue<wordListClass> bfs_queue = new PriorityQueue();
+        bfs_queue.add(new wordListClass(beginWord,0));
+        Set<String> visited_set = new HashSet();
+        while(!bfs_queue.isEmpty() && !bfs_queue.peek().target_str.equals(endWord))
+        {
+            wordListClass polled_ele = bfs_queue.poll();
+            int difference_till_now = polled_ele.difference;
+            visited_set.add(polled_ele.target_str);
+            if(!hmap.containsKey(polled_ele.target_str))
+                continue;
+            for(String connected_str:hmap.get(polled_ele.target_str))
+                if(!visited_set.contains(connected_str))
+                    bfs_queue.add(new wordListClass(connected_str,1+difference_till_now));
+        }
+        return bfs_queue.isEmpty()?0:bfs_queue.peek().difference+1;
+    }
+
+    public int ladderLength(String beginWord, String endWord, List<String> wordList)
+    {
+        Set non_visited_set = new HashSet(wordList);
+        Deque<String> q = new ArrayDeque<>();
+        if(!non_visited_set.contains(endWord))
+            return 0;
+        int current_transformation_length = 1;
+        q.add(beginWord);
+        non_visited_set.remove(beginWord);
+        while(!q.isEmpty())
+        {
+            int current_level_size = q.size();
+            for(int iterator_i=0;iterator_i<current_level_size;iterator_i++)
+            {
+                String popped_str = q.pollFirst();
+                if(popped_str.equals(endWord))
+                    return current_transformation_length;
+                char popped_char_array[] = popped_str.toCharArray();
+                for(int iterator_index=0;iterator_index<popped_str.length();iterator_index++)
+                {
+                    char current_char = popped_char_array[iterator_index];
+                    for (char c = 'a'; c <= 'z'; c++)
+                    {
+                        if(c==current_char)
+                            continue;
+                        popped_char_array[iterator_index] = c;
+                        String formed_string = String.valueOf(popped_char_array);
+                        if(!non_visited_set.contains(formed_string))
+                            continue;
+                        q.offer(formed_string);
+                        non_visited_set.remove(formed_string);
+                    }
+                    popped_char_array[iterator_index] = current_char;
+                }
+            }
+            current_transformation_length++;
+        }
+        return 0;
+    }
+
+
+    /*
+    179. PROBLEM DESCRIPTION (https://leetcode.com/problems/contains-duplicate-ii/)
+        Given an integer array nums and an integer k, return true if there are two distinct indices i and j in the array
+        such that nums[i] == nums[j] and abs(i - j) <= k.
+
+        Example 1:
+            Input: nums = [1,2,3,1], k = 3
+            Output: true
+
+        Example 2:
+            Input: nums = [1,0,1,1], k = 1
+            Output: true
+
+        Example 3:
+            Input: nums = [1,2,3,1,2,3], k = 2
+            Output: false
+
+        Constraints:
+            1 <= nums.length <= 105
+            -109 <= nums[i] <= 109
+            0 <= k <= 105
+    */
+    public boolean containsNearbyDuplicate(int[] nums, int k)
+    {
+        Set<Integer> hset_window = new HashSet();
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(iterator_i-k>=1)
+                hset_window.remove(nums[iterator_i-k-1]);
+            if(!hset_window.add(nums[iterator_i]))
+                return true;
+        }
+        return false;
+    }
+
+    /*
+    180. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-consecutive-sequence/)
+        Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
+
+        Example 1:
+            Input: nums = [100,4,200,1,3,2]
+            Output: 4
+            Explanation: The longest consecutive elements sequence is [1, 2, 3, 4]. Therefore its length is 4.
+
+        Example 2:
+            Input: nums = [0,3,7,2,5,8,4,6,0,1]
+            Output: 9
+
+        Constraints:
+            0 <= nums.length <= 104
+            -109 <= nums[i] <= 109
+
+        Follow up: Could you implement the O(n) solution?
+    */
+    public int longestConsecutive(int[] nums)
+    {
+        HashSet<Integer> hset = new HashSet();
+        for(int num:nums)
+            hset.add(num);
+        int longest_consecutive_length = 0;
+        for(int num:nums)
+        {
+            if(hset.contains(num-1))
+                continue;
+            int current_length =0;
+            int current_num = num;
+            while(hset.remove(current_num))
+            {
+                current_num++;
+                current_length++;
+            }
+            longest_consecutive_length = Math.max(longest_consecutive_length,current_length);
+        }
+        return longest_consecutive_length;
+    }
 
 }
