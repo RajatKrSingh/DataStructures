@@ -1,5 +1,6 @@
 package LeetCode;
 
+import javafx.util.Pair;
 import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
@@ -8419,6 +8420,1170 @@ public class LeetCode
             longest_consecutive_length = Math.max(longest_consecutive_length,current_length);
         }
         return longest_consecutive_length;
+    }
+
+    /*
+    181. PROBLEM DESCRIPTION (https://leetcode.com/problems/regular-expression-matching/)
+        Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'
+        where:
+            '.' Matches any single character.​​​​
+            '*' Matches zero or more of the preceding element.
+        The matching should cover the entire input string (not partial).
+
+        Example 1:
+            Input: s = "aa", p = "a"
+            Output: false
+            Explanation: "a" does not match the entire string "aa".
+
+        Example 2:
+            Input: s = "aa", p = "a*"
+            Output: true
+            Explanation: '*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
+
+        Example 3:
+            Input: s = "ab", p = ".*"
+            Output: true
+            Explanation: ".*" means "zero or more (*) of any character (.)".
+
+        Example 4:
+            Input: s = "aab", p = "c*a*b"
+            Output: true
+            Explanation: c can be repeated 0 times, a can be repeated 1 time. Therefore, it matches "aab".
+
+        Example 5:
+            Input: s = "mississippi", p = "mis*is*p*."
+            Output: false
+
+        Constraints:
+            0 <= s.length <= 20
+            0 <= p.length <= 30
+            s contains only lowercase English letters.
+            p contains only lowercase English letters, '.', and '*'.
+            It is guaranteed for each appearance of the character '*', there will be a previous valid character to match.
+    */
+    int isMatch_dp[][];
+    public boolean isMatch(String s, String p)
+    {
+        isMatch_dp = new int[s.length()+1][p.length()+1];
+        isMatch_dp[s.length()][p.length()] = 1;
+
+        return isMatchHelper(s.toCharArray(),p.toCharArray(),0,0);
+    }
+
+    public boolean isMatchHelper(char s[], char p[],int s_index, int p_index)
+    {
+        if(s_index==s.length && p_index==p.length)
+            return true;
+        if(s_index>s.length || p_index>=p.length)
+            return false;
+        if(isMatch_dp[s_index][p_index]!=0)
+            return isMatch_dp[s_index][p_index]==1?true:false;
+        boolean iscurrent = false,final_value=false;
+        if(s_index<s.length &&(s[s_index]==p[p_index] || p[p_index] == '.'))
+            iscurrent = true;
+
+        if(p_index+1<p.length && p[p_index+1]=='*')
+            final_value = isMatchHelper(s,p,s_index,p_index+2) ||(iscurrent && isMatchHelper(s,p,s_index+1,p_index));
+        else
+            final_value = iscurrent && isMatchHelper(s,p,s_index+1,p_index+1);
+
+        isMatch_dp[s_index][p_index] = final_value==true?1:-1;
+        return final_value;
+    }
+
+    /*
+    182. PROBLEM DESCRIPTION (https://leetcode.com/problems/unique-email-addresses/)
+        Every valid email consists of a local name and a domain name, separated by the '@' sign. Besides lowercase letters,
+        the email may contain one or more '.' or '+'.
+        For example, in "alice@leetcode.com", "alice" is the local name, and "leetcode.com" is the domain name.
+        If you add periods '.' between some characters in the local name part of an email address, mail sent there will be
+        forwarded to the same address without dots in the local name. Note that this rule does not apply to domain names.
+
+        For example, "alice.z@leetcode.com" and "alicez@leetcode.com" forward to the same email address.
+        If you add a plus '+' in the local name, everything after the first plus sign will be ignored. This allows certain
+        emails to be filtered. Note that this rule does not apply to domain names.
+
+        For example, "m.y+name@email.com" will be forwarded to "my@email.com".
+        It is possible to use both of these rules at the same time.
+        Given an array of strings emails where we send one email to each email[i], return the number of different addresses
+        that actually receive mails.
+
+        Example 1:
+            Input: emails = ["test.email+alex@leetcode.com","test.e.mail+bob.cathy@leetcode.com","testemail+david@lee.tcode.com"]
+            Output: 2
+            Explanation: "testemail@leetcode.com" and "testemail@lee.tcode.com" actually receive mails.
+
+        Example 2:
+            Input: emails = ["a@leetcode.com","b@leetcode.com","c@leetcode.com"]
+            Output: 3
+
+        Constraints:
+            1 <= emails.length <= 100
+            1 <= emails[i].length <= 100
+            email[i] consist of lowercase English letters, '+', '.' and '@'.
+            Each emails[i] contains exactly one '@' character.
+            All local and domain names are non-empty.
+            Local names do not start with a '+' character.
+    */
+    public int numUniqueEmails(String[] emails)
+    {
+        HashSet<String> valid_emails = new HashSet();
+        for(String email:emails)
+        {
+            int indexOfSplit = email.indexOf('@');
+            String local = email.substring(0,indexOfSplit);
+            String domain = email.substring(indexOfSplit);
+            if(local.contains("+"))
+                local = local.substring(0,local.indexOf('+'));
+            local = local.replaceAll("\\.","");
+            valid_emails.add(local+domain);
+        }
+
+        return valid_emails.size();
+    }
+
+    /*
+    183. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-window-substring/)
+        Given two strings s and t, return the minimum window in s which will contain all the characters in t. If there is
+        no such window in s that covers all characters in t, return the empty string "".
+        Note that If there is such a window, it is guaranteed that there will always be only one unique minimum window in s.
+
+        Example 1:
+            Input: s = "ADOBECODEBANC", t = "ABC"
+            Output: "BANC"
+
+        Example 2:
+            Input: s = "a", t = "a"
+            Output: "a"
+
+        Constraints:
+            1 <= s.length, t.length <= 105
+            s and t consist of English letters.
+
+        Follow up: Could you find an algorithm that runs in O(n) time?
+    */
+    public String minWindow(String s, String t)
+    {
+        int patternchar_index[] = new int[s.length()],front=0,top=-1,iterator_begin=0,iterator_end=0,required_matches=0,current_matches=0;
+        HashSet<Character> t_set= new HashSet();
+        int t_current[] = new int[128];
+        for(int iterator_i=0;iterator_i<t.length();iterator_i++) {
+            t_set.add(t.charAt(iterator_i));
+            t_current[t.charAt(iterator_i)]++;
+        }
+        int min_window = Integer.MAX_VALUE;
+        int[] position = new int[2];
+
+        while(iterator_begin<s.length() && t_current[s.charAt(iterator_begin)]==0)
+            iterator_begin++;
+        iterator_end = iterator_begin;
+        if(iterator_begin==s.length())
+            return "";
+        required_matches = t.length();
+        while(iterator_end<s.length() && iterator_begin<=iterator_end)
+        {
+            char current_char = s.charAt(iterator_end);
+            if(t_set.contains(current_char))
+            {
+                patternchar_index[++top] = iterator_end;
+            }
+            if(t_current[current_char]>0)
+                current_matches++;
+            t_current[current_char]--;
+            while(current_matches==required_matches && iterator_begin<=iterator_end)
+            {
+                if(min_window>iterator_end-iterator_begin)
+                {
+                    min_window = iterator_end-iterator_begin;
+                    position[0] = patternchar_index[front];
+                    position[1] = iterator_end;
+                }
+                t_current[s.charAt(patternchar_index[front])]++;
+                if(t_current[s.charAt(patternchar_index[front])]==1)
+                    current_matches--;
+                ++front;
+                iterator_begin = front<top+1?patternchar_index[front]:iterator_end+1;
+            }
+            iterator_end++;
+        }
+        return min_window==Integer.MAX_VALUE?"":s.substring(position[0],position[1]+1);
+    }
+
+    /*
+    184. PROBLEM DESCRIPTION (https://leetcode.com/problems/power-of-three/)
+        Given an integer n, return true if it is a power of three. Otherwise, return false.
+        An integer n is a power of three, if there exists an integer x such that n == 3^x.
+
+        Example 1:
+            Input: n = 27
+            Output: true
+
+        Example 2:
+            Input: n = 0
+            Output: false
+    */
+    public boolean isPowerOfThree_alt(int n)
+    {
+        if((Math.log(n)/Math.log(3) + 0.00001)%1.0 < 0.00002)
+            return true;
+        return false;
+    }
+    public boolean isPowerOfThree(int n)
+    {
+        return n > 0 && 1162261467 % n == 0;
+    }
+
+
+    /*
+    185. PROBLEM DESCRIPTION (https://leetcode.com/problems/top-k-frequent-elements/)
+        Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in
+        any order.
+
+        Example 1:
+            Input: nums = [1,1,1,2,2,3], k = 2
+            Output: [1,2]
+
+        Example 2:
+            Input: nums = [1], k = 1
+            Output: [1]
+
+        Constraints:
+            1 <= nums.legth <= 105
+            k is in the range [1, the number of unique elements in the array].
+            It is guaranteed that the answer is unique.
+
+        Follow up: Your algorithm's time complexity must be better than O(n log n), where n is the array's size.
+    */
+    HashMap<Integer,Integer> hmap_kfrequent = new HashMap();
+    public int[] topKFrequent_alt(int[] nums, int k) // Heap Approach
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue((a,b)->(Integer.compare(hmap_kfrequent.get(a),hmap_kfrequent.get(b))));
+
+        for(int num:nums)
+            hmap_kfrequent.put(num,hmap_kfrequent.getOrDefault(num,0)+1);
+
+        for(Integer hmap_key:hmap_kfrequent.keySet())
+        {
+            int frequency_current = hmap_kfrequent.get(hmap_key);
+            if(pq.size()<k)
+                pq.add(hmap_key);
+            else if(hmap_kfrequent.get(pq.peek())<frequency_current)
+            {
+                pq.poll();
+                pq.add(hmap_key);
+            }
+        }
+
+        int result[] = new int[k];
+        for(int iterator_k=k-1;iterator_k>=0;iterator_k--)
+            result[iterator_k] = pq.poll();
+
+        return result;
+    }
+
+    HashMap<Integer,Integer> freq_map = new HashMap();
+    public int[] topKFrequent(int[] nums, int k)
+    {
+        for(int num:nums)
+            freq_map.put(num,freq_map.getOrDefault(num,0)+1);
+        int distinct_num[] = new int[freq_map.size()],counter=0;
+        for(Integer num:freq_map.keySet())
+            distinct_num[counter++] = num;
+        topKFrequentQuickSelectHelper(distinct_num,0,distinct_num.length-1);
+        return Arrays.copyOfRange(distinct_num,distinct_num.length-k,distinct_num.length);
+    }
+
+    public void topKFrequentQuickSelectHelper(int nums[],int lb,int ub)
+    {
+        if(lb>=ub)
+            return;
+        int partition = topKFrequentQuickSelect(nums,lb,ub);
+        topKFrequentQuickSelectHelper(nums,lb,partition-1);
+        topKFrequentQuickSelectHelper(nums,partition+1,ub);
+    }
+
+
+    public int topKFrequentQuickSelect(int nums[],int lb,int ub)
+    {
+        int partition_pos = (lb+ub)/2, ub_cpy=ub;
+        int temp = nums[partition_pos];
+        nums[partition_pos] = nums[ub];
+        nums[ub--] = temp;
+
+        while(lb<=ub)
+        {
+            if(freq_map.get(nums[lb])<=freq_map.get(nums[ub_cpy]))
+                lb++;
+            else if(freq_map.get(nums[ub])>freq_map.get(nums[ub_cpy]))
+                ub--;
+            else
+            {
+                temp = nums[lb];
+                nums[lb] = nums[ub];
+                nums[ub] = temp;
+            }
+        }
+        temp = nums[ub_cpy];
+        nums[ub_cpy] = nums[lb];
+        nums[lb] = temp;
+        return lb;
+    }
+
+    /*
+    186. PROBLEM DESCRIPTION (https://leetcode.com/problems/next-permutation/)
+        Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of
+        numbers.
+        If such an arrangement is not possible, it must rearrange it as the lowest possible order (i.e., sorted in
+        ascending order).
+        The replacement must be in place and use only constant extra memory.
+
+        Example 1:
+            Input: nums = [1,2,3]
+            Output: [1,3,2]
+
+        Example 2:
+            Input: nums = [3,2,1]
+            Output: [1,2,3]
+
+        Example 3:
+            Input: nums = [1,1,5]
+            Output: [1,5 ,1]
+
+        Example 4:
+            Input: nums = [1]
+            Output: [1]
+
+        Constraints:
+            1 <= nums.length <= 100
+            0 <= nums[i] <= 100
+    */
+
+    public void swap(int[] nums,int i,int j)
+    {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+
+    public void nextPermutation(int[] nums)
+    {
+        int n = nums.length;
+        if(n<2)
+            return;
+        int iterator_swap = n-2,temp;
+        while(iterator_swap>=0 && nums[iterator_swap]>=nums[iterator_swap+1])
+            iterator_swap--;
+        if(iterator_swap<0)
+        {
+            for(int iterator_index=0;iterator_index<n/2;iterator_index++)
+                swap(nums,iterator_index,n-iterator_index-1);
+            return;
+        }
+
+        int swap_lowest = iterator_swap+1;
+        while(swap_lowest<n && nums[swap_lowest]>nums[iterator_swap])
+            swap_lowest++;
+
+        swap(nums,swap_lowest-1,iterator_swap);
+
+        for(int iterator_index=0;iterator_index<(nums.length-iterator_swap)/2;iterator_index++)
+            swap(nums,iterator_index+1+iterator_swap,nums.length-iterator_index-1);
+    }
+
+    /*
+    187. PROBLEM DESCRIPTION (https://leetcode.com/problems/search-in-rotated-sorted-array/)
+        There is an integer array nums sorted in ascending order (with distinct values).
+        Prior to being passed to your function, nums is rotated at an unknown pivot index k (0 <= k < nums.length) such
+        that the resulting array is [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed).
+        For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
+
+        Given the array nums after the rotation and an integer target, return the index of target if it is in nums, or -1
+        if it is not in nums.
+
+        Example 1:
+            Input: nums = [4,5,6,7,0,1,2], target = 0
+            Output: 4
+
+        Example 2:
+            Input: nums = [4,5,6,7,0,1,2], target = 3
+            Output: -1
+
+        Example 3:
+            Input: nums = [1], target = 0
+            Output: -1
+
+        Constraints:
+            1 <= nums.length <= 5000
+            -104 <= nums[i] <= 104
+            All values of nums are unique.
+            nums is guaranteed to be rotated at some pivot.
+            -104 <= target <= 104
+
+    Follow up: Can you achieve this in O(log n) time complexity?
+    */
+
+    public int search(int[] nums, int target)
+    {
+        int lb=0,ub=nums.length-1,n=nums.length;
+
+        while(lb<ub)
+        {
+            int mid = (lb+ub)/2;
+            if(nums[mid]>nums[ub])
+                lb = mid+1;
+            else
+                ub = mid;
+        }
+        ub = lb+n-1;
+
+        while(lb<=ub)
+        {
+            int mid = (lb+ub)/2;
+            if(nums[mid%n]>target)
+                ub = mid-1;
+            else if(nums[mid%n]<target)
+                lb = mid+1;
+            else
+                return mid%n;
+        }
+
+        return -1;
+    }
+
+    /*
+    188. PROBLEM DESCRIPTION (https://leetcode.com/problems/unique-paths-ii/)
+        A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+        The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right
+        corner of the grid (marked 'Finish' in the diagram below).
+        Now consider if some obstacles are added to the grids. How many unique paths would there be?
+
+        An obstacle and space is marked as 1 and 0 respectively in the grid.
+
+        Example 1:
+            Input: obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+            Output: 2
+            Explanation: There is one obstacle in the middle of the 3x3 grid above.
+            There are two ways to reach the bottom-right corner:
+                1. Right -> Right -> Down -> Down
+                2. Down -> Down -> Right -> Right
+
+        Example 2:
+            Input: obstacleGrid = [[0,1],[0,0]]
+            Output: 1
+
+        Constraints:
+            m == obstacleGrid.length
+            n == obstacleGrid[i].length
+            1 <= m, n <= 100
+            obstacleGrid[i][j] is 0 or 1.
+    */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid)
+    {
+        int n = obstacleGrid.length, m = obstacleGrid[0].length;
+        int dp_uniquepaths[][] = new int[n][m];
+        if(obstacleGrid[0][0]==0)
+        {
+            dp_uniquepaths[0][0] = 1;
+            int iterator_traversal =1;
+            while(iterator_traversal<n &&  dp_uniquepaths[iterator_traversal - 1][0] == 1 && obstacleGrid[iterator_traversal][0] == 0)
+                    dp_uniquepaths[iterator_traversal++][0] = 1;
+        }
+
+        for(int iterator_row=0;iterator_row<n;iterator_row++)
+            for(int iterator_col=1;iterator_col<m;iterator_col++)
+                dp_uniquepaths[iterator_row][iterator_col] = obstacleGrid[iterator_row][iterator_col]==1?0:(dp_uniquepaths[iterator_row][iterator_col-1] + (iterator_row>0?dp_uniquepaths[iterator_row-1][iterator_col]:0));
+        return dp_uniquepaths[n-1][m-1];
+    }
+
+    /*
+    189. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)
+        Given the root of a binary tree, return the zigzag level order traversal of its nodes' values.
+        (i.e., from left to right, then right to left for the next level and alternate between).
+
+        Example 1:
+            Input: root = [3,9,20,null,null,15,7]
+            Output: [[3],[20,9],[15,7]]
+
+        Example 2:
+            Input: root = [1]
+            Output: [[1]]
+
+        Example 3:
+            Input: root = []
+            Output: []
+
+        Constraints:
+            The number of nodes in the tree is in the range [0, 2000].
+            -100 <= Node.val <= 100
+    */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root)
+    {
+        List<List<Integer>> result_list = new ArrayList();
+        zigzagLevelOrderHelper(root,result_list,0);
+        return result_list;
+    }
+
+    public void zigzagLevelOrderHelper(TreeNode root,List<List<Integer>> result_list, int level)
+    {
+        if(root==null)
+            return;
+        if(result_list.size()<=level)
+        {
+            List<Integer> new_add = new ArrayList();
+            new_add.add(root.val);
+            result_list.add(new_add);
+        }
+        else
+        {
+            if(level%2==0)
+                result_list.get(level).add(root.val);
+            else
+                result_list.get(level).add(0,root.val);
+        }
+        zigzagLevelOrderHelper(root.left,result_list,level+1);
+        zigzagLevelOrderHelper(root.right,result_list,level+1);
+    }
+
+    /*
+    190. PROBLEM DESCRIPTION (https://leetcode.com/problems/island-perimeter/)
+        You are given row x col grid representing a map where grid[i][j] = 1 represents land and grid[i][j] = 0 represents
+        water. Grid cells are connected horizontally/vertically (not diagonally). The grid is completely surrounded by
+        water, and there is exactly one island (i.e., one or more connected land cells).
+
+        The island doesn't have "lakes", meaning the water inside isn't connected to the water around the island. One cell
+        is a square with side length 1. The grid is rectangular, width and height don't exceed 100. Determine the perimeter
+        of the island.
+
+        Example 1:
+            Input: grid = [[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]
+            Output: 16
+            Explanation: The perimeter is the 16 yellow stripes in the image above.
+
+        Example 2:
+            Input: grid = [[1]]
+            Output: 4
+
+        Example 3:
+            Input: grid = [[1,0]]
+            Output: 4
+
+        Constraints:
+            row == grid.length
+            col == grid[i].length
+            1 <= row, col <= 100
+            grid[i][j] is 0 or 1.
+    */
+    public int islandPerimeter_alt(int[][] grid) // Recursive Approach
+    {
+        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
+            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+                if(grid[iterator_i][iterator_j]==1)
+                    return islandPerimeterHelper(grid,iterator_i,iterator_j);
+
+        return 0;
+    }
+    int grid_islanddirection[][] = {{0,1},{1,0},{-1,0},{0,-1}};
+    public int islandPerimeterHelper(int[][] grid,int current_row,int current_col)
+    {
+        int n = grid.length,m=grid[0].length;
+        grid[current_row][current_col] = -1;
+        int perimeter_for_box = 0;
+
+        for(int[] direction:grid_islanddirection)
+        {
+            int new_row = current_row + direction[0];
+            int new_col = current_col + direction[1];
+            if(new_row<0 || new_row>=n || new_col<0 || new_col>=m || grid[new_row][new_col]==0)
+                perimeter_for_box++;
+            else if(grid[new_row][new_col]==1)
+                perimeter_for_box += islandPerimeterHelper(grid,new_row,new_col);
+        }
+        return perimeter_for_box;
+    }
+
+    public int islandPerimeter(int[][] grid)
+    {
+        int squares=0, common_edges=0;
+
+        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+            {
+                if(grid[iterator_i][iterator_j]==1)
+                {
+                    squares++;
+                    if (iterator_i > 0 && grid[iterator_i - 1][iterator_j] == 1)
+                        common_edges++;
+                    if (iterator_j > 0 && grid[iterator_i][iterator_j - 1] == 1)
+                        common_edges++;
+                }
+            }
+        }
+        return 4*squares - common_edges*2;
+    }
+
+    /*
+    191. PROBLEM DESCRIPTION (https://leetcode.com/problems/word-break/)
+        Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated
+        sequence of one or more dictionary words.
+        Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+        Example 1:
+            Input: s = "leetcode", wordDict = ["leet","code"]
+            Output: true
+            Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+        Example 2:
+            Input: s = "applepenapple", wordDict = ["apple","pen"]
+            Output: true
+            Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+            Note that you are allowed to reuse a dictionary word.
+
+        Example 3:
+            Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+            Output: false
+
+        Constraints:
+            1 <= s.length <= 300
+            1 <= wordDict.length <= 1000
+            1 <= wordDict[i].length <= 20
+            s and wordDict[i] consist of only lowercase English letters.
+            All the strings of wordDict are unique.
+    */
+    public boolean wordBreak(String s, List<String> wordDict)
+    {
+        boolean dp_breakpossible[] = new boolean[s.length()];
+        int iterator_index=0;
+
+        while(iterator_index<s.length())
+        {
+            for(String dict_str:wordDict)
+            {
+                if(dp_breakpossible[iterator_index])
+                    continue;
+                int iterator_dictindex = dict_str.length()-1,iterator_index_cpy=iterator_index;
+                while(iterator_index_cpy>=0 && iterator_dictindex>=0 && dict_str.charAt(iterator_dictindex)==s.charAt(iterator_index_cpy))
+                {
+                    iterator_index_cpy--;
+                    iterator_dictindex--;
+                }
+                if(iterator_dictindex<0 && (iterator_index-dict_str.length()==-1 || dp_breakpossible[iterator_index-dict_str.length()]))
+                    dp_breakpossible[iterator_index]= true;
+            }
+            iterator_index++;
+        }
+
+        return dp_breakpossible[s.length()-1];
+    }
+
+    /*
+    192. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
+        Suppose an array of length n sorted in ascending order is rotated between 1 and n times. For example,
+        the array nums = [0,1,2,4,5,6,7] might become:
+            [4,5,6,7,0,1,2] if it was rotated 4 times.
+            [0,1,2,4,5,6,7] if it was rotated 7 times.
+        Notice that rotating an array [a[0], a[1], a[2], ..., a[n-1]] 1 time results in the array
+        [a[n-1], a[0], a[1], a[2], ..., a[n-2]].
+
+        Given the sorted rotated array nums of unique elements, return the minimum element of this array.
+
+        Example 1:
+            Input: nums = [3,4,5,1,2]
+            Output: 1
+            Explanation: The original array was [1,2,3,4,5] rotated 3 times.
+
+        Example 2:
+            Input: nums = [4,5,6,7,0,1,2]
+            Output: 0
+            Explanation: The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+
+        Example 3:
+            Input: nums = [11,13,15,17]
+            Output: 11
+            Explanation: The original array was [11,13,15,17] and it was rotated 4 times.
+
+        Constraints:
+            n == nums.length
+            1 <= n <= 5000
+            -5000 <= nums[i] <= 5000
+            All the integers of nums are unique.
+            nums is sorted and rotated between 1 and n times.
+    */
+    public int findMin(int[] nums)
+    {
+        int lb=0,ub=nums.length-1;
+        while(lb<ub)
+        {
+            int mid = (lb+ub)/2;
+            if(nums[mid]>nums[ub])
+                lb = mid+1;
+            else
+                ub = mid;
+        }
+        return nums[lb];
+    }
+
+    /*
+    193. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-size-subarray-sum/)
+        Given an array of positive integers nums and a positive integer target, return the minimal length of a contiguous
+        subarray [numsl, numsl+1, ..., numsr-1, numsr] of which the sum is greater than or equal to target. If there is
+        no such subarray, return 0 instead.
+
+        Example 1:
+            Input: target = 7, nums = [2,3,1,2,4,3]
+            Output: 2
+            Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+
+        Example 2:
+            Input: target = 4, nums = [1,4,4]
+            Output: 1
+
+        Example 3:
+            Input: target = 11, nums = [1,1,1,1,1,1,1,1]
+            Output: 0
+
+        Constraints:
+            1 <= target <= 109
+            1 <= nums.length <= 105
+            1 <= nums[i] <= 105
+
+    Follow up: If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log(n)).
+    */
+    public int minSubArrayLen(int target, int[] nums)
+    {
+        int lb=0,ub=-1,min_length=Integer.MAX_VALUE,current_sum=0;
+        while(ub<nums.length-1)
+        {
+            current_sum += nums[++ub];
+            while(lb<=ub && current_sum-nums[lb]>=target)
+                current_sum -= nums[lb++];
+            if(current_sum>=target)
+                min_length = Math.min(min_length,ub-lb+1);
+        }
+        return min_length==Integer.MAX_VALUE?0:min_length;
+    }
+
+    /*
+    194. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-k-pairs-with-smallest-sums/)
+        You are given two integer arrays nums1 and nums2 sorted in ascending order and an integer k.
+        Define a pair (u, v) which consists of one element from the first array and one element from the second array.
+        Return the k pairs (u1, v1), (u2, v2), ..., (uk, vk) with the smallest sums.
+
+        Example 1:
+            Input: nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+            Output: [[1,2],[1,4],[1,6]]
+            Explanation: The first 3 pairs are returned from the sequence:
+            [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+
+        Example 2:
+            Input: nums1 = [1,1,2], nums2 = [1,2,3], k = 2
+            Output: [[1,1],[1,1]]
+            Explanation: The first 2 pairs are returned from the sequence: [1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+
+        Example 3:
+            Input: nums1 = [1,2], nums2 = [3], k = 3
+            Output: [[1,3],[2,3]]
+            Explanation: All possible pairs are returned from the sequence: [1,3],[2,3]
+
+        Constraints:
+            1 <= nums1.length, nums2.length <= 104
+            -109 <= nums1[i], nums2[i] <= 109
+            nums1 and nums2 both are sorted in ascending order.
+            1 <= k <= 1000
+    */
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k)
+    {
+        List<List<Integer>> result_list = new ArrayList();
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->(Integer.compare(a[0]+a[1],b[0]+b[1])));
+
+        for(int iterator_i=0;iterator_i<nums1.length;iterator_i++)
+            pq.add(new int[]{nums1[iterator_i],nums2[0],0});
+
+        for(int iterator_i=0;iterator_i<k && !pq.isEmpty();iterator_i++)
+        {
+            int[] polled_ele = pq.poll();
+            List<Integer> new_ele = new ArrayList<>();
+            new_ele.add(polled_ele[0]);
+            new_ele.add(polled_ele[1]);
+            result_list.add(new_ele);
+            if(polled_ele[2]+1<nums2.length)
+                pq.add(new int[]{polled_ele[0],nums2[polled_ele[2]+1],polled_ele[2]+1});
+        }
+
+        return result_list;
+    }
+
+    /*
+    195. PROBLEM DESCRIPTION (https://leetcode.com/problems/max-area-of-island/)
+        Given a non-empty 2D array grid of 0's and 1's, an island is a group of 1's (representing land) connected
+        4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.
+        Find the maximum area of an island in the given 2D array. (If there is no island, the maximum area is 0.)
+
+        Example 1:
+            [[0,0,1,0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,0,1,1,1,0,0,0],
+            [0,1,1,0,1,0,0,0,0,0,0,0,0],
+            [0,1,0,0,1,1,0,0,1,0,1,0,0],
+            [0,1,0,0,1,1,0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,1,1,0,0,0],
+            [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+        Given the above grid, return 6. Note the answer is not 11, because the island must be connected 4-directionally.
+
+        Example 2:
+            [[0,0,0,0,0,0,0,0]]
+            Given the above grid, return 0.
+
+        Note: The length of each dimension in the given grid does not exceed 50.
+    */
+    public int maxAreaOfIsland(int[][] grid)
+    {
+        int max_area = Integer.MIN_VALUE;
+        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+            {
+                if(grid[iterator_i][iterator_j]==1)
+                    max_area = Math.max(max_area,maxAreaOfIslandHelper(grid,iterator_i,iterator_j));
+            }
+        }
+        return max_area==Integer.MIN_VALUE?0:max_area;
+    }
+
+    public int maxAreaOfIslandHelper(int grid[][],int curr_row,int curr_col)
+    {
+        int current_area =1;
+        grid[curr_row][curr_col] = 0;
+
+        for(int direction[]:grid_islanddirection)
+        {
+            int new_row = direction[0]+curr_row;
+            int new_col = direction[1]+curr_col;
+            if(new_row>=0 && new_row<grid.length && new_col>=0 && new_col<grid[0].length && grid[new_row][new_col]==1)
+                current_area += maxAreaOfIslandHelper(grid,new_row,new_col);
+        }
+        return current_area;
+    }
+
+
+    /*
+    196. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-largest-element-in-a-stream/)
+        Design a class to find the kth largest element in a stream. Note that it is the kth largest element in the sorted
+        order, not the kth distinct element.
+
+        Implement KthLargest class:
+            KthLargest(int k, int[] nums) Initializes the object with the integer k and the stream of integers nums.
+            int add(int val) Returns the element representing the kth largest element in the stream.
+
+        Example 1:
+        Input: ["KthLargest", "add", "add", "add", "add", "add"]
+               [[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]
+        Output:
+               [null, 4, 5, 5, 8, 8]
+
+        Explanation
+            KthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);
+            kthLargest.add(3);   // return 4
+            kthLargest.add(5);   // return 5
+            kthLargest.add(10);  // return 5
+            kthLargest.add(9);   // return 8
+            kthLargest.add(4);   // return 8
+
+        Constraints:
+            1 <= k <= 104
+            0 <= nums.length <= 104
+            -104 <= nums[i] <= 104
+            -104 <= val <= 104
+            At most 104 calls will be made to add.
+            It is guaranteed that there will be at least k elements in the array when you search for the kth element.
+    */
+
+    class KthLargest
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        int k;
+        public KthLargest(int k, int[] nums)
+        {
+            this.k =k;
+            int iterator_index=0;
+            while(iterator_index<k && iterator_index<nums.length)
+                pq.add(nums[iterator_index++]);
+            while(iterator_index<nums.length)
+            {
+                if(nums[iterator_index]>pq.peek())
+                {
+                    pq.poll();
+                    pq.add(nums[iterator_index]);
+                }
+                iterator_index++;
+            }
+
+        }
+
+        public int add(int val)
+        {
+            if(pq.size()<k)
+                pq.add(val);
+            else if(val>pq.peek())
+            {
+                pq.poll();
+                pq.add(val);
+            }
+            return pq.peek();
+        }
+    }
+
+    /*
+    197. PROBLEM DESCRIPTION (https://leetcode.com/problems/k-th-symbol-in-grammar/)
+        On the first row, we write a 0. Now in every subsequent row, we look at the previous row and replace each
+        occurrence of 0 with 01, and each occurrence of 1 with 10.
+        Given row N and index K, return the K-th indexed symbol in row N. (The values of K are 1-indexed.) (1 indexed).
+
+        Examples:
+            Input: N = 1, K = 1
+            Output: 0
+
+            Input: N = 2, K = 1
+            Output: 0
+
+            Input: N = 2, K = 2
+            Output: 1
+
+            Input: N = 4, K = 5
+            Output: 1
+
+            Explanation:
+            row 1: 0
+            row 2: 01
+            row 3: 0110
+            row 4: 01101001
+
+        Note:
+            N will be an integer in the range [1, 30].
+            K will be an integer in the range [1, 2^(N-1)].
+    */
+    public int kthGrammar_alt(int N, int K) // TLE and MLE
+    {
+        boolean prev_grammar[] = new boolean[(1<<(N-1))];
+        boolean curr_grammer[] = new boolean[(1<<(N-1))];
+        int prev_top=1;
+        int iterator_top_prev=0, iterator_top_curr=0;
+        for(int iterator_i=1;iterator_i<N;iterator_i++)
+        {
+            iterator_top_prev=0;iterator_top_curr=0;
+            while(iterator_top_prev<prev_top)
+            {
+                if(prev_grammar[iterator_top_prev])
+                {
+                    curr_grammer[iterator_top_curr++] = true;
+                    curr_grammer[iterator_top_curr++] = false;
+                }
+                else
+                {
+                    curr_grammer[iterator_top_curr++] = false;
+                    curr_grammer[iterator_top_curr++] = true;
+                }
+                iterator_top_prev++;
+            }
+            prev_top = iterator_top_curr;
+            prev_grammar = curr_grammer;
+        }
+        return prev_grammar[K-1]?1:0;
+    }
+
+    public int kthGrammar(int N, int K)
+    {
+        //return Integer.bitCount(K-1)&1 ;
+        if(N==1)
+            return 0;
+        if(K%2==0)
+        {
+            if (kthGrammar(N-1,K/2)==0)
+                return 1;
+            else
+                return 0;
+        }
+        else
+        {
+            if(kthGrammar(N-1,(K+1)/2)==0)
+                return 0;
+            else
+                return 1;
+        }
+    }
+
+    /*
+    198. PROBLEM DESCRIPTION (https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/)
+        A conveyor belt has packages that must be shipped from one port to another within D days.
+        The ith package on the conveyor belt has a weight of weights[i]. Each day, we load the ship with packages on the
+        conveyor belt (in the order given by weights). We may not load more weight than the maximum weight capacity of
+        the ship.
+        Return the least weight capacity of the ship that will result in all the packages on the conveyor belt being
+        shipped within D days.
+
+        Example 1:
+            Input: weights = [1,2,3,4,5,6,7,8,9,10], D = 5
+            Output: 15
+            Explanation: A ship capacity of 15 is the minimum to ship all the packages in 5 days like this:
+                1st day: 1, 2, 3, 4, 5
+                2nd day: 6, 7
+                3rd day: 8
+                4th day: 9
+                5th day: 10
+
+        Note that the cargo must be shipped in the order given, so using a ship of capacity 14 and splitting the packages into parts like (2, 3, 4, 5), (1, 6, 7), (8), (9), (10) is not allowed.
+
+        Example 2:
+            Input: weights = [3,2,2,4,1,4], D = 3
+            Output: 6
+            Explanation: A ship capacity of 6 is the minimum to ship all the packages in 3 days like this:
+            1st day: 3, 2
+            2nd day: 2, 4
+            3rd day: 1, 4
+
+        Example 3:
+            Input: weights = [1,2,3,1,1], D = 4
+            Output: 3
+            Explanation:
+            1st day: 1
+            2nd day: 2
+            3rd day: 3
+            4th day: 1, 1
+
+        Constraints:
+            1 <= D <= weights.length <= 5 * 104
+            1 <= weights[i] <= 500
+    */
+    public int shipWithinDays(int[] weights, int D)
+    {
+        int lb=0,ub=0;
+        for(int weight:weights)
+        {
+            lb = Math.max(lb,weight);
+            ub += weight;
+        }
+        while(lb<ub)
+        {
+            int mid = (lb+ub)/2,days_required=1,current_weight=0;
+            for(int weight:weights)
+            {
+                if(current_weight+weight<=mid)
+                    current_weight +=weight;
+                else
+                {
+                    current_weight=weight;
+                    days_required++;
+                }
+            }
+            if(days_required>D)
+                lb = mid+1;
+            else
+                ub = mid;
+        }
+        return lb;
+    }
+
+    /*
+    199. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-level-sum-of-a-binary-tree/)
+        Given the root of a binary tree, the level of its root is 1, the level of its children is 2, and so on.
+        Return the smallest level x such that the sum of all the values of nodes at level x is maximal.
+
+        Example 1:
+            Input: root = [1,7,0,7,-8,null,null]
+            Output: 2
+            Explanation:
+                Level 1 sum = 1.
+                Level 2 sum = 7 + 0 = 7.
+                Level 3 sum = 7 + -8 = -1.
+                So we return the level with the maximum sum which is level 2.
+
+            Example 2:
+                Input: root = [989,null,10250,98693,-89388,null,null,null,-32127]
+                Output: 2
+
+            Constraints:
+                The number of nodes in the tree is in the range [1, 104].
+                -105 <= Node.val <= 105
+    */
+    public int maxLevelSum(TreeNode root)
+    {
+        List<Integer> level_sum = new ArrayList<>();
+        maxLevelSumHelper(root,level_sum,0);
+
+        return level_sum.indexOf(Collections.max(level_sum))+1;
+    }
+
+    public void maxLevelSumHelper(TreeNode root,List<Integer> level_sum,int current_level)
+    {
+        if(root==null)
+            return;
+        if(level_sum.size()<=current_level)
+            level_sum.add(root.val);
+        else {
+            int prev = level_sum.remove(current_level);
+            level_sum.add(current_level , prev + root.val);
+        }
+        maxLevelSumHelper(root.left,level_sum,current_level+1);
+        maxLevelSumHelper(root.right,level_sum,current_level+1);
+    }
+
+    /*
+        200. PROBLEM DESCRIPTION (https://leetcode.com/problems/shortest-unsorted-continuous-subarray/)
+        Given an integer array nums, you need to find one continuous subarray that if you only sort this subarray in
+        ascending order, then the whole array will be sorted in ascending order.
+        Return the shortest such subarray and output its length.
+
+        Example 1:
+            Input: nums = [2,6,4,8,10,9,15]
+            Output: 5
+            Explanation: You need to sort [6, 4, 8, 10, 9] in ascending order to make the whole array sorted in ascending order.
+
+        Example 2:
+            Input: nums = [1,2,3,4]
+            Output: 0
+
+        Example 3:
+            Input: nums = [1]
+            Output: 0
+
+        Constraints:
+            1 <= nums.length <= 104
+            -105 <= nums[i] <= 105
+
+        Follow up: Can you solve it in O(n) time complexity?
+    */
+    public int findUnsortedSubarray(int[] nums)
+    {
+        int lb=0,ub=nums.length-1,lb_value_unsorted,ub_value_unsorted;
+
+        while(lb<nums.length-1 && nums[lb+1]>=nums[lb])
+            lb++;
+
+        if(lb==nums.length-1) // Already Sorted
+            return 0;
+
+        lb_value_unsorted = nums[lb+1];
+        for(int iterator_i=lb+2;iterator_i<nums.length;iterator_i++)
+            if(lb_value_unsorted>nums[iterator_i])
+                lb_value_unsorted = nums[iterator_i];
+
+        while(lb>=0 && lb_value_unsorted<nums[lb])
+            lb--;
+        lb++;
+
+        while(ub>0 && nums[ub-1]<=nums[ub])
+            ub--;
+        ub_value_unsorted = nums[ub-1];
+
+        for(int iterator_i=ub-2;iterator_i>=0;iterator_i--)
+            if(ub_value_unsorted<nums[iterator_i])
+                ub_value_unsorted = nums[iterator_i];
+
+        while(ub<nums.length && ub_value_unsorted>nums[ub])
+            ub++;
+        ub--;
+
+        return ub-lb+1;
     }
 
 }

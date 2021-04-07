@@ -1500,5 +1500,150 @@ public class Runner {
 //        int input_arr[] = obj.create_array_int(sc);
 //        System.out.println(obj.longestConsecutive(input_arr));
 
+        /** Driver Code for Q181.isMatch
+         *
+         */
+//        System.out.println("Enter string s and t");
+//        System.out.println(obj.isMatch(sc.next(),sc.next()));
+
+        /** Driver Code for Q182.numUniqueEmails
+         *
+         */
+//        System.out.println("Enter number of emails");
+//        int n = sc.nextInt();
+//        String input_mails[] = new String[n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            input_mails[iterator_i] = sc.next();
+//        System.out.println(obj.numUniqueEmails(input_mails));
+
+        /** Driver Code for Q183.minWindow
+         *
+         */
+//        System.out.println("Enter string s and t");
+//        System.out.println(obj.minWindow(sc.next(),sc.next()));
+
+        /** Driver Code for Q184.isPowerOfThree
+         *
+         */
+//        System.out.println("Enter value of n");
+//        System.out.println(obj.isPowerOfThree(sc.nextInt()));
+
+        /** Driver Code for Q185.topKFrequent
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter value of k");
+//        obj.topKFrequent(input_arr,sc.nextInt());
+
+        /** Driver Code for Q186.nextPermutation
+         *
+         */
+//        int input_num[] = obj.create_array_int(sc);
+//        obj.nextPermutation(input_num);
+
+        /** Driver Code for Q187.search
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        System.out.println(obj.search(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q188.uniquePathsWithObstacles
+         *
+         */
+//        System.out.println("Enter n,m and grid");
+//        int n=sc.nextInt(), m=sc.nextInt(),input_grid[][] = new int[n][m];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                input_grid[iterator_i][iterator_j] = sc.nextInt();
+//        System.out.println(obj.uniquePathsWithObstacles(input_grid));
+
+        /** Driver Code for Q189.zigzagLevelOrder
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        obj.zigzagLevelOrder(input_tree);
+
+        /** Driver Code for Q190.islandPerimeter
+         *
+         */
+//        System.out.println("Enter n and m");
+//        int n=sc.nextInt(),m = sc.nextInt(),input_grid[][] = new int[n][m];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<m;iterator_j++)
+//                input_grid[iterator_i][iterator_j] = sc.nextInt();
+//
+//
+//        System.out.println(obj.islandPerimeter(input_grid));
+
+        /** Driver Code for Q191.wordBreak
+         *
+         */
+//        System.out.println("Enter string");
+//        String str = sc.next();
+//        System.out.println("Enter items in dictionary");
+//        int n = sc.nextInt();
+//        List<String> input_dict = new ArrayList();
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            input_dict.add(sc.next());
+//        obj.wordBreak(str,input_dict);
+
+        /** Driver Code for Q192.findMin
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.findMin(input_arr));
+
+        /** Driver Code for Q193.minSubArrayLen
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter target");
+//        obj.minSubArrayLen(sc.nextInt(),input_arr);
+
+        /** Driver Code for Q194.kSmallestPairs
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc),input_arr2[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        obj.kSmallestPairs(input_arr,input_arr2,sc.nextInt());
+
+        /** Driver Code for Q195.maxAreaOfIsland
+         *
+         */
+//        System.out.println("Enter n,m and grid");
+//        int grid[][] = new int[sc.nextInt()][sc.nextInt()];
+//        for(int iterator_i=0;iterator_i<grid.length;iterator_i++)
+//            for(int iterator_j=0;iterator_j<grid[0].length;iterator_j++)
+//                grid[iterator_i][iterator_j] = sc.nextInt();
+//        System.out.println(obj.maxAreaOfIsland(grid));
+
+        /** Driver Code for Q197.kthGrammar
+         *
+         */
+//        System.out.println("Enter N and K");
+//        System.out.println(obj.kthGrammar(sc.nextInt(),sc.nextInt()));
+
+        /** Driver Code for Q198.shipWithinDays
+         *
+         */
+//        int input_weights[] = obj.create_array_int(sc);
+//        System.out.println("Enter days");
+//        System.out.println(obj.shipWithinDays(input_weights,sc.nextInt()));
+
+        /** Driver Code for Q199.maxLevelSum
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        obj.maxLevelSum(input_tree);
+
+        /** Driver Code for Q200.findUnsortedSubarray
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj.findUnsortedSubarray(input_arr));
+
     }
 }
