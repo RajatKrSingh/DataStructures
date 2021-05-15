@@ -9585,5 +9585,5 @@ public class LeetCode
 
         return ub-lb+1;
     }
-
 }
+
