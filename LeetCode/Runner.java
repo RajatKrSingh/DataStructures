@@ -13,6 +13,7 @@ public class Runner {
     {
         Scanner sc = new Scanner(System.in);
         LeetCode obj = new LeetCode();
+        LeetCode_2 obj_2 = new LeetCode_2();
         Revision rev_obj = new Revision();
 
         /** Driver Code for Q1. twoSum
@@ -1645,5 +1646,134 @@ public class Runner {
 //        int input_arr[] = obj.create_array_int(sc);
 //        System.out.println(obj.findUnsortedSubarray(input_arr));
 
+        /** Driver Code for Q201.canArrange
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        System.out.println(obj_2.canArrange(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q202.minDistance
+         *
+         */
+//        System.out.println("Enter 2 words");
+//        System.out.println(obj_2.minDistance(sc.next(),sc.next()));
+
+        /** Driver Code for Q203.pathSum2
+         *
+         */
+//        TreeNode input_tree = null;
+//        input_tree = create_binary_tree(input_tree,sc);
+//        System.out.println("Enter target sum");
+//        obj_2.pathSum2(input_tree,sc.nextInt());
+
+        /** Driver Code for Q204.canPartition
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj_2.canPartition(input_arr));
+
+        /** Driver Code for Q205.pathSum
+         *
+         */
+//        TreeNode input_root = create_binary_tree(null,sc);
+//        System.out.println("Enter target");
+//        obj_2.pathSum(input_root,sc.nextInt());
+
+        /** Driver Code for Q206.countSubstrings
+         *
+         */
+//        System.out.println("Enter Substring");
+//        System.out.println(obj_2.countSubstrings(sc.next()));
+
+        /** Driver Code for Q207.removeBoxes
+         *
+         */
+//        int input_boxes[] = obj.create_array_int(sc);
+//        System.out.println(obj_2.removeBoxes(input_boxes));
+
+        /** Driver Code for Q208.longestPalindrome
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println("Longest Palindrome: "+obj_2.longestPalindrome1(sc.next()));
+
+        /** Driver Code for Q209.reverseVowels
+         *
+         */
+//        System.out.println("Enter string");
+//        System.out.println("Vowel Reversed String: "+obj_2.reverseVowels(sc.next()));
+
+        /** Driver Code for Q210.generateMatrix
+         *
+         */
+//        System.out.println("Enter n");
+//        obj_2.generateMatrix(sc.nextInt());
+
+        /** Driver Code for Q211.numTrees
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println("Unique BST :"+obj_2.numTrees(sc.nextInt()));
+
+        /** Driver Code for Q212.findLHS
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Longest Harmonious Subsequence: "+obj_2.findLHS(input_arr));
+
+        /** Driver Code for Q213.isSubtree
+         *
+         */
+//        System.out.println("Enter trees");
+//        TreeNode t1 = create_binary_tree(null,sc), t2 = create_binary_tree(null,sc);
+//        System.out.println("isSubtree: "+obj_2.isSubtree(t1,t2));
+
+        /** Driver Code for Q214.findKthNumber
+         *
+         */
+//        System.out.println("Enter m,n and k");
+//        System.out.println("kth Smallest Number : "+obj_2.findKthNumber(sc.nextInt(),sc.nextInt(),sc.nextInt()));
+
+        /** Driver Code for Q215.canCross
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Can cross: "+obj_2.canCross(input_arr));
+
+        /** Driver Code for Q216.findErrorNums
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        int result_arr[] = obj_2.findErrorNums(input_arr);
+//        System.out.println("Set Mismatch: "+result_arr[0]+","+result_arr[1]);
+
+        /** Driver Code for Q217.maxProduct
+         *
+         */
+//        System.out.println("Enter number of words, then words");
+//        int n = sc.nextInt();
+//        String input_str[] = new String[n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            input_str[iterator_i] = sc.next();
+//        System.out.println("maxProduct is : "+obj_2.maxProduct(input_str));
+
+        /** Driver Code for Q218.shortestToChar
+         *
+         */
+//        System.out.println("Enter String and char");
+//        obj_2.shortestToChar(sc.next(),sc.next().charAt(0));
+
+        /** Driver Code for Q219.integerBreak
+         *
+         */
+//        System.out.println("Enter n");
+//        System.out.println("IntegerBreak: "+obj_2.integerBreak(sc.nextInt()));
+
+        /** Driver Code for Q220.findShortestSubArray
+         *
+         */
+        int input_arr[] = obj.create_array_int(sc);
+        System.out.println(obj_2.findShortestSubArray(input_arr));
     }
 }
