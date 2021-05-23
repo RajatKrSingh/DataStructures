@@ -1773,7 +1773,165 @@ public class Runner {
         /** Driver Code for Q220.findShortestSubArray
          *
          */
-        int input_arr[] = obj.create_array_int(sc);
-        System.out.println(obj_2.findShortestSubArray(input_arr));
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println(obj_2.findShortestSubArray(input_arr));
+
+        /** Driver Code for Q221.openLock
+         *
+         */
+//        System.out.println("Enter number deadends then deadends");
+//        int n = sc.nextInt();
+//        String deadends[] = new String[n], target;
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            deadends[iterator_i] = sc.next();
+//        System.out.println("Enter target");
+//        System.out.println(obj_2.openLock(deadends,sc.next()));
+
+        /** Driver Code for Q222.numberOfSwapsToSort
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Swaps: "+obj_2.numberOfSwapsToSort(input_arr));
+
+        /** Driver Code for Q223.isConnected
+         *
+         */
+//        System.out.println("Enter n and grid");
+//        int n=sc.nextInt(),input_grid[][] = new int[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                input_grid[iterator_i][iterator_j] = sc.nextInt();
+//
+//        System.out.println("NUmber of provinces: "+obj_2.findCircleNum(input_grid));
+
+        /** Driver Code for Q224.minTaps
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Min Taps: "+obj_2.minTape(input_arr.length-1,input_arr));
+
+        /** Driver Code for Q225.minDeletions
+         *
+         */
+//        System.out.println("Enter String");
+//        System.out.println("Min Deletions: "+obj_2.minDeletions(sc.next()));
+
+        /** Driver Code for Q226.sumZero
+         *
+         */
+//        System.out.println("Enter n");
+//        obj_2.sumZero(sc.nextInt());
+
+        /** Driver Code for Q227.partitionDisjoint
+         *
+         */
+//        System.out.println("Partition Left interval: "+obj_2.partitionDisjoint(obj.create_array_int(sc)));
+
+        /** Driver Code for Q228.videoStitching
+         *
+         */
+//        System.out.println("Enter number of clips");
+//        int n = sc.nextInt(),input_clips[][]=new int[n][2];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//        {
+//            input_clips[iterator_i][0] = sc.nextInt();
+//            input_clips[iterator_i][1] = sc.nextInt();
+//        }
+//        System.out.println("Enter T");
+//        System.out.println("Num Clips: "+obj_2.videoStitching(input_clips,sc.nextInt()));
+
+        /** Driver Code for Q229.minEatingSpeed
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter h");
+//        System.out.println("Banana Eating Speed: "+obj_2.minEatingSpeed(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q230.longestCommonSubsequence
+         *
+         */
+//        System.out.println("Enter strings");
+//        System.out.println("Lenght of LCS: "+obj_2.longestCommonSubsequence(sc.next(),sc.next()));
+
+        /** Driver Code for Q231.uniqueOccurrences
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Unique Occurrences:"+obj_2.uniqueOccurrences(input_arr));
+
+        /** Driver Code for Q232.pancakeSort
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        obj_2.pancakeSort_alt(input_arr);
+
+        /** Driver Code for Q233.findCheapestPrice
+         *
+         */
+//        System.out.println("Enter n");
+//        int n = sc.nextInt();
+//        System.out.println("Enter number of flights and flights");
+//        int num_flights = sc.nextInt(), flights[][] = new int[num_flights][3];
+//        for(int iterator_i=0;iterator_i<num_flights;iterator_i++)
+//        {
+//            flights[iterator_i][0] = sc.nextInt();
+//            flights[iterator_i][1] = sc.nextInt();
+//            flights[iterator_i][2] = sc.nextInt();
+//        }
+//        System.out.println("Enter src, dst and k");
+//        System.out.println("Cheapest Cost: "+obj_2.findCheapestPrice_alt(n,flights,sc.nextInt(),sc.nextInt(),sc.nextInt()));
+
+        /** Driver Code for Q234.kLengthApart
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        System.out.println("k Places Away: "+obj_2.kLengthApart(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q235.maxScore
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter k");
+//        System.out.println("maxScore is: "+obj_2.maxScore(input_arr,sc.nextInt()));
+
+        /** Driver Code for Q236.numberOfSteps
+         *
+         */
+//        System.out.println("Enter number");
+//        System.out.println("Number of steps: "+obj_2.numberOfSteps(sc.nextInt()));
+
+        /** Driver Code for Q237.largestIsland
+         *
+         */
+//        System.out.println("Enter n and grid");
+//        int n=sc.nextInt(),input_grid[][] = new int[n][n];
+//        for(int iterator_i=0;iterator_i<n;iterator_i++)
+//            for(int iterator_j=0;iterator_j<n;iterator_j++)
+//                input_grid[iterator_i][iterator_j] = sc.nextInt();
+//        System.out.println("Largest Island: "+obj_2.largestIsland(input_grid));
+
+        /** Driver Code for Q238.rangeSumBST
+         *
+         */
+//        TreeNode input_tree = create_binary_tree(null,sc);
+//        System.out.println("Enter low and high");
+//        System.out.println("Sum of nodes in range: "+obj_2.rangeSumBST(input_tree,sc.nextInt(),sc.nextInt()));
+
+        /** Driver Code for Q239.prisonAfterDays
+         *
+         */
+//        int input_arr[] = obj.create_array_int(sc);
+//        System.out.println("Enter days");
+//        obj_2.prisonAfterNDays(input_arr,sc.nextInt());
+
+        /** Driver Code for Q240.callPoints
+         *
+         */
+//        System.out.println("Enter number of operations and String");
+//        String input_str[] = new String[sc.nextInt()];
+//        for(int iterator_i=0;iterator_i<input_str.length;iterator_i++)
+//            input_str[iterator_i] = sc.next();
+//        System.out.println("Points: "+obj_2.calPoints(input_str));
     }
 }

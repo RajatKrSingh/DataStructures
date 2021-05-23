@@ -1,6 +1,10 @@
 package LeetCode;
 
+import java.lang.reflect.Array;
 import java.util.*;
+
+// Premium TOO: https://leetcode.com/problems/shortest-way-to-form-string/
+//https://leetcode.com/problems/minimize-max-distance-to-gas-station/
 
 public class LeetCode_2
 {
@@ -1081,4 +1085,1250 @@ public class LeetCode_2
         }
         return result;
     }
+
+    /*
+        221. PROBLEM DESCRIPTION (https://leetcode.com/problems/open-the-lock/)
+        You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'. The wheels can rotate freely
+        and wrap around: for example we can turn '9' to be '0', or '0' to be '9'. Each move consists of turning one wheel one slot.
+        The lock initially starts at '0000', a string representing the state of the 4 wheels.You are given a list of deadends dead ends, meaning if the lock displays
+        any of these codes, the wheels of the lock will stop turning and you will be unable to open it.
+        Given a target representing the value of the wheels that will unlock the lock, return the minimum total number of turns required to open the lock, or -1 if it
+        is impossible.
+
+        Example 1:
+            Input: deadends = ["0201","0101","0102","1212","2002"], target = "0202"
+            Output: 6
+            Explanation:
+                A sequence of valid moves would be "0000" -> "1000" -> "1100" -> "1200" -> "1201" -> "1202" -> "0202".
+                Note that a sequence like "0000" -> "0001" -> "0002" -> "0102" -> "0202" would be invalid,
+                because the wheels of the lock become stuck after the display becomes the dead end "0102".
+
+        Example 2:
+            Input: deadends = ["8888"], target = "0009"
+            Output: 1
+            Explanation:
+            We can turn the last wheel in reverse to move from "0000" -> "0009".
+
+        Example 3:
+            Input: deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"
+            Output: -1
+            Explanation:
+            We can't reach the target without getting stuck.
+
+        Example 4:
+            Input: deadends = ["0000"], target = "8888"
+            Output: -1
+
+        Constraints:
+            1 <= deadends.length <= 500
+            deadends[i].length == 4
+            target.length == 4
+            target will not be in the list deadends.
+            target and deadends[i] consist of digits only.
+    */
+    public int openLock_alt(String[] deadends, String target) // Basic BFS
+    {
+        HashSet<String> visited = new HashSet<>();
+        visited.addAll(Arrays.asList(deadends));
+        LinkedList<StringBuffer> current_level = new LinkedList<>();
+        current_level.add(new StringBuffer("0000"));
+
+        int turns_required=0;
+        if(visited.contains("0000"))
+            return -1;
+        visited.add("0000");
+        while(!current_level.isEmpty())
+        {
+            int current_level_size = current_level.size();
+            for(int iterator_i=0;iterator_i<current_level_size;iterator_i++)
+            {
+                StringBuffer current_code = current_level.poll();
+                if(target.equals(current_code.toString()))
+                    return turns_required;
+                // Get all possibilities for next code with only one turn
+                for(int iterator_j=0;iterator_j<4;iterator_j++)
+                {
+                    char current_char = current_code.charAt(iterator_j);
+                    // Forward turn
+                    StringBuffer sbuffer_fr = new StringBuffer(current_code.substring(0,iterator_j)).append(current_char=='9'?'0':(char)(current_char+1)).append(current_code.substring(iterator_j+1));
+                    // Backward Turn
+                    StringBuffer sbuffer_bck = new StringBuffer(current_code.substring(0,iterator_j)).append(current_char=='0'?'9':(char)(current_char-1)).append(current_code.substring(iterator_j+1));
+
+                    // Check if already visited or deadlock in which case dont add it
+                    if(visited.add(sbuffer_fr.toString()))
+                        current_level.offer(sbuffer_fr);
+                    if(visited.add(sbuffer_bck.toString())) {
+                        current_level.offer(sbuffer_bck);
+                    }
+                }
+            }
+            turns_required++;
+        }
+        return -1;
+    }
+
+    public int openLock(String[] deadends, String target) // Biderectional BFS selecting smaller set
+    {
+        HashSet<String> visited_or_deadlocked = new HashSet();
+        visited_or_deadlocked.addAll(Arrays.asList(deadends));
+
+        HashSet<String> q_expand = new HashSet<>(), q_secondary = new HashSet<>();
+        if(visited_or_deadlocked.contains("0000"))
+            return -1;
+        q_expand.add("0000");
+        q_secondary.add(target);
+        int turns = 0;
+        while(!q_expand.isEmpty() && !q_secondary.isEmpty())
+        {
+            //Assign Queue to be expanded
+            if(q_expand.size()>q_secondary.size())
+            {
+                HashSet temp2 = q_expand;
+                q_expand = q_secondary;
+                q_secondary = temp2;
+            }
+            HashSet<String> temp = new HashSet<>();
+            for(String current_code:q_expand)
+            {
+                if(q_secondary.contains(current_code))
+                    return turns;
+                if(!visited_or_deadlocked.add(current_code))
+                    continue;
+                StringBuffer c_code = new StringBuffer(current_code);
+                for(int iterator_j=0;iterator_j<4;iterator_j++)
+                {
+                    int current_char = c_code.charAt(iterator_j);
+                    String sb_fr = (new StringBuffer(c_code.substring(0,iterator_j)).append(current_char=='9'?'0':(char)(1+current_char)).append(c_code.substring(iterator_j+1))).toString();
+                    String sb_bck = (new StringBuffer(c_code.substring(0,iterator_j)).append(current_char=='0'?'9':(char)(current_char-1)).append(c_code.substring(iterator_j+1))).toString();
+
+                    if(!visited_or_deadlocked.contains(sb_fr))
+                        temp.add(sb_fr);
+                    if(!visited_or_deadlocked.contains(sb_bck))
+                        temp.add(sb_bck);
+                }
+            }
+            turns++;
+            q_expand = temp;
+        }
+        return -1;
+    }
+
+
+    /*
+        222. PROBLEM DESCRIPTION (https://www.geeksforgeeks.org/minimum-number-swaps-required-sort-array/)
+        Given an array and a sorting algorithm, the sorting algorithm will do a selection swap. Find the number of swaps to sort the array.
+
+        Example 1:
+            Input: {4, 3, 2, 1}
+            Output: 2
+            Explanation: Swap index 0 with 3 and 1 with 2 to
+              form the sorted array {1, 2, 3, 4}.
+
+        Example 2:
+            Input: {1, 5, 4, 3, 2}
+            Output: 2
+    */
+    public int numberOfSwapsToSort_cyclic(int nums[]) // Cyclic swaps
+    {
+        boolean isFixed[] = new boolean[nums.length];
+        int sorted_indexes[][] = new int[nums.length][2],swaps=0;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            sorted_indexes[iterator_i][0] = nums[iterator_i];
+            sorted_indexes[iterator_i][1] = iterator_i;
+        }
+        Arrays.sort(sorted_indexes,(a,b)->(a[0]-b[0]));
+
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            int iterator_j = iterator_i;
+            while(!isFixed[iterator_j])
+            {
+                isFixed[iterator_j] = true;
+                swaps += (sorted_indexes[iterator_j][1]!=iterator_j && !isFixed[sorted_indexes[iterator_j][1]])?1:0;
+                iterator_j = sorted_indexes[iterator_j][1];
+            }
+        }
+        return swaps;
+    }
+
+    public int numberOfSwapsToSort(int nums[]) // HashMap swaps
+    {
+        HashMap<Integer,Integer> hmap = new HashMap<>();
+        int nums_cpy[] = Arrays.copyOf(nums,nums.length),swap=0;
+        Arrays.sort(nums_cpy);
+
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+            hmap.put(nums[iterator_i],iterator_i);
+
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums_cpy[iterator_i] != nums[iterator_i])
+            {
+                swap += 1;
+
+                // Swap ith smallest element with number at current pos
+                nums[hmap.get(nums_cpy[iterator_i])]=nums[iterator_i];
+                hmap.put(nums[iterator_i],hmap.get(nums_cpy[iterator_i]));
+            }
+        }
+        return swap;
+    }
+
+    /*
+        223. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-provinces/)
+        There are n cities. Some of them are connected, while some are not. If city a is connected directly with city b, and city b is connected directly with city c,
+        then city a is connected indirectly with city c.
+        A province is a group of directly or indirectly connected cities and no other cities outside of the group.
+        You are given an n x n matrix isConnected where isConnected[i][j] = 1 if the ith city and the jth city are directly connected, and isConnected[i][j] = 0
+        otherwise. Return the total number of provinces.
+
+        Example 1:
+            Input: isConnected = [[1,1,0],[1,1,0],[0,0,1]]
+            Output: 2
+        Example 2:
+            Input: isConnected = [[1,0,0],[0,1,0],[0,0,1]]
+            Output: 3
+    */
+    public int findCircleNum(int[][] isConnected)
+    {
+        int n = isConnected.length,num_provinces = 0;
+        boolean visited[] = new boolean[n];
+        for (int iterator_i = 0; iterator_i < n; iterator_i++)
+        {
+            if (!visited[iterator_i])
+            {
+                findCircleNumHelper(isConnected, visited,iterator_i,n);
+                num_provinces++;
+            }
+        }
+        return num_provinces;
+    }
+
+    public void findCircleNumHelper(int[][] isConnected,boolean[] visited,int node,int n)
+    {
+        visited[node] = true;
+        for(int iterator_i=0;iterator_i<n;iterator_i++) // Mark all nodes in province as visited
+        {
+            if(isConnected[node][iterator_i]==1 && !visited[iterator_i])
+                findCircleNumHelper(isConnected,visited,iterator_i,n);
+        }
+        return;
+    }
+
+    /*
+        224. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/)
+        There is a one-dimensional garden on the x-axis. The garden starts at the point 0 and ends at the point n. (i.e The length of the garden is n).
+        There are n + 1 taps located at points [0, 1, ..., n] in the garden. Given an integer n and an integer array ranges of length n + 1 where ranges[i] (0-indexed)
+        means the i-th tap can water the area [i - ranges[i], i + ranges[i]] if it was open.
+        Return the minimum number of taps that should be open to water the whole garden, If the garden cannot be watered return -1.
+
+        Example 1:
+            Input: n = 5, ranges = [3,4,1,1,0,0]
+            Output: 1
+            Explanation: The tap at point 0 can cover the interval [-3,3]
+                The tap at point 1 can cover the interval [-3,5]
+                The tap at point 2 can cover the interval [1,3]
+                The tap at point 3 can cover the interval [2,4]
+                The tap at point 4 can cover the interval [4,4]
+                The tap at point 5 can cover the interval [5,5]
+                Opening Only the second tap will water the whole garden [0,5]
+
+        Example 2:
+            Input: n = 3, ranges = [0,0,0,0]
+            Output: -1
+            Explanation: Even if you activate all the four taps you cannot water the whole garden.
+
+        Example 3:
+            Input: n = 7, ranges = [1,2,1,0,2,1,0,1]
+            Output: 3
+    */
+    public int minTaps_sort(int n, int[] ranges) // Sorting Method
+    {
+        if(n==0)
+            return 0; // No taps needed
+        int ranges_left[][] = new int[ranges.length][2],num_taps=0,start_pos=0;
+
+        for(int iterator_i=0;iterator_i<ranges.length;iterator_i++)
+        {
+            ranges_left[iterator_i][0] = Math.max(iterator_i-ranges[iterator_i],0);
+            ranges_left[iterator_i][1] = iterator_i;
+        }
+        Arrays.sort(ranges_left,(a,b)->{return Integer.compare(a[0],b[0]);});
+        for(int iterator_i=0,end_pos=ranges[ranges_left[iterator_i][1]];iterator_i<ranges.length;iterator_i++)
+        {
+            int iterator_j=iterator_i;
+            for(;iterator_j<ranges.length && ranges_left[iterator_j][0]<=start_pos;iterator_j++)
+                end_pos = Math.max(end_pos,ranges_left[iterator_j][1]+ranges[ranges_left[iterator_j][1]]);
+            if(start_pos==end_pos)
+                return -1;
+            num_taps++;
+            if(end_pos>=n)
+                return num_taps;
+            iterator_i = iterator_j-1;
+            start_pos = end_pos;
+
+        }
+        return -1;
+    }
+
+    public int minTaps_dp(int n, int[] ranges) // DP Method
+    {
+        int dp_arr[] = new int[n+1];
+        Arrays.fill(dp_arr,n+2); // Not Possible
+        dp_arr[0] = 0; // All point to 0 watered by 0 taps
+
+        for(int iterator_i=0;iterator_i<=n;iterator_i++)
+        {
+            int previous_point = Math.max(iterator_i-ranges[iterator_i],0);
+            //Update all dp[j] where j can be watered by i
+            for(int iterator_j=previous_point;iterator_j<=Math.min(iterator_i+ranges[iterator_i],n);iterator_j++)
+            {
+                // Update if points before range are already watered. Otherwise not updated
+                dp_arr[iterator_j] = Math.min(dp_arr[iterator_j],dp_arr[previous_point]+1);
+            }
+        }
+        return dp_arr[n]==n+2?-1:dp_arr[n];
+    }
+
+    public int minTape(int n, int[] ranges) // Convert to FrogJump Subtype
+    {
+        int rightmost_arr[] = new int[n+1]; // maximum point reached by a tap which waters point i
+        for(int iterator_i=0;iterator_i<=n;iterator_i++)
+        {
+            if(ranges[iterator_i]==0)
+                continue;
+            rightmost_arr[Math.max(iterator_i - ranges[iterator_i], 0)] = iterator_i + ranges[iterator_i];
+        }
+
+        int max_point_reached=0,num_taps=0,start_position;
+        for(int iterator_i=0;iterator_i<=n;)
+        {
+            num_taps++;start_position = max_point_reached;
+            while(iterator_i<=n && iterator_i<=start_position)
+                max_point_reached = Math.max(max_point_reached,rightmost_arr[iterator_i++]);
+            if(start_position==max_point_reached)
+                return -1;
+            if(max_point_reached>=n)
+                return num_taps;
+        }
+        return -1;
+    }
+
+    /*
+        225. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-deletions-to-make-character-frequencies-unique/)
+        A string s is called good if there are no two different characters in s that have the same frequency. Given a string s, return the minimum number of characters
+        you need to delete to make s good. The frequency of a character in a string is the number of times it appears in the string. For example, in the string "aab",
+        the frequency of 'a' is 2, while the frequency of 'b' is 1.
+
+        Example 1:
+            Input: s = "aab"
+            Output: 0
+            Explanation: s is already good.
+
+        Example 2:
+            Input: s = "aaabbbcc"
+            Output: 2
+            Explanation: You can delete two 'b's resulting in the good string "aaabcc".
+            Another way it to delete one 'b' and one 'c' resulting in the good string "aaabbc".
+
+        Example 3:
+            Input: s = "ceabaacb"
+            Output: 2
+            Explanation: You can delete both 'c's resulting in the good string "eabaab".
+            Note that we only care about characters that are still in the string at the end (i.e. frequency of 0 is ignored).
+
+        Constraints:
+            1 <= s.length <= 105
+            s contains only lowercase English letters.
+    */
+    public int minDeletions(String s)
+    {
+        int frequency_map[] = new int[26],num_deletions=0;
+        for(char c:s.toCharArray())
+            frequency_map[c-'a']++;
+        Arrays.sort(frequency_map);
+
+        for(int iterator_i=frequency_map.length-2;iterator_i>=0 && frequency_map[iterator_i]!=0;iterator_i--)
+        {
+            while(frequency_map[iterator_i]>=frequency_map[iterator_i+1] && frequency_map[iterator_i]!=0)
+            {
+                frequency_map[iterator_i]--;
+                num_deletions++;
+            }
+        }
+        return num_deletions;
+    }
+
+    /*
+        226. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-n-unique-integers-sum-up-to-zero/)
+        Given an integer n, return any array containing n unique integers such that they add up to 0.
+
+        Example 1:
+            Input: n = 5
+            Output: [-7,-1,1,3,4]
+            Explanation: These arrays also are accepted [-5,-1,1,2,3] , [-3,-1,2,-2,4].
+
+        Example 2:
+            Input: n = 3
+            Output: [-1,0,1]
+
+        Example 3:
+            Input: n = 1
+            Output: [0]
+
+        Constraints:
+            1 <= n <= 1000
+    */
+    public int[] sumZero(int n)
+    {
+        int result_arr[] = new int[n], left_ptr = n/2 -1,right_ptr=(n+1)/2,current_num=1;
+        while(left_ptr>=0)
+        {
+            result_arr[left_ptr--] = current_num;
+            result_arr[right_ptr++] = -current_num++;
+
+        }
+        return result_arr;
+    }
+
+    /*
+        227. PROBLEM DESCRIPTION (https://leetcode.com/problems/partition-array-into-disjoint-intervals/)
+        Given an array nums, partition it into two (contiguous) subarrays left and right so that:
+            1. Every element in left is less than or equal to every element in right.
+            2. left and right are non-empty.
+            3. left has the smallest possible size.
+        Return the length of left after such a partitioning.  It is guaranteed that such a partitioning exists.
+
+        Example 1:
+            Input: nums = [5,0,3,8,6]
+            Output: 3
+            Explanation: left = [5,0,3], right = [8,6]
+
+        Example 2:
+            Input: nums = [1,1,1,0,6,12]
+            Output: 4
+            Explanation: left = [1,1,1,0], right = [6,12]
+
+        Note:
+            2 <= nums.length <= 30000
+            0 <= nums[i] <= 106
+            It is guaranteed there is at least one way to partition nums as described.
+    */
+    public int partitionDisjoint_alt(int[] nums) // Time O(n) Space O(n)
+    {
+        int left_max[] = new int[nums.length], right_min[] = new int[nums.length];
+        left_max[0] = nums[0];
+        right_min[nums.length-1] = nums[nums.length-1];
+
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            left_max[iterator_i] = Math.max(left_max[iterator_i - 1], nums[iterator_i]);
+            right_min[nums.length-iterator_i-1] = Math.min(right_min[nums.length-iterator_i], nums[nums.length-iterator_i-1]);
+        }
+        for(int iterator_i=0;iterator_i<nums.length-1;iterator_i++)
+        {
+            if(left_max[iterator_i]<right_min[iterator_i+1])
+                return iterator_i+1;
+        }
+        return nums.length;
+    }
+
+    public int partitionDisjoint(int[] nums) // Time O(n) Space O(1)
+    {
+        int partition_max=nums[0], global_max=nums[0], partition_index=0;
+        for(int iterator_i=1;iterator_i<nums.length;iterator_i++)
+        {
+            if(partition_max>nums[iterator_i]) //New Partition till i needs to be formed
+            {
+                partition_max = global_max;
+                partition_index = iterator_i;
+            }
+            else
+                global_max = Math.max(global_max,nums[iterator_i]);
+        }
+        return partition_index+1;
+    }
+
+    /*
+        228. PROBLEM DESCRIPTION (https://leetcode.com/problems/video-stitching/)
+        You are given a series of video clips from a sporting event that lasted T seconds.  These video clips can be overlapping with each other and have varied lengths.
+        Each video clip clips[i] is an interval: it starts at time clips[i][0] and ends at time clips[i][1].  We can cut these clips into segments freely: for example,
+        a clip [0, 7] can be cut into segments [0, 1] + [1, 3] + [3, 7].
+        Return the minimum number of clips needed so that we can cut the clips into segments that cover the entire sporting event ([0, T]).  If the task is impossible,
+        return -1.
+
+        Example 1:
+            Input: clips = [[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]], T = 10
+            Output: 3
+            Explanation:
+                We take the clips [0,2], [8,10], [1,9]; a total of 3 clips.
+                Then, we can reconstruct the sporting event as follows:
+                We cut [1,9] into segments [1,2] + [2,8] + [8,9].
+                Now we have segments [0,2] + [2,8] + [8,10] which cover the sporting event [0, 10].
+
+        Example 2:
+            Input: clips = [[0,1],[1,2]], T = 5
+            Output: -1
+            Explanation:
+                We can't cover [0,5] with only [0,1] and [1,2].
+
+        Example 3:
+            Output: 3
+            Explanation:
+                We can take clips [0,4], [4,7], and [6,9].
+
+        Example 4:
+            Input: clips = [[0,4],[2,8]], T = 5
+            Output: 2
+            Explanation:
+                Notice you can have extra video after the event ends.
+
+        Constraints:
+            1 <= clips.length <= 100
+            0 <= clips[i][0] <= clips[i][1] <= 100
+            0 <= T <= 100
+    */
+    public int videoStitching_sort(int[][] clips, int T) // Sort Technique
+    {
+        if(T==0)
+            return 0;
+        Arrays.sort(clips,(a,b)->(a[0]-b[0]));
+        int start_position=0,end_position=0,num_clips=1;
+        for(int iterator_i=0;iterator_i<clips.length;start_position=end_position,num_clips++)
+        {
+            while(iterator_i<clips.length && clips[iterator_i][0]<=start_position)
+                end_position = Math.max(end_position,clips[iterator_i++][1]);
+            if(end_position>=T)
+                return num_clips;
+            if(start_position==end_position)
+                return -1;
+        }
+        return -1;
+    }
+
+    public int videoStitching(int[][] clips, int T) // DP Approach - Jump Game
+    {
+        int dp[] = new int[T+1]; // dp[i] : Number of clips to make clips[0,i]
+        Arrays.fill(dp,clips.length+1);
+        dp[0] = 0;
+        for(int iterator_i=0;iterator_i<=T ;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<clips.length;iterator_j++)
+            {
+                if(iterator_i>=clips[iterator_j][0] && iterator_i<=clips[iterator_j][1])
+                    dp[iterator_i] = Math.min(dp[iterator_i], dp[clips[iterator_j][0]] + 1);
+            }
+        }
+        return dp[T]==clips.length+1?-1:dp[T];
+    }
+
+    /*
+        229. PROBLEM DESCRIPTION (https://leetcode.com/problems/koko-eating-bananas/)
+        Koko loves to eat bananas. There are n piles of bananas, the ith pile has piles[i] bananas. The guards have gone and will come back in h hours.
+        Koko can decide her bananas-per-hour eating speed of k. Each hour, she chooses some pile of bananas and eats k bananas from that pile. If the pile has less
+        than k bananas, she eats all of them instead and will not eat any more bananas during this hour.
+        Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.
+        Return the minimum integer k such that she can eat all the bananas within h hours.
+
+        Example 1:
+            Input: piles = [3,6,7,11], h = 8
+            Output: 4
+
+        Example 2:
+            Input: piles = [30,11,23,4,20], h = 5
+            Output: 30
+
+        Example 3:
+            Input: piles = [30,11,23,4,20], h = 6
+            Output: 23
+
+        Constraints:
+            1 <= piles.length <= 104
+            piles.length <= h <= 109
+            1 <= piles[i] <= 109
+    */
+    public int minEatingSpeed(int[] piles, int h)
+    {
+        int lb = 1, ub= 1000000000, mid=0, current_time; //UB constraint in Question
+        while(lb<ub)
+        {
+            mid = lb + (ub-lb)/2;
+            current_time =0;
+            for(int iterator_pile=0;iterator_pile<piles.length && current_time<=h;iterator_pile++)
+                current_time += (piles[iterator_pile] +mid -1) / mid; // MAth.ceil ca use / and mod
+            if(current_time>h)
+                lb = mid+1;
+            else
+                ub = mid;
+        }
+        return lb;
+    }
+
+    /*
+        230. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-common-subsequence/)
+        Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, return 0.
+        A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of
+        the remaining characters.
+        For example, "ace" is a subsequence of "abcde".A common subsequence of two strings is a subsequence that is common to both strings.
+
+        Example 1:
+            Input: text1 = "abcde", text2 = "ace"
+            Output: 3
+            Explanation: The longest common subsequence is "ace" and its length is 3.
+
+        Example 2:
+            Input: text1 = "abc", text2 = "abc"
+            Output: 3
+            Explanation: The longest common subsequence is "abc" and its length is 3.
+
+        Example 3:
+            Input: text1 = "abc", text2 = "def"
+            Output: 0
+            Explanation: There is no such common subsequence, so the result is 0.
+
+        Constraints:
+            1 <= text1.length, text2.length <= 1000
+            text1 and text2 consist of only lowercase English characters.
+    */
+    public int longestCommonSubsequence(String text1, String text2)
+    {
+        int dp_prev[] = new int[text1.length()+1],dp_curr[];
+        for(int iterator_i=0;iterator_i<text2.length();iterator_i++)
+        {
+            dp_curr = new int[text1.length()+1];
+            for (int iterator_j = 1; iterator_j <= text1.length(); iterator_j++)
+            {
+                int current_max = Math.max(dp_curr[iterator_j - 1], dp_prev[iterator_j]);
+                dp_curr[iterator_j] = (text1.charAt(iterator_j-1) == text2.charAt(iterator_i))?Math.max(current_max,dp_prev[iterator_j-1]+1):current_max;
+            }
+            dp_prev = dp_curr;
+        }
+        return dp_prev[text1.length()];
+    }
+
+    /*
+        231. PROBLEM DESCRIPTION (https://leetcode.com/problems/unique-number-of-occurrences/)
+        Given an array of integers arr, write a function that returns true if and only if the number of occurrences of each value in the array is unique.
+
+        Example 1:
+            Input: arr = [1,2,2,1,1,3]
+            Output: true
+            Explanation: The value 1 has 3 occurrences, 2 has 2 and 3 has 1. No two values have the same number of occurrences.
+
+        Example 2:
+            Input: arr = [1,2]
+            Output: false
+
+        Example 3:
+            Input: arr = [-3,0,1,-3,1,1,1,-3,10,0]
+            Output: true
+
+        Constraints:
+            1 <= arr.length <= 1000
+            -1000 <= arr[i] <= 1000
+    */
+    public boolean uniqueOccurrences(int[] arr)
+    {
+        HashMap<Integer,Integer> hmap = new HashMap<>();
+        HashSet<Integer> hset = new HashSet<>();
+        for(int num:arr)
+            hmap.put(num,hmap.getOrDefault(num,0)+1);
+        for(int val:hmap.keySet())
+        {
+            if(!hset.add(hmap.get(val)))
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        232. PROBLEM DESCRIPTION (https://leetcode.com/problems/pancake-sorting/)
+        Given an array of integers arr, sort the array by performing a series of pancake flips.
+        In one pancake flip we do the following steps:
+            1. Choose an integer k where 1 <= k <= arr.length.
+            2. Reverse the sub-array arr[0...k-1] (0-indexed).
+        For example, if arr = [3,2,1,4] and we performed a pancake flip choosing k = 3, we reverse the sub-array [3,2,1], so arr = [1,2,3,4] after the pancake flip
+        at k = 3.
+        Return an array of the k-values corresponding to a sequence of pancake flips that sort arr. Any valid answer that sorts the array within 10 * arr.length flips
+        will be judged as correct.
+
+        Example 1:
+            Input: arr = [3,2,4,1]
+            Output: [4,2,4,3]
+            Explanation:
+                We perform 4 pancake flips, with k values 4, 2, 4, and 3.
+                Starting state: arr = [3, 2, 4, 1]
+                After 1st flip (k = 4): arr = [1, 4, 2, 3]
+                After 2nd flip (k = 2): arr = [4, 1, 2, 3]
+                After 3rd flip (k = 4): arr = [3, 2, 1, 4]
+                After 4th flip (k = 3): arr = [1, 2, 3, 4], which is sorted.
+
+            Example 2:
+                Input: arr = [1,2,3]
+                Output: []
+                Explanation: The input is already sorted, so there is no need to flip anything.
+        Note that other answers, such as [3, 3], would also be accepted.
+
+        Constraints:
+            1 <= arr.length <= 100
+            1 <= arr[i] <= arr.length
+            All integers in arr are unique (i.e. arr is a permutation of the integers from 1 to arr.length).
+    */
+    public List<Integer> pancakeSort(int[] arr) // Naive method
+    {
+        List<Integer> result_pancake = new ArrayList<>();
+        for(int iterator_i=arr.length-1;iterator_i>0;iterator_i--)
+        {
+            // Find current max element to put in position
+            int iterator_j=0;
+            for(;arr[iterator_j]!=iterator_i+1;iterator_j++);
+            if(iterator_j==iterator_i)
+                continue;
+            if(iterator_j!=0) {
+                result_pancake.add(iterator_j + 1);
+                pancakeSortHelper(arr, iterator_j);
+            }
+            result_pancake.add(iterator_i+1);
+            pancakeSortHelper(arr,iterator_i);
+        }
+        return result_pancake;
+    }
+
+    public void pancakeSortHelper(int arr[],int last_index)
+    {
+        int temp;
+        for(int iterator_i=0;iterator_i<=(last_index-1)/2;iterator_i++)
+        {
+            temp = arr[iterator_i];
+            arr[iterator_i] = arr[last_index-iterator_i];
+            arr[last_index-iterator_i] = temp;
+        }
+    }
+
+    public List<Integer> pancakeSort_alt(int[] arr) //O(n)
+    {
+        LinkedList<Integer> result_list = new LinkedList<>();
+        Stack<Integer> temp_stck = new Stack<>();
+        int index_arr[] = new int[arr.length];
+        for(int iterator_i=0;iterator_i<arr.length;iterator_i++)
+            index_arr[arr[iterator_i]-1] = iterator_i;
+        for(int iterator_i=0;iterator_i<arr.length;iterator_i++)
+        {
+            int sorted_pos = index_arr[iterator_i];
+            pancakeSortPreserve(iterator_i,sorted_pos,temp_stck);
+            arr[sorted_pos] = arr[iterator_i];
+            index_arr[arr[iterator_i]-1] = sorted_pos;
+        }
+        while(!temp_stck.isEmpty())
+            result_list.addFirst(temp_stck.pop());
+        return result_list;
+    }
+
+    public void pancakeSortPreserve(int pos_i,int pos_j,Stack stck)
+    {
+        if(pos_i!=pos_j) // No need to move i to j
+        {
+            pancakeAdd(stck,pos_j+1);
+            pancakeAdd(stck,pos_j-pos_i+1);
+            pancakeAdd(stck,pos_j-pos_i);
+            pancakeAdd(stck,pos_j-pos_i-1);
+            pancakeAdd(stck,pos_j-pos_i);
+            pancakeAdd(stck,pos_j+1);
+        }
+    }
+
+    public void pancakeAdd(Stack stck,int val)
+    {
+        if(val>1) // 1 is not required since flipping itself
+        {
+            if(!stck.isEmpty() && (int)stck.peek()==val)
+                stck.pop();
+            else
+                stck.push(val);
+        }
+    }
+
+    /*
+        233. PROBLEM DESCRIPTION (https://leetcode.com/problems/cheapest-flights-within-k-stops/)
+        There are n cities connected by some number of flights. You are given an array flights where flights[i] = [fromi, toi, pricei] indicates that there is a flight
+        from city fromi to city toi with cost pricei.
+        You are also given three integers src, dst, and k, return the cheapest price from src to dst with at most k stops. If there is no such route, return -1.
+
+        Example 1:
+            Input: n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 1
+            Output: 200
+            Explanation: The graph is shown.
+            The cheapest price from city 0 to city 2 with at most 1 stop costs 200, as marked red in the picture.
+
+        Example 2:
+            Input: n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 0
+            Output: 500
+            Explanation: The graph is shown.
+            The cheapest price from city 0 to city 2 with at most 0 stop costs 500, as marked blue in the picture.
+
+        Constraints:
+            1 <= n <= 100
+            0 <= flights.length <= (n * (n - 1) / 2)
+            flights[i].length == 3
+            0 <= fromi, toi < n
+            fromi != toi
+            1 <= pricei <= 104
+            There will not be any multiple flights between two cities.
+            0 <= src, dst, k < n
+            src != dst
+    */
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) //
+    {
+        LinkedList<int []> bfs_q = new LinkedList<>();
+        HashMap<Integer,Integer> seen = new HashMap();
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+            seen.put(iterator_i,Integer.MAX_VALUE);
+        HashMap<Integer,LinkedList<int[]>> hmap_connections = new HashMap<>();
+        for(int[] connection: flights)
+            hmap_connections.computeIfAbsent(connection[0], a-> new LinkedList<>()).add(new int[]{connection[1],connection[2]});
+        bfs_q.add(new int[]{src,0,0}); // airport,stops,cost
+        int min_path_cast = Integer.MAX_VALUE;
+        while(!bfs_q.isEmpty())
+        {
+            int size_breadth = bfs_q.size();
+            for(int iterator_i=0;iterator_i<size_breadth;iterator_i++)
+            {
+                int[] popped_ele = bfs_q.poll();
+                if(popped_ele[0] ==dst)
+                    min_path_cast = Math.min(min_path_cast,popped_ele[2]);
+                LinkedList<int[]> connection_ele = hmap_connections.getOrDefault(popped_ele[0],new LinkedList<>());
+                for(int[] nxt_airport : connection_ele)
+                {
+                    if(popped_ele[1]>k || ( popped_ele[1] == k && nxt_airport[0]!=dst) || (seen.get(nxt_airport[0])<=popped_ele[2]+nxt_airport[1]))
+                        continue;
+                    seen.put(nxt_airport[0],popped_ele[2]+nxt_airport[1]);
+                    bfs_q.addLast(new int[]{nxt_airport[0],popped_ele[1]+1,popped_ele[2]+nxt_airport[1]});
+                }
+            }
+        }
+        return min_path_cast==Integer.MAX_VALUE?-1:min_path_cast;
+    }
+
+    public int findCheapestPrice_alt(int n, int[][] flights, int src, int dst, int k) //Will run into TLE
+    {
+        Queue<int []> bfs_q = new PriorityQueue<>((a,b)->(Integer.compare(a[2],b[2])));
+        HashMap<Integer,LinkedList<int[]>> hmap_connections = new HashMap<>();
+        for(int[] connection: flights)
+            hmap_connections.computeIfAbsent(connection[0], a-> new LinkedList<>()).add(new int[]{connection[1],connection[2]});
+        bfs_q.add(new int[]{src,0,0}); // airport,stops,cost
+        while(!bfs_q.isEmpty())
+        {
+            int[] popped_ele = bfs_q.poll();
+            if(popped_ele[0] ==dst)
+                return popped_ele[2];
+            LinkedList<int[]> connection_ele = hmap_connections.getOrDefault(popped_ele[0],new LinkedList<>());
+            if(popped_ele[1]>k)
+                continue;
+            for(int[] nxt_airport : connection_ele)
+                bfs_q.add(new int[]{nxt_airport[0],popped_ele[1]+1,popped_ele[2]+nxt_airport[1]});
+
+        }
+        return -1;
+    }
+
+    /*
+        234. PROBLEM DESCRIPTION (https://leetcode.com/problems/check-if-all-1s-are-at-least-length-k-places-away/)
+        Given an array nums of 0s and 1s and an integer k, return True if all 1's are at least k places away from each other, otherwise return False.
+
+        Example 1:
+            Input: nums = [1,0,0,0,1,0,0,1], k = 2
+            Output: true
+            Explanation: Each of the 1s are at least 2 places away from each other.
+
+        Example 2:
+            Input: nums = [1,0,0,1,0,1], k = 2
+            Output: false
+            Explanation: The second 1 and third 1 are only one apart from each other.
+
+        Example 3:
+            Input: nums = [1,1,1,1,1], k = 0
+            Output: true
+
+        Example 4:
+            Input: nums = [0,1,0,1], k = 1
+            Output: true
+
+        Constraints:
+            1 <= nums.length <= 105
+            0 <= k <= nums.length
+            nums[i] is 0 or 1
+    */
+    public boolean kLengthApart(int[] nums, int k)
+    {
+        int prev=-1;
+        for(int iterator_i=0;iterator_i<nums.length;iterator_i++)
+        {
+            if(nums[iterator_i]==1)
+            {
+                if (prev!=-1 && iterator_i-prev<=k)
+                    return false;
+                prev = iterator_i;
+            }
+        }
+        return true;
+    }
+
+    /*
+        235. PROBLEM DESCRIPTION (https://leetcode.com/problems/cheapest-flights-within-k-stops/)
+        There are several cards arranged in a row, and each card has an associated number of points. The points are given in the integer array cardPoints.
+        In one step, you can take one card from the beginning or from the end of the row. You have to take exactly k cards. Your score is the sum of the points of the
+        cards you have taken.
+        Given the integer array cardPoints and the integer k, return the maximum score you can obtain.
+
+        Example 1:
+            Input: cardPoints = [1,2,3,4,5,6,1], k = 3
+            Output: 12
+            Explanation: After the first step, your score will always be 1. However, choosing the rightmost card first will maximize your total score. The optimal
+            strategy is to take the three cards on the right, giving a final score of 1 + 6 + 5 = 12.
+
+        Example 2:
+            Input: cardPoints = [2,2,2], k = 2
+            Output: 4
+            Explanation: Regardless of which two cards you take, your score will always be 4.
+
+        Example 3:
+            Input: cardPoints = [9,7,7,9,7,7,9], k = 7
+            Output: 55
+            Explanation: You have to take all the cards. Your score is the sum of points of all cards.
+
+        Example 4:
+            Input: cardPoints = [1,1000,1], k = 1
+            Output: 1
+            Explanation: You cannot take the card in the middle. Your best score is 1.
+
+        Example 5:
+            Input: cardPoints = [1,79,80,1,1,1,200,1], k = 3
+            Output: 202
+
+        Constraints:
+            1 <= cardPoints.length <= 105
+            1 <= cardPoints[i] <= 104
+            1 <= k <= cardPoints.length
+    */
+    public int maxScore(int[] cardPoints, int k) //Sliding Window
+    {
+        int current_window_sum =0,max_sum;
+        for(int iterator_i=cardPoints.length-k;iterator_i<cardPoints.length;iterator_i++)
+            current_window_sum += cardPoints[iterator_i];
+        max_sum = current_window_sum;
+        for(int iterator_i=-k+1;iterator_i<=0;iterator_i++)
+        {
+            current_window_sum += cardPoints[iterator_i+k-1]- cardPoints[cardPoints.length+iterator_i-1];
+            max_sum = Math.max(max_sum,current_window_sum);
+        }
+        return max_sum;
+    }
+
+    /*
+        236. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/)
+        Given a non-negative integer num, return the number of steps to reduce it to zero. If the current number is even, you have to divide it by 2, otherwise, you
+        have to subtract 1 from it.
+
+        Example 1:
+            Input: num = 14
+            Output: 6
+            Explanation:
+                Step 1) 14 is even; divide by 2 and obtain 7.
+                Step 2) 7 is odd; subtract 1 and obtain 6.
+                Step 3) 6 is even; divide by 2 and obtain 3.
+                Step 4) 3 is odd; subtract 1 and obtain 2.
+                Step 5) 2 is even; divide by 2 and obtain 1.
+                Step 6) 1 is odd; subtract 1 and obtain 0.
+
+        Example 2:
+            Input: num = 8
+            Output: 4
+
+        Example 3:
+            Input: num = 123
+            Output: 12
+
+        Constraints:
+            0 <= num <= 10^6
+    */
+    public int numberOfSteps(int num)
+    {
+        if(num==0)
+            return 0;
+        int steps =0;
+        while(num!=0)
+        {
+            if((num&1)!= 0) //Odd extra operation
+                steps++;
+            steps++;
+            num >>=1;
+        }
+        return steps-1;
+    }
+
+    /*
+        237. PROBLEM DESCRIPTION (https://leetcode.com/problems/making-a-large-island/)
+        You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+        Return the size of the largest island in grid after applying this operation. An island is a 4-directionally connected group of 1s.
+
+        Example 1:
+            Input: grid = [[1,0],[0,1]]
+            Output: 3
+            Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
+
+        Example 2:
+            Input: grid = [[1,1],[1,0]]
+            Output: 4
+            Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
+
+        Example 3:
+            Input: grid = [[1,1],[1,1]]
+            Output: 4
+            Explanation: Can't change any 0 to 1, only one island with area = 4.
+
+        Constraints:
+            n == grid.length
+            n == grid[i].length
+            1 <= n <= 500
+            grid[i][j] is either 0 or 1.
+    */
+    int directions4[][] = {{1,0},{0,1},{-1,0},{0,-1}};
+    public int largestIsland(int[][] grid)
+    {
+        int n = grid.length,color=2;
+        HashMap<Integer,Integer> size_hmap = new HashMap<>();
+        //Give all island unique identifier
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+            for(int iterator_j=0;iterator_j<n;iterator_j++)
+                if(grid[iterator_i][iterator_j]==1)
+                    size_hmap.put(color,largestIslandColorDFS(iterator_i,iterator_j,grid,color++,n));
+
+        // For all zeros check
+        int max_island_size = 0;
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            for(int iterator_j=0;iterator_j<n;iterator_j++)
+            {
+                if(grid[iterator_i][iterator_j]==0)
+                {
+                    HashSet<Integer> visited_set = new HashSet();
+                    visited_set.add(1);
+                    visited_set.add(0);
+                    int current_island_size=1;
+                    for(int direction[]:directions4)
+                    {
+                        int new_row = direction[0]+iterator_i;
+                        int new_col = direction[1]+iterator_j;
+                        if(new_row<0 || new_col<0 || new_row>=n || new_col>=n || !visited_set.add(grid[new_row][new_col]))
+                            continue;
+                        current_island_size += size_hmap.get(grid[new_row][new_col]);
+                    }
+                    max_island_size = Math.max(max_island_size,current_island_size);
+                }
+            }
+        }
+        return max_island_size==0?n*n:max_island_size;
+    }
+
+    public int largestIslandColorDFS(int row,int col,int grid[][],int color,int n)
+    {
+        int current_size =1;
+        grid[row][col] = color;
+        for(int[] direction:directions4)
+        {
+            int new_row = direction[0]+row;
+            int new_col = direction[1]+col;
+            if(new_row<0 || new_col<0 || new_row>=n || new_col>=n || grid[new_row][new_col]!=1)
+                continue;
+            current_size += largestIslandColorDFS(new_row,new_col,grid,color,n);
+        }
+        return current_size;
+    }
+
+    /*
+        238. PROBLEM DESCRIPTION (https://leetcode.com/problems/range-sum-of-bst/)
+        Given the root node of a binary search tree and two integers low and high, return the sum of values of all nodes with a value in the inclusive range [low, high].
+
+        Example 1:
+            Input: root = [10,5,15,3,7,null,18], low = 7, high = 15
+            Output: 32
+            Explanation: Nodes 7, 10, and 15 are in the range [7, 15]. 7 + 10 + 15 = 32.
+
+        Example 2:
+            Input: root = [10,5,15,3,7,13,18,1,null,6], low = 6, high = 10
+            Output: 23
+            Explanation: Nodes 6, 7, and 10 are in the range [6, 10]. 6 + 7 + 10 = 23.
+
+        Constraints:
+            The number of nodes in the tree is in the range [1, 2 * 104].
+            1 <= Node.val <= 105
+            1 <= low <= high <= 105
+            All Node.val are unique.
+    */
+    public int rangeSumBST(TreeNode root, int low, int high)
+    {
+        if(root==null)
+            return 0;
+        int current_sum = 0,num_conditions=0;
+        if(root.val>=low)
+        {
+            current_sum += rangeSumBST(root.left, low, high);
+            num_conditions++;
+        }
+        if(root.val<=high)
+        {
+            current_sum += rangeSumBST(root.right, low, high);
+            num_conditions++;
+        }
+        return current_sum + (num_conditions==2?root.val:0);
+    }
+
+    /*
+        239. PROBLEM DESCRIPTION (https://leetcode.com/problems/prison-cells-after-n-days/)
+        There are 8 prison cells in a row and each cell is either occupied or vacant. Each day, whether the cell is occupied or vacant changes according to the
+        following rules:
+            1. If a cell has two adjacent neighbors that are both occupied or both vacant, then the cell becomes occupied.
+            2. Otherwise, it becomes vacant.
+        Note that because the prison is a row, the first and the last cells in the row can't have two adjacent neighbors.
+
+        You are given an integer array cells where cells[i] == 1 if the ith cell is occupied and cells[i] == 0 if the ith cell is vacant, and you are given an integer n.
+        Return the state of the prison after n days (i.e., n such changes described above).
+
+        Example 1:
+            Input: cells = [0,1,0,1,1,0,0,1], n = 7
+            Output: [0,0,1,1,0,0,0,0]
+            Explanation: The following table summarizes the state of the prison on each day:
+                Day 0: [0, 1, 0, 1, 1, 0, 0, 1]
+                Day 1: [0, 1, 1, 0, 0, 0, 0, 0]
+                Day 2: [0, 0, 0, 0, 1, 1, 1, 0]
+                Day 3: [0, 1, 1, 0, 0, 1, 0, 0]
+                Day 4: [0, 0, 0, 0, 0, 1, 0, 0]
+                Day 5: [0, 1, 1, 1, 0, 1, 0, 0]
+                Day 6: [0, 0, 1, 0, 1, 1, 0, 0]
+                Day 7: [0, 0, 1, 1, 0, 0, 0, 0]
+
+        Example 2:
+            Input: cells = [1,0,0,1,0,0,1,0], n = 1000000000
+            Output: [0,0,1,1,1,1,1,0]
+
+        Constraints:
+            cells.length == 8
+            cells[i] is either 0 or 1.
+            1 <= n <= 109
+    */
+    public int[] prisonAfterNDays(int[] cells, int n)
+    {
+        HashMap<String,Integer> seen_map = new HashMap<>();
+        for(int iterator_i=0;iterator_i<n;iterator_i++)
+        {
+            //Store current State and days occurred
+            seen_map.put(Arrays.toString(cells),iterator_i);
+            int next_cells[] = new int[8];
+            for(int iterator_j=1;iterator_j<7;iterator_j++)
+                next_cells[iterator_j] = (cells[iterator_j-1]==cells[iterator_j+1]?1:0);
+
+            // Check if next state reached previously
+            if(seen_map.containsKey(Arrays.toString(next_cells)))
+            {
+                if((n - iterator_i) % (iterator_i + 1 - seen_map.get(Arrays.toString(next_cells)))==0)
+                    return cells;
+                iterator_i += (n - iterator_i) / (iterator_i + 1 - seen_map.get(Arrays.toString(next_cells))) * (iterator_i + 1 - seen_map.get(Arrays.toString(next_cells)));
+            }
+            cells = next_cells;
+
+        }
+        return cells;
+    }
+
+    /*
+        240. PROBLEM DESCRIPTION (https://leetcode.com/problems/baseball-game/)
+        You are keeping score for a baseball game with strange rules. The game consists of several rounds, where the scores of past rounds may affect future rounds'
+        scores. At the beginning of the game, you start with an empty record. You are given a list of strings ops, where ops[i] is the ith operation you must apply to
+        the record and is one of the following:
+            1. An integer x - Record a new score of x.
+            2. "+" - Record a new score that is the sum of the previous two scores. It is guaranteed there will always be two previous scores.
+            3. "D" - Record a new score that is double the previous score. It is guaranteed there will always be a previous score.
+            4. "C" - Invalidate the previous score, removing it from the record. It is guaranteed there will always be a previous score.
+
+        Return the sum of all the scores on the record.
+
+        Example 1:
+            Input: ops = ["5","2","C","D","+"]
+            Output: 30
+            Explanation:
+                "5" - Add 5 to the record, record is now [5].
+                "2" - Add 2 to the record, record is now [5, 2].
+                "C" - Invalidate and remove the previous score, record is now [5].
+                "D" - Add 2 * 5 = 10 to the record, record is now [5, 10].
+                "+" - Add 5 + 10 = 15 to the record, record is now [5, 10, 15].
+            The total sum is 5 + 10 + 15 = 30.
+
+        Example 2:
+            Input: ops = ["5","-2","4","C","D","9","+","+"]
+            Output: 27
+            Explanation:
+                "5" - Add 5 to the record, record is now [5].
+                "-2" - Add -2 to the record, record is now [5, -2].
+                "4" - Add 4 to the record, record is now [5, -2, 4].
+                "C" - Invalidate and remove the previous score, record is now [5, -2].
+                "D" - Add 2 * -2 = -4 to the record, record is now [5, -2, -4].
+                "9" - Add 9 to the record, record is now [5, -2, -4, 9].
+                "+" - Add -4 + 9 = 5 to the record, record is now [5, -2, -4, 9, 5].
+                "+" - Add 9 + 5 = 14 to the record, record is now [5, -2, -4, 9, 5, 14].
+                The total sum is 5 + -2 + -4 + 9 + 5 + 14 = 27.
+
+        Example 3:
+            Input: ops = ["1"]
+            Output: 1
+
+        Constraints:
+            1 <= ops.length <= 1000
+            ops[i] is "C", "D", "+", or a string representing an integer in the range [-3 * 104, 3 * 104].
+            For operation "+", there will always be at least two previous scores on the record.
+            For operations "C" and "D", there will always be at least one previous score on the record.
+    */
+    public int calPoints(String[] ops)
+    {
+        Stack<Integer> score_stck = new Stack<>();
+        for(int iterator_i=0;iterator_i<ops.length;iterator_i++)
+        {
+            if(ops[iterator_i].equals("C"))
+                score_stck.pop();
+            else if(ops[iterator_i].equals("+"))
+            {
+                int popval = score_stck.pop(),new_val = popval+score_stck.peek();
+                score_stck.push(popval);
+                score_stck.push(new_val);
+            }
+            else if(ops[iterator_i].equals("D"))
+                score_stck.push(2*score_stck.peek());
+            else
+                score_stck.push(Integer.valueOf(ops[iterator_i]));
+        }
+        int points =0;
+        while(!score_stck.isEmpty())
+            points += score_stck.pop();
+        return points;
+    }
+
+    /*
+        241. PROBLEM DESCRIPTION (https://leetcode.com/problems/reorganize-string/)
+        Given a string s, check if the letters can be rearranged so that two characters that are adjacent to each other are not the same.
+        If possible, output any possible result.  If not possible, return the empty string.
+
+        Example 1:
+            Input: s = "aab"
+            Output: "aba"
+
+        Example 2:
+            Input: s = "aaab"
+            Output: ""
+
+        Note: s will consist of lowercase letters and have length in range [1, 500].
+    */
+    public String reorganizeString(String s) {
+        return null;
+    }
+
 }
