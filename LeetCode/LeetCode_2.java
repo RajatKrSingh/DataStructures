@@ -5,6 +5,12 @@ import java.util.*;
 
 // Premium TOO: https://leetcode.com/problems/shortest-way-to-form-string/
 //https://leetcode.com/problems/minimize-max-distance-to-gas-station/
+// https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/
+// https://leetcode.com/problems/increasing-order-search-tree/
+// https://leetcode.com/problems/brick-wall/
+// https://leetcode.com/problems/di-string-match/
+// https://leetcode.com/problems/shortest-path-with-alternating-colors/
+// https://leetcode.com/problems/longest-string-chain/
 
 public class LeetCode_2
 {
@@ -1975,7 +1981,7 @@ public class LeetCode_2
     }
 
     /*
-        235. PROBLEM DESCRIPTION (https://leetcode.com/problems/cheapest-flights-within-k-stops/)
+        235. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/)
         There are several cards arranged in a row, and each card has an associated number of points. The points are given in the integer array cardPoints.
         In one step, you can take one card from the beginning or from the end of the row. You have to take exactly k cards. Your score is the sum of the points of the
         cards you have taken.
@@ -2327,8 +2333,585 @@ public class LeetCode_2
 
         Note: s will consist of lowercase letters and have length in range [1, 500].
     */
-    public String reorganizeString(String s) {
+    public String reorganizeString(String s)
+    {
+        int char_map[] = new int[26], max_val=0;
+        char char_max = ' ';
+        for(char c:s.toCharArray())
+        {
+            if(max_val < ++char_map[c-'a'])
+            {
+                max_val = char_map[c-'a'];
+                char_max = c;
+            }
+
+        }
+        if(max_val>(s.length()+1)/2)
+            return "";
+        char str_reorg[] = new char[s.length()];
+        // Place the max value
+        int index =0;
+        while(index/2 < max_val)
+        {
+            str_reorg[index] = char_max;
+            index += 2;
+        }
+        // Assign all other letters in between places
+        for(int iterator_i=0;iterator_i<26;iterator_i++)
+        {
+            while(char_map[iterator_i]>0 && (iterator_i!=(char_max-'a')))
+            {
+                if(index>=s.length())
+                    index=1;
+                char_map[iterator_i]--;
+                str_reorg[index] = (char)(iterator_i+'a');
+                index += 2;
+            }
+        }
+        return new String(str_reorg);
+    }
+
+    /*
+        242. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/)
+        Given a string s of '(' and ')' parentheses, we add the minimum number of parentheses ( '(' or ')', and in any positions )
+        so that the resulting parentheses string is valid.
+
+        Formally, a parentheses string is valid if and only if:
+            1. It is the empty string, or
+            2. It can be written as AB (A concatenated with B), where A and B are valid strings, or
+            3. It can be written as (A), where A is a valid string.
+        Given a parentheses string, return the minimum number of parentheses we must add to make the resulting string valid.
+
+        Example 1:
+            Input: s = "())"
+            Output: 1
+
+        Example 2:
+            Input: s = "((("
+            Output: 3
+
+        Example 3:
+            Input: s = "()"
+            Output: 0
+
+        Example 4:
+            Input: s = "()))(("
+            Output: 4
+
+        Note:
+            s.length <= 1000
+            s only consists of '(' and ')' characters.
+    */
+    public int minAddToMakeValid(String s)
+    {
+        return -1;
+    }
+
+    /*
+        243. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-repeating-character-replacement/)
+        You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase
+        English character. You can perform this operation at most k times.
+        Return the length of the longest substring containing the same letter you can get after performing the above operations.
+
+        Example 1:
+            Input: s = "ABAB", k = 2
+            Output: 4
+            Explanation: Replace the two 'A's with two 'B's or vice versa.
+
+        Example 2:
+            Input: s = "AABABBA", k = 1
+            Output: 4
+            Explanation: Replace the one 'A' in the middle with 'B' and form "AABBBBA".
+            The substring "BBBB" has the longest repeating letters, which is 4.
+
+        Constraints:
+            1 <= s.length <= 105
+            s consists of only uppercase English letters.
+            0 <= k <= s.length
+    */
+    public int characterReplacement(String s, int k) {
+        return -1;
+    }
+
+    /*
+        244. PROBLEM DESCRIPTION (https://leetcode.com/problems/set-matrix-zeroes/)
+        Given an m x n matrix. If an element is 0, set its entire row and column to 0. Do it in-place.
+
+        Follow up:
+            1.A straight forward solution using O(mn) space is probably a bad idea.
+            2.A simple improvement uses O(m + n) space, but still not the best solution.
+            3.Could you devise a constant space solution?
+
+        Example 1:
+            Input: matrix = [[1,1,1],[1,0,1],[1,1,1]]
+            Output: [[1,0,1],[0,0,0],[1,0,1]]
+
+        Example 2:
+            Input: matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+            Output: [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+
+        Constraints:
+            m == matrix.length
+            n == matrix[0].length
+            1 <= m, n <= 200
+            -231 <= matrix[i][j] <= 231 - 1
+    */
+    public void setZeroes(int[][] matrix) {
+
+    }
+
+    /*
+        245. PROBLEM DESCRIPTION (https://leetcode.com/problems/non-overlapping-intervals/)
+        Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need
+        to remove to make the rest of the intervals non-overlapping.
+
+        Example 1:
+            Input: intervals = [[1,2],[2,3],[3,4],[1,3]]
+            Output: 1
+            Explanation: [1,3] can be removed and the rest of the intervals are non-overlapping.
+
+        Example 2:
+            Input: intervals = [[1,2],[1,2],[1,2]]
+            Output: 2
+            Explanation: You need to remove two [1,2] to make the rest of the intervals non-overlapping.
+
+        Example 3:
+            Input: intervals = [[1,2],[2,3]]
+            Output: 0
+            Explanation: You don't need to remove any of the intervals since they're already non-overlapping.
+
+        Constraints:
+            1 <= intervals.length <= 2 * 104
+            intervals[i].length == 2
+            -2 * 104 <= starti < endi <= 2 * 104
+    */
+    public int eraseOverlapIntervals(int[][] intervals) {
+        return -1;
+    }
+
+    /*
+        246. PROBLEM DESCRIPTION (https://leetcode.com/problems/rotate-image/)
+        You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+        You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another
+        2D matrix and do the rotation.
+
+        Example 1:
+            Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+            Output: [[7,4,1],[8,5,2],[9,6,3]]
+
+        Example 2:
+            Input: matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+            Output: [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+        Example 3:
+            Input: matrix = [[1]]
+            Output: [[1]]
+
+        Example 4:
+            Input: matrix = [[1,2],[3,4]]
+            Output: [[3,1],[4,2]]
+
+        Constraints:
+            matrix.length == n
+            matrix[i].length == n
+            1 <= n <= 20
+            -1000 <= matrix[i][j] <= 1000
+    */
+    public void rotate(int[][] matrix)
+    {
+    }
+
+    /*
+        247. PROBLEM DESCRIPTION (https://leetcode.com/problems/pacific-atlantic-water-flow/)
+        You are given an m x n integer matrix heights representing the height of each unit cell in a continent. The Pacific ocean
+        touches the continent's left and top edges, and the Atlantic ocean touches the continent's right and bottom edges.
+        Water can only flow in four directions: up, down, left, and right. Water flows from a cell to an adjacent one with an equal
+        or lower height.
+        Return a list of grid coordinates where water can flow to both the Pacific and Atlantic oceans.
+
+        Example 1:
+            Input: heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
+            Output: [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+
+        Example 2:
+            Input: heights = [[2,1],[1,2]]
+            Output: [[0,0],[0,1],[1,0],[1,1]]
+
+        Constraints:
+            m == heights.length
+            n == heights[i].length
+            1 <= m, n <= 200
+            1 <= heights[i][j] <= 105
+    */
+    public List<List<Integer>> pacificAtlantic(int[][] matrix)
+    {
         return null;
     }
 
+    /*
+        248. PROBLEM DESCRIPTION (https://leetcode.com/problems/insert-interval/)
+        Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary).
+        You may assume that the intervals were initially sorted according to their start times.
+
+        Example 1:
+            Input: intervals = [[1,3],[6,9]], newInterval = [2,5]
+            Output: [[1,5],[6,9]]
+
+        Example 2:
+            Input: intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+            Output: [[1,2],[3,10],[12,16]]
+            Explanation: Because the new interval [4,8] overlaps with [3,5],[6,7],[8,10].
+
+        Example 3:
+            Input: intervals = [], newInterval = [5,7]
+            Output: [[5,7]]
+
+        Example 4:
+            Input: intervals = [[1,5]], newInterval = [2,3]
+            Output: [[1,5]]
+
+        Example 5:
+            Input: intervals = [[1,5]], newInterval = [2,7]
+            Output: [[1,7]]
+
+        Constraints:
+            0 <= intervals.length <= 104
+            intervals[i].length == 2
+            0 <= intervals[i][0] <= intervals[i][1] <= 105
+            intervals is sorted by intervals[i][0] in ascending order.
+            newInterval.length == 2
+            0 <= newInterval[0] <= newInterval[1] <= 105
+    */
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        return new int[][]{};
+    }
+
+    /*
+        249. PROBLEM DESCRIPTION (https://leetcode.com/problems/squares-of-a-sorted-array/)
+        Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in
+        non-decreasing order.
+
+        Example 1:
+            Input: nums = [-4,-1,0,3,10]
+            Output: [0,1,9,16,100]
+            Explanation: After squaring, the array becomes [16,1,0,9,100].
+                After sorting, it becomes [0,1,9,16,100].
+
+        Example 2:
+            Input: nums = [-7,-3,2,3,11]
+            Output: [4,9,9,49,121]
+
+        Constraints:
+            1 <= nums.length <= 104
+            -104 <= nums[i] <= 104
+                nums is sorted in non-decreasing order.
+
+        Follow up: Squaring each element and sorting the new array is very trivial, could you find an O(n) solution using a
+        different approach?
+    */
+    public int[] sortedSquares(int[] nums)
+    {
+        return new int[]{};
+    }
+
+    /*
+        250. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-word-in-dictionary/)
+        Given an array of strings words representing an English Dictionary, return the longest word in words that can be built one
+        character at a time by other words in words.
+        If there is more than one possible answer, return the longest word with the smallest lexicographical order. If there is no
+        answer, return the empty string.
+
+        Example 1:
+            Input: words = ["w","wo","wor","worl","world"]
+            Output: "world"
+            Explanation: The word "world" can be built one character at a time by "w", "wo", "wor", and "worl".
+
+        Example 2:
+            Input: words = ["a","banana","app","appl","ap","apply","apple"]
+            Output: "apple"
+            Explanation: Both "apply" and "apple" can be built from other words in the dictionary. However, "apple" is
+            lexicographically smaller than "apply".
+
+        Constraints:
+            1 <= words.length <= 1000
+            1 <= words[i].length <= 30
+            words[i] consists of lowercase English letters.
+    */
+    public String longestWord(String[] words) {
+        return null;
+    }
+
+    /*
+        251. PROBLEM DESCRIPTION (https://leetcode.com/problems/all-possible-full-binary-trees/)
+        Given an integer n, return a list of all possible full binary trees with n nodes. Each node of each tree in the answer
+        must have Node.val == 0.
+        Each element of the answer is the root node of one possible tree. You may return the final list of trees in any order.
+        A full binary tree is a binary tree where each node has exactly 0 or 2 children.
+
+        Example 1:
+            Input: n = 7
+            Output: [[0,0,0,null,null,0,0,null,null,0,0],[0,0,0,null,null,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,null,null,null,null,0,0],
+            [0,0,0,0,0,null,null,0,0]]
+
+        Example 2:
+            Input: n = 3
+            Output: [[0,0,0]]
+
+        Constraints:
+        1 <= n <= 20
+    */
+    public List<TreeNode> allPossibleFBT(int n) {
+        return null;
+    }
+
+    /*
+        252. PROBLEM DESCRIPTION (https://leetcode.com/problems/tiling-a-rectangle-with-the-fewest-squares/)
+        Given a rectangle of size n x m, find the minimum number of integer-sided squares that tile the rectangle.
+
+        Example 1:
+            Input: n = 2, m = 3
+            Output: 3
+            Explanation: 3 squares are necessary to cover the rectangle.
+                2 (squares of 1x1)
+                1 (square of 2x2)
+
+        Example 2:
+            Input: n = 5, m = 8
+            Output:
+
+        Example 3:
+        Input: n = 11, m = 13
+        Output: 6
+
+        Constraints:
+            1 <= n <= 13
+            1 <= m <= 13
+    */
+    public int tilingRectangle(int n, int m) {
+        return -1;
+    }
+
+    /*
+        253. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/)
+        Given an array of integers nums and an integer target. Return the number of non-empty subsequences of nums such that the sum
+        of the minimum and maximum element on it is less or equal to target. Since the answer may be too large, return it modulo 109 + 7.
+
+        Example 1:
+            Input: nums = [3,5,6,7], target = 9
+            Output: 4
+            Explanation: There are 4 subsequences that satisfy the condition.
+                [3] -> Min value + max value <= target (3 + 3 <= 9)
+                [3,5] -> (3 + 5 <= 9)
+                [3,5,6] -> (3 + 6 <= 9)
+                [3,6] -> (3 + 6 <= 9)
+
+        Example 2:
+            Input: nums = [3,3,6,8], target = 10
+            Output: 6
+            Explanation: There are 6 subsequences that satisfy the condition. (nums can have repeated numbers).
+                [3] , [3] , [3,3], [3,6] , [3,6] , [3,3,6]
+
+        Example 3:
+            Input: nums = [2,3,3,4,6,7], target = 12
+            Output: 61
+            Explanation: There are 63 non-empty subsequences, two of them don't satisfy the condition ([6,7], [7]).
+            Number of valid subsequences (63 - 2 = 61).
+
+        Example 4:
+            Input: nums = [5,2,4,1,7,6,8], target = 16
+            Output: 127
+            Explanation: All non-empty subset satisfy the condition (2^7 - 1) = 127
+
+        Constraints:
+            1 <= nums.length <= 105
+            1 <= nums[i] <= 106
+            1 <= target <= 106
+    */
+    public int numSubseq(int[] nums, int target) {
+        return -1;
+    }
+
+    /*
+        254. PROBLEM DESCRIPTION (https://leetcode.com/problems/repeated-dna-sequences/)
+        The DNA sequence is composed of a series of nucleotides abbreviated as 'A', 'C', 'G', and 'T'.
+        For example, "ACGAATTCCG" is a DNA sequence. When studying DNA, it is useful to identify repeated sequences within the DNA.
+        Given a string s that represents a DNA sequence, return all the 10-letter-long sequences (substrings) that occur more than
+        once in a DNA molecule. You may return the answer in any order.
+
+        Example 1:
+            Input: s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+            Output: ["AAAAACCCCC","CCCCCAAAAA"]
+
+        Example 2:
+            Input: s = "AAAAAAAAAAAAA"
+            Output: ["AAAAAAAAAA"]
+
+        Constraints:
+            1 <= s.length <= 105
+            s[i] is either 'A', 'C', 'G', or 'T'.
+    */
+    public List<String> findRepeatedDnaSequences(String s) {
+        return null;
+    }
+
+    /*
+        255. PROBLEM DESCRIPTION (https://leetcode.com/problems/k-closest-points-to-origin/)
+        Given an array of points where points[i] = [xi, yi] represents a point on the X-Y plane and an integer k, return the k
+        closest points to the origin (0, 0).
+        The distance between two points on the X-Y plane is the Euclidean distance (i.e., √(x1 - x2)2 + (y1 - y2)2).
+        You may return the answer in any order. The answer is guaranteed to be unique (except for the order that it is in).
+
+        Example 1:
+            Input: points = [[1,3],[-2,2]], k = 1
+            Output: [[-2,2]]
+            Explanation:
+                The distance between (1, 3) and the origin is sqrt(10).
+                The distance between (-2, 2) and the origin is sqrt(8).
+                Since sqrt(8) < sqrt(10), (-2, 2) is closer to the origin.
+                We only want the closest k = 1 points from the origin, so the answer is just [[-2,2]].
+
+        Example 2:
+            Input: points = [[3,3],[5,-1],[-2,4]], k = 2
+            Output: [[3,3],[-2,4]]
+            Explanation: The answer [[-2,4],[3,3]] would also be accepted.
+
+        Constraints:
+            1 <= k <= points.length <= 104
+            -104 < xi, yi < 104
+    */
+    public int[][] kClosest(int[][] points, int K) {
+        return new int[][]{};
+    }
+
+    /*
+        256. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-array-by-parity/)
+        Given an array nums of non-negative integers, return an array consisting of all the even elements of nums, followed by all
+        the odd elements of nums.
+        You may return any answer array that satisfies this condition.
+
+        Example 1:
+            Input: nums = [3,1,2,4]
+            Output: [2,4,3,1]
+            The outputs [4,2,3,1], [2,4,1,3], and [4,2,1,3] would also be accepted.
+
+        Note:
+            1 <= nums.length <= 5000
+            0 <= nums[i] <= 5000
+    */
+    public int[] sortArrayByParity(int[] nums) {
+        return new int[]{};
+    }
+
+    /*
+        257. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-score-from-performing-multiplication-operations/)
+        You are given two integer arrays nums and multipliers of size n and m respectively, where n >= m. The arrays are 1-indexed.
+        You begin with a score of 0. You want to perform exactly m operations. On the ith operation (1-indexed), you will:
+            1.Choose one integer x from either the start or the end of the array nums.
+            2.Add multipliers[i] * x to your score.
+            3.Remove x from the array nums.
+        Return the maximum score after performing m operations.
+
+        Example 1:
+            Input: nums = [1,2,3], multipliers = [3,2,1]
+            Output: 14
+            Explanation: An optimal solution is as follows:
+                - Choose from the end, [1,2,3], adding 3 * 3 = 9 to the score.
+                - Choose from the end, [1,2], adding 2 * 2 = 4 to the score.
+                - Choose from the end, [1], adding 1 * 1 = 1 to the score.
+                The total score is 9 + 4 + 1 = 14.
+
+        Example 2:
+            Input: nums = [-5,-3,-3,-2,7,1], multipliers = [-10,-5,3,4,6]
+            Output: 102
+            Explanation: An optimal solution is as follows:
+                - Choose from the start, [-5,-3,-3,-2,7,1], adding -5 * -10 = 50 to the score.
+                - Choose from the start, [-3,-3,-2,7,1], adding -3 * -5 = 15 to the score.
+                - Choose from the start, [-3,-2,7,1], adding -3 * 3 = -9 to the score.
+                - Choose from the end, [-2,7,1], adding 1 * 4 = 4 to the score.
+                - Choose from the end, [-2,7], adding 7 * 6 = 42 to the score.
+                The total score is 50 + 15 - 9 + 4 + 42 = 102.
+
+        Constraints:
+            n == nums.length
+            m == multipliers.length
+            1 <= m <= 103
+            m <= n <= 105
+            -1000 <= nums[i], multipliers[i] <= 1000
+    */
+    public int maximumScore(int[] nums, int[] multipliers) {
+        return -1;
+    }
+
+    /*
+        258. PROBLEM DESCRIPTION (https://leetcode.com/problems/largest-perimeter-triangle/)
+        Given an integer array nums, return the largest perimeter of a triangle with a non-zero area, formed from three of these
+        lengths. If it is impossible to form any triangle of a non-zero area, return 0.
+
+        Example 1:
+            Input: nums = [2,1,2]
+            Output: 5
+
+        Example 2:
+            Input: nums = [1,2,1]
+            Output: 0
+
+        Example 3:
+            Input: nums = [3,2,3,4]
+            Output: 10
+
+        Example 4:
+            Input: nums = [3,6,2,3]
+            Output: 8
+
+        Constraints:
+            3 <= nums.length <= 104
+            1 <= nums[i] <= 106
+    */
+    public int largestPerimeter(int[] nums) {
+        return -1;
+    }
+
+    /*
+        259. PROBLEM DESCRIPTION (https://leetcode.com/problems/duplicate-zeros/)
+        Given a fixed length array arr of integers, duplicate each occurrence of zero, shifting the remaining elements to the right.
+        Note that elements beyond the length of the original array are not written.
+        Do the above modifications to the input array in place, do not return anything from your function.
+
+        Example 1:
+            Input: [1,0,2,3,0,4,5,0]
+            Output: null
+            Explanation: After calling your function, the input array is modified to: [1,0,0,2,3,0,0,4]
+
+        Example 2:
+            Input: [1,2,3]
+            Output: null
+            Explanation: After calling your function, the input array is modified to: [1,2,3]
+
+        Note:
+            1 <= arr.length <= 10000
+            0 <= arr[i] <= 9
+    */
+    public void duplicateZeros(int[] arr) {
+
+    }
+
+    /*
+        260. PROBLEM DESCRIPTION (https://leetcode.com/problems/relative-sort-array/)
+        Given two arrays arr1 and arr2, the elements of arr2 are distinct, and all elements in arr2 are also in arr1.
+        Sort the elements of arr1 such that the relative ordering of items in arr1 are the same as in arr2.  Elements that don't
+        appear in arr2 should be placed at the end of arr1 in ascending order.
+
+        Example 1:
+            Input: arr1 = [2,3,1,3,2,4,6,7,9,2,19], arr2 = [2,1,4,3,9,6]
+            Output: [2,2,2,1,4,3,3,9,6,7,19]
+
+        Constraints:
+            1 <= arr1.length, arr2.length <= 1000
+            0 <= arr1[i], arr2[i] <= 1000
+            All the elements of arr2 are distinct.
+            Each arr2[i] is in arr1.
+    */
+    public int[] relativeSortArray(int[] arr1, int[] arr2) {
+        return new int[]{};
+    }
 }

@@ -1933,5 +1933,11 @@ public class Runner {
 //        for(int iterator_i=0;iterator_i<input_str.length;iterator_i++)
 //            input_str[iterator_i] = sc.next();
 //        System.out.println("Points: "+obj_2.calPoints(input_str));
+
+        /** Driver Code for Q241.reorganizestring
+         *
+         */
+        System.out.println("Enter string");
+        System.out.println("Reorganized String is: "+obj_2.reorganizeString(sc.next()));
     }
 }
