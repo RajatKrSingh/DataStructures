@@ -8,4 +8,4 @@ Questions selected from Data Structures and Algorithms academic coursework. Topi
 - Dynamic Programming
 
 # Leetcode
-Archive of leetcode questions and their proposed solutions ranging various difficulties. Runner.java contains the main codde for standalone execution. URL and problem heading provided with functional code.
+Archive of 300+ leetcode questions and their proposed solutions ranging various difficulties. Runner.java contains the main codde for standalone execution. URL and problem heading provided with functional code.
