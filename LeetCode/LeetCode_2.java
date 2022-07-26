@@ -1,5 +1,7 @@
 package LeetCode;
 
+import javafx.util.Pair;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -2929,8 +2931,42 @@ public class LeetCode_2
             1 <= n <= 13
             1 <= m <= 13
     */
-    public int tilingRectangle(int n, int m) {
-        return -1;
+    int result=0,n,m;
+    public int tilingRectangle(int n, int m)
+    {
+        this.m=m;
+        this.n=n;
+        int boundary[]=new int[m];
+        tile_helper(boundary,0,0);
+        return result;
+    }
+    public void tile_helper(int[] boundary,int covered,int tile_num)
+    {
+        if(result!=0 && tile_num>result)
+            return;
+        if(covered==m)
+        {
+            if(result==0 || result>tile_num)
+                result=tile_num;
+        }
+        int min_pos=0,end_pos;
+        for(int i=1;i<m;i++)
+        {
+            if(boundary[min_pos]>boundary[i])
+                min_pos=i;
+        }
+        end_pos=min_pos;
+        while(end_pos+1<m && boundary[end_pos+1]==boundary[min_pos])
+            end_pos++;
+        for(int square_size=Math.min(end_pos-min_pos+1,n-boundary[min_pos]);square_size>0;square_size--)
+        {
+            int updated_boundary=boundary[min_pos]+square_size,original_boundary=boundary[min_pos];
+            for(int i=0;i<square_size;i++)
+                boundary[min_pos+i]=updated_boundary;
+            tile_helper(boundary,covered+(updated_boundary==n?square_size:0),tile_num+1);
+            for(int i=0;i<square_size;i++)
+                boundary[min_pos+i]=original_boundary;
+        }
     }
 
     /*
@@ -3354,7 +3390,7 @@ public class LeetCode_2
     }
 
     /*
-        264. PROBLEM DESCRIPTION (https://leetcode.com/problems/powx-n/submissions/)
+        264. PROBLEM DESCRIPTION (https://leetcode.com/problems/powx-n)
         Implement pow(x, n), which calculates x raised to the power n (i.e., xn).
 
         Example 1:
@@ -3875,6 +3911,4020 @@ public class LeetCode_2
             q = nq;
         }
         return mindist==Integer.MAX_VALUE?-1:mindist;
+    }
+
+    /*
+        273. PROBLEM DESCRIPTION (https://leetcode.com/problems/swap-nodes-in-pairs/)
+    */
+    public ListNode swapPairs(ListNode head) {
+        if(head==null || head.next==null)
+            return head;
+        ListNode curr=head, next=head.next,result=head.next,prev=null;
+        while(curr!=null && next!=null)
+        {
+            curr.next = next.next;
+            next.next = curr;
+            if(prev!=null)
+                prev.next=next;
+            prev=curr;
+            curr=curr.next;
+            if(curr!=null)
+                next=curr.next;
+        }
+        return result;
+    }
+
+    /*
+        273. PROBLEM DESCRIPTION (https://leetcode.com/problems/4sum/)
+    */
+    public List<List<Integer>> fourSum(int[] nums, int target)
+    {
+        Arrays.sort(nums);
+        int len=nums.length,curr_sum;
+        List<List<Integer>> result=new ArrayList<>();
+        for(int i=0;i<len-3;i++)
+        {
+            if(i>0 && nums[i]==nums[i-1])
+                continue;
+            for(int j=i+1;j<len-2;j++)
+            {
+                if(j-1!=i && nums[j-1]==nums[j])
+                    continue;
+                int index_fr=j+1,index_rear=len-1;
+                long sum_left=(long)target-(nums[i]+nums[j]);
+                while(index_fr<index_rear)
+                {
+                    if((index_fr-1!=j && nums[index_fr]==nums[index_fr-1]) || nums[index_fr]+nums[index_rear]<sum_left)
+                        index_fr++;
+                    else if((index_rear+1!=len && nums[index_rear]==nums[index_rear+1]) || nums[index_fr]+nums[index_rear]>sum_left)
+                        index_rear--;
+                    else
+                    {
+                        result.add(Arrays.asList(new Integer[]{nums[i],nums[j],nums[index_fr],nums[index_rear]}));
+                        index_fr++;
+                        index_rear--;
+                    }
+                }
+
+            }
+        }
+        return result;
+    }
+
+    /*
+        274. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-nodes-in-k-group/)
+    */
+    public ListNode reverseKGroup(ListNode head, int k)
+    {
+        if(head==null || k==1)
+            return head;
+        ListNode prev=null, cur_node=head, final_node=head,temp;
+        int count=k;
+        while(count>0 && cur_node!=null)
+        {
+            count--;
+            cur_node=cur_node.next;
+        }
+        if(count!=0)
+            return head;
+        cur_node = head;
+        for(int i=0;i<k;i++)
+        {
+            temp=cur_node.next;
+            cur_node.next=prev;
+            prev=cur_node;
+            cur_node=temp;
+        }
+        final_node.next=reverseKGroup(cur_node,k);
+        return prev;
+    }
+
+    /*
+        275. PROBLEM DESCRIPTION (https://leetcode.com/problems/jump-game-ii/)
+    */
+    public int jump(int[] nums) {
+        int len=nums.length, dp[]=new int[len];
+        Arrays.fill(dp,len);
+        dp[0]=0;
+        for(int i=0;i<len;i++)
+        {
+            for(int j=i+1;j<Math.min(nums[i]+i+1,len);j++)
+                dp[j] = Math.min(dp[j],dp[i]+1);
+        }
+        return dp[len-1];
+    }
+
+    /*
+        276. PROBLEM DESCRIPTION (https://leetcode.com/problems/rotate-list/)
+    */
+    public ListNode rotateRight(ListNode head, int k)
+    {
+        if(head==null)
+            return head;
+        int total_nodes=0;
+        ListNode curr=head,result;
+        while(curr!=null)
+        {
+            curr = curr.next;
+            total_nodes++;
+        }
+        k = k%total_nodes;
+        if(k==0)
+            return head;
+        curr=head;
+        for(int i=0;i<total_nodes-k-1;i++)
+            curr = curr.next;
+        result=curr.next;
+        curr.next=null;
+        curr=result;
+        while(curr.next!=null)
+            curr=curr.next;
+        curr.next=head;
+        return result;
+    }
+
+    /*
+        277. PROBLEM DESCRIPTION (https://leetcode.com/problems/same-tree/)
+    */
+    public boolean isSameTree(TreeNode p, TreeNode q)
+    {
+        if(p==null && q==null)
+            return true;
+        if(p==null || q==null)
+            return false;
+        return p.val==q.val && isSameTree(p.left,q.left) && isSameTree(p.right,q.right);
+    }
+
+    /*
+        278. PROBLEM DESCRIPTION (https://leetcode.com/problems/wildcard-matching/)
+    */
+    public boolean isMatch(String s, String p) {
+        int slen=s.length(),plen=p.length();
+        boolean dp[][]=new boolean[slen+1][plen+1];
+        dp[0][0]=true;
+        char sArr[]=s.toCharArray(), pArr[]=p.toCharArray();
+        for(int i=1;i<=plen && pArr[i-1]=='*';i++)
+            dp[0][i] = true;
+
+        for(int i=1;i<=slen;i++)
+        {
+            for(int j=1;j<=plen;j++)
+            {
+                if(pArr[j-1]=='*')
+                {
+                    for(int k=i;k>=0;k--)
+                    {
+                        if(dp[k][j-1])
+                        {
+                            dp[i][j] =true;
+                            break;
+                        }
+                    }
+                }
+                else
+                    dp[i][j] = dp[i-1][j-1] && (sArr[i-1]==pArr[j-1] || pArr[j-1]=='?');
+            }
+        }
+        return dp[slen][plen];
+    }
+    public boolean isMatch_alt(String s, String p)
+    {
+        int slen=s.length(),plen=p.length(),star_matched=-1,i=0,j=0,star_index=0;
+        while(i<slen)
+        {
+            if((j<plen)&&(s.charAt(i)==p.charAt(j) || p.charAt(j)=='?'))
+            {
+                i++;
+                j++;
+            }
+            else if((j<plen) && p.charAt(j)=='*')
+            {
+                star_matched=i;
+                star_index=j;
+                j++;
+            }
+            else if(star_matched!=-1)
+            {
+                star_matched++;
+                i=star_matched;
+                j=star_index+1;
+            }
+            else
+                return false;
+        }
+        while(j<plen && p.charAt(j)=='*')
+            j++;
+        return j==plen;
+
+    }
+
+    /*
+        279. PROBLEM DESCRIPTION (https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+    */
+    public TreeNode buildTree(int[] preorder, int[] inorder)
+    {
+        return helperin(preorder,inorder,0,0,preorder.length-1);
+    }
+    public TreeNode helperin(int[] preorder, int[] inorder, int pre_idx, int lb,int ub)
+    {
+        if(lb>ub )
+            return null;
+        TreeNode root=new TreeNode(preorder[pre_idx]);
+        if(lb==ub)
+            return root;
+        int in_idx=0;
+        for(int i=lb;i<=ub;i++)
+            if(preorder[pre_idx]==inorder[i])
+                in_idx=i;
+        root.left = helperin(preorder,inorder,pre_idx+1,lb,in_idx-1);
+        root.right = helperin(preorder,inorder,pre_idx+(in_idx-lb)+1,in_idx+1,ub);
+        return root;
+    }
+
+    /*
+        280. PROBLEM DESCRIPTION (https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+    */
+    public TreeNode buildTree1(int[] inorder, int[] postorder)
+    {
+        HashMap hmap=new HashMap<Integer,Integer>();
+        for(int i=0;i<inorder.length;i++)
+            hmap.put(inorder[i],i);
+        return helper1(inorder,postorder,inorder.length-1,0,inorder.length-1,hmap);
+    }
+    public TreeNode helper1(int[] inorder,int[] postorder,int post_idx,int lb,int ub, HashMap<Integer,Integer> hmap)
+    {
+        if(lb>ub)
+            return null;
+        TreeNode root= new TreeNode(postorder[post_idx]);
+        if(lb==ub)
+            return root;
+        int split_in=hmap.get(postorder[post_idx]);
+
+        root.right = helper1(inorder,postorder,post_idx-1,split_in+1,ub,hmap);
+        root.left = helper1(inorder,postorder,post_idx-(ub-split_in)-1,lb,split_in-1,hmap);
+        return root;
+    }
+    /*
+        281. PROBLEM DESCRIPTION (https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/)
+    */
+    public TreeNode sortedListToBST(ListNode head)
+    {
+        ListNode curr=head;
+        int count=0;
+        while(curr!=null)
+        {
+            curr=curr.next;
+            count++;
+        }
+        return helper(head,count);
+    }
+    public TreeNode helper(ListNode head, int ub)
+    {
+        if(ub==0 || head==null)
+            return null;
+        int mid=ub/2;
+        ListNode split=head;
+        for(int i=0;i<mid;i++)
+            split=split.next;
+        TreeNode root=new TreeNode(split.val);
+        root.left = helper(head,mid);
+        root.right = helper(split.next,ub-mid-1);
+        return root;
+    }
+
+    /*
+        282. PROBLEM DESCRIPTION (https://leetcode.com/problems/balanced-binary-tree/)
+    */
+    public boolean isBalanced(TreeNode root)
+    {
+        if(root==null)
+            return true;
+        return (Math.abs(helper(root.left)-helper(root.right))<2) && isBalanced(root.left) && isBalanced(root.right);
+    }
+    public int helper(TreeNode root)
+    {
+        if(root==null)
+            return 0;
+        return 1+Math.max(helper(root.left),helper(root.right));
+    }
+
+    /*
+        283. PROBLEM DESCRIPTION (https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/)
+    */
+    public Node connect(Node root) {
+        if(root==null)
+            return null;
+        List<Node> bfs_q=new ArrayList<>(),next_q;
+        bfs_q.add(root);
+        while(!bfs_q.isEmpty())
+        {
+            next_q=new ArrayList<>();
+            int len=bfs_q.size();
+            Node temp;
+            for(int i=0;i<len;i++)
+            {
+                temp=bfs_q.get(i);
+                //temp.next= (i==len-1?null:bfs_q.get(i+1));
+                //if(temp.left!=null)
+                //    next_q.add(temp.left);
+                //if(temp.right!=null)
+                //    next_q.add(temp.right);
+            }
+            bfs_q=next_q;
+        }
+        return root;
+    }
+
+    /*
+        284. PROBLEM DESCRIPTION (https://leetcode.com/problems/pascals-triangle-ii/)
+    */
+    public List<Integer> getRow(int rowIndex) {
+        List<Integer> curr = Arrays.asList(new Integer[]{1}),next;
+        for(int i=0;i<rowIndex;i++)
+        {
+            next = new ArrayList<>();
+            next.add(1);
+            for(int j=1;j<curr.size();j++)
+                next.add(curr.get(j-1)+curr.get(j));
+            next.add(1);
+            curr=next;
+        }
+        return curr;
+    }
+
+    /*
+        285. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
+    */
+    public boolean isPalindrome(String s) {
+        int start_index=0,end_index=s.length()-1;
+        while(start_index<end_index)
+        {
+            if(!Character.isAlphabetic(s.charAt(start_index)) && !Character.isDigit(s.charAt(start_index)))
+                start_index++;
+            else if(!Character.isAlphabetic(s.charAt(end_index)) && !Character.isDigit(s.charAt(end_index)))
+                end_index--;
+            else if(Character.toLowerCase(s.charAt(start_index++)) != Character.toLowerCase(s.charAt(end_index--)))
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        286. PROBLEM DESCRIPTION (https://leetcode.com/problems/insertion-sort-list/)
+    */
+    public ListNode insertionSortList(ListNode head) {
+        ListNode temp,curr=head.next,temp1,dummy=new ListNode(0);
+        dummy.next=head;
+        head.next=null;
+        while(curr!=null)
+        {
+            temp=dummy;
+            while(temp.next!=null && temp.next.val<curr.val)
+                temp=temp.next;
+            if(temp.next!=curr)
+            {
+                temp1=temp.next;
+                temp.next=curr;
+                temp=curr.next;
+                curr.next=temp1;
+                curr=temp;
+            }
+            else
+                curr = curr.next;
+
+        }
+        return dummy.next;
+    }
+
+    /*
+        287. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/)
+    */
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        int start_index=0,end_index=0,len=s.length(),result=0;
+        HashSet<Character> current=new HashSet<>();
+        HashMap<Character,Integer> position_latest=new HashMap<>();
+        while(end_index<len)
+        {
+            char c=s.charAt(end_index);
+            if(current.size()<2 || current.contains(c))
+            {
+                current.add(c);
+                position_latest.put(c,end_index++);
+                continue;
+            }
+            result=Math.max(result,end_index-start_index);
+            Integer min_pos=null;
+            Character replaced=null;
+            for(Character x:current)
+            {
+                if(min_pos==null || min_pos>position_latest.get(x))
+                {
+                    min_pos=position_latest.get(x);
+                    replaced=x;
+                }
+            }
+            position_latest.remove(replaced);
+            current.remove(replaced);
+            start_index =min_pos+1;
+        }
+        return Math.max(result,len-start_index);
+    }
+
+    /*
+        288. PROBLEM DESCRIPTION (https://leetcode.com/problems/one-edit-distance/)
+    */
+    public boolean isOneEditDistance(String s, String t) {
+        int len1=s.length(),len2=t.length(),idx=0;
+        if(Math.abs(len1-len2)>1)
+            return false;
+        if(len1>len2)
+            return isOneEditDistance(t,s);
+        if(len1==len2)
+        {
+            while(idx<len1)
+            {
+                if(s.charAt(idx)!=t.charAt(idx))
+                {
+                    idx++;
+                    while(idx<len1 && s.charAt(idx)==t.charAt(idx))
+                        idx++;
+                    if(idx==len1)
+                        return true;
+                    return false;
+                }
+                idx++;
+            }
+        }
+        else
+        {
+            while(idx<len1)
+            {
+                if(s.charAt(idx)!=t.charAt(idx))
+                {
+                    int temp=idx;
+                    while(temp<len1)
+                    {
+                        if(s.charAt(temp)!=t.charAt(temp+1))
+                            break;
+                        temp++;
+                    }
+                    if(temp==len1)
+                        return true;
+                    temp=idx+1;
+                    while(temp<len1)
+                    {
+                        if(s.charAt(temp)!=t.charAt(temp))
+                            break;
+                        temp++;
+                    }
+                    if(temp==len2)
+                        return true;
+                    return false;
+                }
+                idx++;
+            }
+        }
+        return len2-1==idx;
+    }
+
+    /*
+        289. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-right-side-view/)
+    */
+    public List<Integer> rightSideView(TreeNode root)
+    {
+        List<Integer> result=new ArrayList<>();
+        helper(root,result,0);
+        return result;
+    }
+    public void helper(TreeNode root,List<Integer> result,int level)
+    {
+        if(root==null)
+            return;
+        if(level==result.size())
+            result.add(root.val);
+        helper(root.right,result,level+1);
+        helper(root.left,result,level+1);
+    }
+
+    /*
+        290. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-linked-list-elements/)
+    */
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode dummy=new ListNode(0),curr=dummy;
+        dummy.next=head;
+        while(curr!=null && curr.next!=null)
+        {
+            if(curr.next.val==val)
+                curr.next=curr.next.next;
+            else
+                curr = curr.next;
+        }
+        return dummy.next;
+    }
+
+    /*
+        291. PROBLEM DESCRIPTION (https://leetcode.com/problems/course-schedule-ii/)
+    */
+    public int[] findOrder(int numCourses, int[][] prerequisites)
+    {
+        boolean isCycle[]=new boolean[numCourses],isVisited[]=new boolean[numCourses];
+        List<Integer> result=new ArrayList<>(),final_list=new ArrayList<>();
+        HashMap<Integer,List<Integer>> hmap=new HashMap<>();
+        int order[]=new int[numCourses],top=0;
+        for(int i=0;i<numCourses;i++)
+            hmap.put(i,new ArrayList<>());
+        for(int p[]:prerequisites)
+            hmap.get(p[1]).add(p[0]);
+
+        for(int i=0;i<numCourses;i++)
+        {
+            if(!helper(i,hmap,result,isVisited,isCycle))
+                return new int[]{};
+
+        }
+        for(int i=0;i<numCourses;i++)
+            order[i]=result.get(numCourses-i-1);
+        return order;
+    }
+    public boolean helper(int cur_node,HashMap<Integer,List<Integer>> hmap,List<Integer> result, boolean[] isVisited,boolean[] isCycle)
+    {
+        if(isVisited[cur_node])
+            return true;
+        if(isCycle[cur_node])
+            return false;
+        isCycle[cur_node]=true;
+        for(Integer adj:hmap.get(cur_node))
+        {
+            if(!helper(adj,hmap,result,isVisited,isCycle))
+                return false;
+        }
+        result.add(cur_node);
+        isVisited[cur_node]=true;
+        return true;
+    }
+
+    /*
+        292. PROBLEM DESCRIPTION (https://leetcode.com/problems/word-search-ii/)
+    */
+    public class TrieNode1
+    {
+        char val;
+        boolean isEnd;
+        HashMap<Character, TrieNode1> children = new HashMap<>();
+        public TrieNode1(char c,boolean flag)
+        {
+            val=c;
+            isEnd= flag;
+        }
+        public TrieNode1 checkandAdd(char c,boolean flag)
+        {
+            TrieNode1 next_node= check(c);
+            if(next_node!=null)
+            {
+                next_node.isEnd= next_node.isEnd || flag;
+                return next_node;
+            }
+            TrieNode1 new_node=new TrieNode1(c,flag);
+            children.put(c,new_node);
+            return new_node;
+        }
+        public TrieNode1 check(char c)
+        {
+            return children.getOrDefault(c,null);
+        }
+        public void delete(String s)
+        {
+            TrieNode1 temp=this;
+            for(int i=0;i<s.length();i++)
+            {
+                TrieNode1 next=temp.check(s.charAt(i));
+                if(temp.children.size()==1)
+                {
+                    temp.children.remove(0);
+                    return;
+                }
+                temp=next;
+            }
+        }
+    }
+    TrieNode1 root;
+    public List<String> findWords(char[][] board, String[] words)
+    {
+        List<String> result=new ArrayList<>();
+        m=board.length;
+        n=board[0].length;
+        root=new TrieNode1('$',false);
+        TrieNode1 next;
+        for(String w:words)
+        {
+            next=root;
+            int len=w.length();
+            for(int i=0;i<len;i++)
+            {
+                char c=w.charAt(i);
+                if(i==len-1)
+                    next=next.checkandAdd(c,true);
+                else
+                    next=next.checkandAdd(c,false);
+
+            }
+        }
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                helper(board,i,j,root,new StringBuffer(),result);
+            }
+        }
+        return result;
+    }
+    public void helper(char board[][],int row,int col,TrieNode1 cur_node,StringBuffer sb,List<String> result)
+    {
+        sb.append(board[row][col]);
+        //System.out.println(board[row][col]+" "+sb.toString()+" "+cur_node.val+" "+cur_node.children.size());
+        TrieNode1 next= cur_node.check(board[row][col]);
+        if(next!=null)
+        {
+            if(next.isEnd)
+            {
+                result.add(sb.toString());
+                next.isEnd=false;
+            }
+            char original=board[row][col];
+            board[row][col]='#';
+            for(int d[]:dir)
+            {
+                int nr=d[0]+row, nc=col+d[1];
+                if(nr>-1 && nr<m && nc>-1 && nc<n)
+                    helper(board,nr,nc,next,sb,result);
+            }
+            board[row][col]=original;
+        }
+        sb.deleteCharAt(sb.length()-1);
+    }
+
+    /*
+        293. PROBLEM DESCRIPTION (https://leetcode.com/problems/power-of-two/)
+    */
+    public boolean isPowerOfTwo(int n) {
+        if(n==0)
+            return false;
+        if(n==1)
+            return true;
+        return n%2==0 && isPowerOfTwo(n/2);
+    }
+
+    /*
+        294. PROBLEM DESCRIPTION (https://leetcode.com/problems/shortest-word-distance/)
+    */
+    public int shortestDistance(String[] wordsDict, String word1, String word2) {
+        Integer pos1=null,pos2=null;
+        int result=wordsDict.length;
+        for(int i=0;i<wordsDict.length;i++)
+        {
+            if(word1.equals(wordsDict[i]) || word2.equals(wordsDict[i]))
+            {
+                if(word1.equals(wordsDict[i]))
+                    pos1=i;
+                else if(word2.equals(wordsDict[i]))
+                    pos2=i;
+                if(pos1!=null && pos2!=null)
+                    result=Math.min(result,Math.abs(pos1-pos2));
+            }
+        }
+        return result;
+    }
+
+    /*
+        295. PROBLEM DESCRIPTION (https://leetcode.com/problems/group-shifted-strings/)
+    */
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> result=new ArrayList<>();
+        HashMap<String,List<String>> hmap=new HashMap<>();
+        for(String s:strings)
+        {
+            int prev=s.charAt(0);
+            StringBuffer sb= new StringBuffer();
+            for(int i=1;i<s.length();i++)
+                sb.append((char)((prev-s.charAt(i)+26)%26));
+            String hashcode= sb.toString();
+            if(!hmap.containsKey(hashcode))
+                hmap.put(hashcode,new ArrayList<>());
+            hmap.get(hashcode).add(s);
+        }
+        for(List<String> sets:hmap.values())
+            result.add(sets);
+        return result;
+    }
+
+    /*
+        296. PROBLEM DESCRIPTION (https://leetcode.com/problems/strobogrammatic-number/)
+    */
+    public boolean isStrobogrammatic(String num) {
+        HashMap<Character,Character> hmap=new HashMap<>();
+        hmap.put('0','0');
+        hmap.put('6','9');
+        hmap.put('9','6');
+        hmap.put('8','8');
+        hmap.put('1','1');
+        int len=num.length();
+        for(int i=0;i<=len/2;i++)
+        {
+            char f_c=num.charAt(i), r_c=num.charAt(len-i-1);
+            if(!hmap.getOrDefault(f_c,'%').equals(r_c))
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        297. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-univalue-subtrees/)
+    */
+    public int countUnivalSubtrees(TreeNode root)
+    {
+        result=0;
+        helper5(root);
+        return result;
+    }
+    public int helper5(TreeNode root)
+    {
+        if(root==null)
+            return 1001;
+        int left_val=helper5(root.left),right_val=helper5(root.right);
+        if((left_val==1001 || left_val==root.val) && (right_val==1001 || right_val==root.val))
+        {
+            result++;
+            return root.val;
+        }
+        return -1001;
+    }
+
+    /*
+        298. PROBLEM DESCRIPTION (https://leetcode.com/problems/factor-combinations/)
+    */
+    public List<List<Integer>> getFactors(int n)
+    {
+        List<List<Integer>> result=new ArrayList<>();
+        if(n==1)
+            return result;
+        helper(result,2,n,new ArrayList<>());
+        return result;
+    }
+    public void helper(List<List<Integer>> result,int start,int n,List<Integer> cur_list)
+    {
+        if(n<=1)
+        {
+            if(cur_list.size()>1)
+                result.add(new ArrayList<>(cur_list));
+            return;
+        }
+        for(int i=start;i<=n;i++)
+        {
+            if(n%i==0)
+            {
+                cur_list.add(i);
+                helper(result,i,n/i,cur_list);
+                cur_list.remove(cur_list.size()-1);
+            }
+        }
+    }
+
+    /*
+        299. PROBLEM DESCRIPTION (https://leetcode.com/problems/meeting-rooms/)
+    */
+    public boolean canAttendMeetings(int[][] intervals) {
+        Arrays.sort(intervals,(a,b)->(a[0]-b[0]));
+        for(int i=1;i<intervals.length;i++)
+        {
+            if(intervals[i][0]<intervals[i-1][1])
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        300. PROBLEM DESCRIPTION (https://leetcode.com/problems/paint-house/)
+    */
+    public int minCost(int[][] costs) {
+        int len=costs.length,dp_prev[]=new int[3],dp_next[];
+        for(int i=0;i<len;i++)
+        {
+            dp_next=new int[3];
+            dp_next[0] = Math.min(dp_prev[1],dp_prev[2])+costs[i][0];
+            dp_next[1] = Math.min(dp_prev[0],dp_prev[2])+costs[i][1];
+            dp_next[2] = Math.min(dp_prev[0],dp_prev[1])+costs[i][2];
+            dp_prev=dp_next;
+        }
+        return Math.min(Math.min(dp_prev[0],dp_prev[1]),dp_prev[2]);
+    }
+
+    /*
+        301. PROBLEM DESCRIPTION (https://leetcode.com/problems/add-digits/)
+    */
+    public int addDigits(int num)
+    {
+        int sum;
+        while(num>9)
+        {
+            sum=0;
+            while(num!=0)
+            {
+                sum+=num%10;
+                num/=10;
+            }
+            num=sum;
+        }
+        return num;
+    }
+
+    /*
+        302. PROBLEM DESCRIPTION (https://leetcode.com/problems/graph-valid-tree/)
+    */
+    public boolean validTree(int n, int[][] edges)
+    {
+        HashSet<Integer> hset[]=new HashSet[n];
+        for(int i=0;i<n;i++)
+            hset[i] = new HashSet<>();
+        for(int e[]:edges)
+        {
+            hset[e[0]].add(e[1]);
+            hset[e[1]].add(e[0]);
+        }
+        boolean isVisited[]=new boolean[n], isCycle[]=new boolean[n];
+        if(helper(0,hset,isVisited,isCycle))
+            return false;
+        for(int i=0;i<n;i++)
+        {
+            if(!isCycle[i])
+                return false;
+        }
+        return true;
+    }
+    public boolean helper(int cur_node,HashSet<Integer>[] hset, boolean isVisited[], boolean isCycle[])
+    {
+        if(isCycle[cur_node])
+            return true;
+        if(isVisited[cur_node])
+            return false;
+        isVisited[cur_node]=true;
+        for(Integer adj:hset[cur_node])
+        {
+            if(helper(adj,hset,isVisited,isCycle))
+                return true;
+        }
+        isCycle[cur_node]=true;
+        return false;
+    }
+
+    /*
+        303. PROBLEM DESCRIPTION (https://leetcode.com/problems/ugly-number-ii/)
+    */
+    public int nthUglyNumber(int n)
+    {
+        int prime[] ={2,3,5},result[]=new int[n], idx[]=new int[3];
+        result[0]=1;
+        for(int i=1;i<n;i++)
+        {
+            int next_num=Integer.MAX_VALUE;
+            for(int j=0;j<3;j++)
+            {
+                if(result[i-1]==prime[j]*result[idx[j]])
+                    idx[j]++;
+                next_num=Math.min(next_num,result[idx[j]]*prime[j]);
+            }
+            result[i]=next_num;
+        }
+        return result[n-1];
+    }
+
+    /*
+        304. PROBLEM DESCRIPTION (https://leetcode.com/problems/palindrome-permutation/)
+    */
+    public boolean canPermutePalindrome(String s) {
+        int count[]=new int[26];
+        boolean odd=false;
+        for(char c:s.toCharArray())
+            count[c-'a']++;
+        for(int i=0;i<26;i++)
+        {
+            if(count[i]%2!=0)
+            {
+                if(odd)
+                    return false;
+                odd=true;
+            }
+        }
+        return true;
+    }
+
+    /*
+        305. PROBLEM DESCRIPTION (https://leetcode.com/problems/paint-house-ii/)
+    */
+    public int minCostII(int[][] costs)
+    {
+        int n=costs.length,k=costs[0].length,dp_prev[]=costs[0],dp_next[],min_index_prev=0;
+        for(int i=1;i<k;i++)
+            if(dp_prev[i]<dp_prev[min_index_prev])
+                min_index_prev=i;
+        for(int i=1;i<n;i++)
+        {
+            int next_min=0;
+            dp_next=new int[k];
+            for(int j=0;j<k;j++)
+            {
+                if(min_index_prev==j)
+                {
+                    int curr_min= min_index_prev==0?1:0;
+                    for(int x=0;x<k;x++)
+                    {
+                        if(x==j)
+                            continue;
+                        if(dp_prev[curr_min]>dp_prev[x])
+                            curr_min=x;
+                    }
+                    dp_next[j] = dp_prev[curr_min]+costs[i][j];
+                }
+                else
+                    dp_next[j]=dp_prev[min_index_prev]+costs[i][j];
+                if(dp_next[j]<dp_next[next_min])
+                    next_min=j;
+            }
+            min_index_prev=next_min;
+            dp_prev=dp_next;
+        }
+        return dp_prev[min_index_prev];
+    }
+
+    /*
+        306. PROBLEM DESCRIPTION (https://leetcode.com/problems/closest-binary-search-tree-value/)
+    */
+    //int result;
+    public int closestValue(TreeNode root, double target)
+    {
+        result=root.val;
+        helper(root,target);
+        return result;
+    }
+    public void helper(TreeNode root,double target)
+    {
+        if(root==null)
+            return;
+        if(Math.abs(target-root.val)<Math.abs(target-result))
+            result=root.val;
+        if(root.val>target)
+            helper(root.left,target);
+        else
+            helper(root.right,target);
+    }
+
+    /*
+        307. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-the-celebrity/)
+    */
+    public boolean knows(int x,int y)
+    {
+        return true;
+    }
+    public int findCelebrity(int n) {
+        int celebrity=0;
+        for(int i=1;i<n;i++)
+            if(knows(celebrity,i))
+                celebrity=i;
+        for(int i=0;i<n;i++)
+        {
+            if(i==celebrity)
+                continue;
+            if(!knows(i,celebrity) || knows(celebrity,i))
+                return -1;
+        }
+        return celebrity;
+    }
+
+    /*
+        308. PROBLEM DESCRIPTION (https://leetcode.com/problems/greatest-english-letter-in-upper-and-lower-case/)
+    */
+    public String greatestLetter(String s)
+    {
+        HashSet<Character> hset_lower=new HashSet<>();
+        HashSet<Character> hset_upper=new HashSet<>();
+        int len=s.length();
+        int result=-1;
+        for(int i=len-1;i>=0;i--)
+        {
+            char c=s.charAt(i);
+            if(Character.isLowerCase(c))
+            {
+                hset_lower.add(c);
+                if(hset_upper.contains((char)(c-32)))
+                    result=Math.max(result,c-32);
+            }
+            else
+            {
+                hset_upper.add(c);
+                if(hset_lower.contains((char)(c+32)))
+                    result=Math.max(result,c);
+            }
+        }
+        return ""+(result==-1?"":(char)(result));
+    }
+
+    /*
+        309. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-numbers-with-units-digit-k/)
+    */
+    public int minimumNumbers(int num, int k)
+    {
+        if(num==0 && k==0)
+            return 0;
+        int dp[]=new int[num+2];
+        Arrays.fill(dp,num+2);
+        dp[0]=0;
+        if(k<=num)
+            dp[k]=1;
+        for(int i=1;i<=num;i++)
+        {
+            if(i%10==k)
+            {
+                dp[i]=1;
+                continue;
+            }
+            for(int j=k;j<i;j+=10)
+                dp[i] = Math.min(dp[i],dp[i-j]+dp[j]);
+        }
+        return dp[num]==num+2?-1:dp[num];
+    }
+
+    /*
+        310. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-binary-subsequence-less-than-or-equal-to-k/)
+    */
+    public int longestSubsequence(String s, int k)
+    {
+        int start_index=-1,len=s.length(),curr_num=0,result=0,count_zeros=0;
+        for(int i=0;i<len;i++)
+        {
+            char c=s.charAt(i);
+            curr_num = curr_num*2+(c=='1'?1:0);
+            while( start_index<i && curr_num>k)
+            {
+                start_index++;
+                if(s.charAt(start_index)=='1')
+                    curr_num -= (1<<(i-start_index));
+                else
+                    count_zeros++;
+            }
+            result=Math.max(result,i-start_index+count_zeros);
+        }
+        return result;
+    }
+
+    /*
+        311. PROBLEM DESCRIPTION (https://leetcode.com/problems/selling-pieces-of-wood/)
+    */
+    public long sellingWood(int m, int n, int[][] prices)
+    {
+        HashMap<Integer,HashMap<Integer,Integer>> hmap=new HashMap<>();
+        long memo[][]=new long[m+1][n+1];
+        for(int i=0;i<=m;i++)
+            Arrays.fill(memo[i],-1);
+        for(int p[]:prices)
+        {
+            if(!hmap.containsKey(p[0]))
+                hmap.put(p[0],new HashMap<Integer,Integer>());
+            hmap.get(p[0]).put(p[1],p[2]);
+        }
+
+        return helper(m,n,hmap,memo);
+    }
+    public long helper(int m,int n,HashMap<Integer,HashMap<Integer,Integer>> hmap,long[][] memo)
+    {
+        if(memo[m][n]!=-1)
+            return memo[m][n];
+        long cur_val=0;
+        if(hmap.containsKey(m) && hmap.get(m).containsKey(n))
+            cur_val=hmap.get(m).get(n);
+        for(int i=1;i<m;i++)
+            cur_val = Math.max(cur_val,helper(m-i,n,hmap,memo)+helper(i,n,hmap,memo));
+        for(int i=1;i<n;i++)
+            cur_val = Math.max(cur_val,helper(m,i,hmap,memo)+helper(m,n-i,hmap,memo));
+        memo[m][n] =cur_val;
+        return cur_val;
+    }
+
+    /*
+        312. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-path-cost-in-a-grid/)
+    */
+    public int minPathCost(int[][] grid, int[][] moveCost)
+    {
+        int m=grid.length,n=grid[0].length,dp_prev[]=new int[n],dp_next[];
+        for(int i=0;i<n;i++)
+            dp_prev[i]=grid[0][i];
+        for(int i=0;i<m-1;i++)
+        {
+            dp_next=new int[n];
+            Arrays.fill(dp_next,-1);
+            for(int j=0;j<n;j++)
+            {
+                int cur_sum;
+                for(int k=0;k<n;k++)
+                {
+                    cur_sum= dp_prev[j]+ grid[i+1][k]+moveCost[grid[i][j]][k];
+                    if(dp_next[k]==-1 || dp_next[k]>cur_sum)
+                        dp_next[k]=cur_sum;
+                }
+            }
+            dp_prev=dp_next;
+        }
+        int result=dp_prev[0];
+        for(int i=1;i<n;i++)
+            result=Math.min(result,dp_prev[i]);
+        return result;
+    }
+
+    /*
+        313. PROBLEM DESCRIPTION (https://leetcode.com/problems/calculate-amount-paid-in-taxes/)
+    */
+    public double calculateTax(int[][] brackets, int income)
+    {
+        double tax=Math.min(brackets[0][0],income)*brackets[0][1]/100.0;
+        for(int i=1;i<brackets.length && income>=brackets[i-1][0];i++)
+        {
+            tax += (Math.min(income,brackets[i][0])-brackets[i-1][0])*brackets[i][1]/100.0;
+        }
+        return tax;
+    }
+
+    /*
+        314. PROBLEM DESCRIPTION (https://leetcode.com/problems/naming-a-company/)
+    */
+    public long distinctNames(String[] ideas)
+    {
+        long result=0;
+        HashSet<Integer>[] hset=new HashSet[26];
+        for(int i=0;i<26;i++)
+            hset[i] =new HashSet<>();
+        for(String s:ideas)
+            hset[s.charAt(0)-'a'].add(s.substring(1).hashCode());
+        for(int i=0;i<26;i++)
+        {
+            for(int j=i+1;j<26;j++)
+            {
+                long first_set=0, second_set=0;
+                for(Integer c:hset[i])
+                    if(!hset[j].contains(c))
+                        first_set++;
+                for(Integer c:hset[j])
+                    if(!hset[i].contains(c))
+                        second_set++;
+                result+= first_set*second_set;
+            }
+        }
+        return result*2;
+    }
+
+    /*
+        315. PROBLEM DESCRIPTION (https://leetcode.com/problems/fair-distribution-of-cookies/)
+    */
+    int minimum_unfairness,len;
+    public int distributeCookies(int[] cookies, int k)
+    {
+        minimum_unfairness=-1;
+        Arrays.sort(cookies);
+        len=k;
+        helper(cookies,0,new int[k+1]);
+        return minimum_unfairness;
+    }
+    public void helper(int[] cookies,int cur,int sum[])
+    {
+        int cur_uniqueness = sum[len];
+        if(cur_uniqueness>minimum_unfairness && minimum_unfairness!=-1)
+            return;
+        if(cur==cookies.length)
+        {
+            minimum_unfairness=cur_uniqueness;
+            return;
+        }
+        for(int i=0;i<len;i++)
+        {
+            sum[i]+=cookies[cur];
+            int prev_max=sum[len];
+            if(sum[i]>sum[len])
+                sum[len]=sum[i];
+            helper(cookies,cur+1,sum);
+            sum[len] = prev_max;
+            sum[i] -= cookies[cur];
+        }
+    }
+    /*
+        316. PROBLEM DESCRIPTION (https://leetcode.com/problems/design-a-text-editor/)
+    */
+    class TextEditor {
+
+        StringBuffer sb;
+        int cursor_pos;
+        public TextEditor() {
+            sb=new StringBuffer();
+            cursor_pos=0;
+        }
+
+        public void addText(String text) {
+            sb.insert(cursor_pos,text);
+            cursor_pos+=text.length();
+        }
+
+        public int deleteText(int k) {
+            sb.delete(Math.max(0,cursor_pos-k),cursor_pos);
+            int deleted = cursor_pos;
+            cursor_pos= Math.max(0,cursor_pos-k);
+            return deleted-cursor_pos;
+        }
+
+        public String cursorLeft(int k) {
+            cursor_pos = Math.max(0,cursor_pos-k);
+            return sb.substring(cursor_pos-Math.min(10,cursor_pos),cursor_pos).toString();
+        }
+
+        public String cursorRight(int k) {
+            cursor_pos = Math.min(sb.length(),cursor_pos+k);
+            return sb.substring(cursor_pos-Math.min(10,cursor_pos),cursor_pos).toString();
+        }
+    }
+
+    /*
+        317. PROBLEM DESCRIPTION (https://leetcode.com/problems/replace-elements-in-an-array/)
+    */
+    public int[] arrayChange(int[] nums, int[][] operations) {
+        HashMap<Integer,Integer> hmap=new HashMap<>();
+        int result=0;
+        for(int i=operations.length-1;i>-1;i--)
+        {
+            if(!hmap.containsKey(operations[i][1]))
+                hmap.put(operations[i][0],operations[i][1]);
+            else
+                hmap.put(operations[i][0],hmap.get(operations[i][1]));
+        }
+        for(int i=0;i<nums.length;i++)
+            nums[i] = hmap.getOrDefault(nums[i],nums[i]);
+        return nums;
+    }
+
+    /*
+        318. PROBLEM DESCRIPTION (https://leetcode.com/problems/partition-array-such-that-maximum-difference-is-k/)
+    */
+    public int partitionArray(int[] nums, int k)
+    {
+        Arrays.sort(nums);
+        int min=nums[0],len=nums.length,result=0,i=0;
+        while(i<len)
+        {
+            int curr=nums[i];
+            while(i<len && nums[i]-curr<=k)
+                i++;
+            result++;
+        }
+        return result;
+    }
+
+    /*
+        319. PROBLEM DESCRIPTION (https://leetcode.com/problems/min-max-game/)
+    */
+    public int minMaxGame(int[] nums)
+    {
+        int n=nums.length;
+        while(n!=1)
+        {
+            int next[] = new int[n/2];
+            for(int i=0;i<n/2;i++)
+            {
+                if(i%2==0)
+                    next[i] = Math.min(nums[2*i],nums[2*i+1]);
+                else
+                    next[i] = Math.max(nums[2*i],nums[2*i+1]);
+            }
+            nums=next;
+            n/=2;
+        }
+        return nums[0];
+    }
+
+    /*
+        320. PROBLEM DESCRIPTION (https://leetcode.com/problems/strong-password-checker-ii/)
+    */
+    public boolean strongPasswordCheckerII(String password)
+    {
+        if(password.length()<8)
+            return false;
+        boolean lower=false,upper=false,digit=false,special=false;;
+        HashSet<Character> special_set=new HashSet<>(Arrays.asList(new Character[]{'!','@','#','$','%','^','&','*','(',')','-','+'}));
+        char prev=' ';
+        for(char c:password.toCharArray())
+        {
+            if(prev!=' ' && prev==c)
+                return false;
+            prev=c;
+            if(Character.isLowerCase(c))
+                lower=true;
+            if(Character.isUpperCase(c))
+                upper=true;
+            if(special_set.contains(c))
+                special=true;
+            if(Character.isDigit(c))
+                digit=true;
+        }
+        return digit&&lower&&upper&&special;
+    }
+
+    /*
+        321. PROBLEM DESCRIPTION (https://leetcode.com/problems/successful-pairs-of-spells-and-potions/)
+    */
+    public int[] successfulPairs(int[] spells, int[] potions, long success)
+    {
+        Arrays.sort(potions);
+        int spell_mod[][]=new int[spells.length][2];
+        for(int i=0;i<spells.length;i++)
+        {
+            spell_mod[i][0]= spells[i];
+            spell_mod[i][1]= i;
+        }
+        Arrays.sort(spell_mod,(a,b)->(a[0]-b[0]));
+
+        int potion_idx=0,plen=potions.length,result[]=new int[spells.length];
+        for(int i=spells.length-1;i>=0 && potion_idx<plen;i--)
+        {
+            while(potion_idx<plen && (long)(spell_mod[i][0])*potions[potion_idx]<success)
+                potion_idx++;
+            result[spell_mod[i][1]] += (plen-potion_idx);
+        }
+        return result;
+    }
+
+    /*
+        322. PROBLEM DESCRIPTION (https://leetcode.com/problems/match-substring-after-replacement/)
+    */
+    public boolean matchReplacement(String s, String sub, char[][] mappings)
+    {
+        HashMap<Character,HashSet<Character>> hmap=new HashMap<>();
+        for(char[] m:mappings)
+        {
+            if(!hmap.containsKey(m[0]))
+                hmap.put(m[0],new HashSet<>());
+            hmap.get(m[0]).add(m[1]);
+        }
+        HashMap<Character,HashSet<Character>> visited=new HashMap<>();
+        return helper(s.toCharArray(),0,sub.toCharArray(),0,hmap,visited);
+    }
+    public boolean helper(char s[],int s_idx,char sub[],int sub_idx,HashMap<Character,HashSet<Character>> hmap, HashMap<Character,HashSet<Character>> visited)
+    {
+        if(sub_idx==sub.length)
+            return true;
+        if(s_idx==s.length)
+            return false;
+
+        if(s[s_idx]==sub[sub_idx] || (visited.containsKey(sub[sub_idx]) && visited.get(sub[sub_idx]).contains(s[s_idx])))
+        {
+            if(helper(s,s_idx+1,sub,sub_idx+1,hmap,visited))
+                return true;
+        }
+        else if(hmap.containsKey(sub[sub_idx]) && hmap.get(sub[sub_idx]).contains(s[s_idx]))
+        {
+            hmap.get(sub[sub_idx]).remove(s[s_idx]);
+            if(!visited.containsKey(sub[sub_idx]))
+                visited.put(sub[sub_idx],new HashSet<>());
+            visited.get(sub[sub_idx]).add(s[s_idx]);
+            if(helper(s,s_idx+1,sub,sub_idx+1,hmap,visited))
+                return true;
+            visited.get(sub[sub_idx]).remove(s[s_idx]);
+            hmap.get(sub[sub_idx]).add(s[s_idx]);
+        }
+
+        if(sub_idx==0)
+        {
+            if(helper(s,s_idx+1,sub,0,hmap,visited))
+                return true;
+        }
+        return false;
+    }
+
+    /*
+        323. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-subarrays-with-score-less-than-k/)
+    */
+    public long countSubarrays(int[] nums, long k)
+    {
+        long result=0,cur_sum=0;
+        int end_idx=0,len=nums.length;
+        for(int i=0;i<len;i++)
+        {
+            while(end_idx<len && (long)(cur_sum+nums[end_idx])*(end_idx-i+1)<k)
+                cur_sum += nums[end_idx++];
+            cur_sum-=nums[i];
+            result += (end_idx-i);
+        }
+        return result;
+    }
+
+    /*
+        324. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-number-of-ways-to-place-houses/)
+    */
+    public int countHousePlacements(int n)
+    {
+        long dp[]=new long[n+1];
+        dp[0]=1;
+        for(int i=1;i<=n;i++)
+        {
+            dp[i]=((i==1?1:dp[i-2])+dp[i-1])%1000000007;
+        }
+        return (int)((dp[n]%1000000007 * dp[n]%1000000007 )%1000000007);
+    }
+
+    /*
+        325. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-score-of-spliced-array/)
+    */
+    public int maximumsSplicedArray(int[] nums1, int[] nums2)
+    {
+        return Math.max(helper(nums2,nums1),helper(nums1,nums2));
+    }
+    public int helper(int nums1[],int nums2[])
+    {
+        int n=nums1.length,prev1=0,start_idx=0,result=-1,sum=0;
+        for(int i=0;i<n;i++)
+        {
+            sum+=nums2[i];
+            prev1 += nums1[i]-nums2[i];
+            while(prev1<0)
+            {
+                prev1 += nums2[start_idx]-nums1[start_idx++];
+            }
+            if(prev1>result)
+                result=prev1;
+        }
+        return sum+result;
+    }
+
+    /*
+        326. PROBLEM DESCRIPTION (https://leetcode.com/problems/check-if-matrix-is-x-matrix/)
+    */
+    public boolean checkXMatrix(int[][] grid)
+    {
+        int n=grid.length;
+        for(int i=0;i<n;i++)
+        {
+            if(grid[i][i]==0 || grid[i][n-i-1]==0)
+                return false;
+            for(int j=0;j<n;j++)
+            {
+                if(j==i || j==n-i-1)
+                    continue;
+                if(grid[i][j]!=0)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+        327. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-score-after-removals-on-a-tree/)
+    */
+
+
+    /*
+        328. PROBLEM DESCRIPTION (https://leetcode.com/problems/steps-to-make-array-non-decreasing/)
+    */
+    public int totalSteps(int[] nums)
+    {
+        int len=nums.length,result=0,mystck[]=new int[len],top=-1;
+        Stack<int[]> stck=new Stack<>();
+        stck.push(new int[]{0,0});
+        for(int i=1;i<len;i++)
+        {
+            int removed=0;
+            while(!stck.isEmpty() && nums[stck.peek()[0]]<=nums[i])
+            {
+                removed=Math.max(removed,stck.pop()[1]);
+            }
+            if(stck.isEmpty())
+                removed=0;
+            else
+                removed++;
+            stck.push(new int[]{i,removed});
+            result=Math.max(result,removed);
+        }
+        return result;
+    }
+
+    /*
+        329. PROBLEM DESCRIPTION (https://leetcode.com/problems/apply-discount-to-prices/)
+    */
+    public String discountPrices(String sentence, int discount)
+    {
+        sentence = sentence+" ";
+        StringBuffer result=new StringBuffer();
+        int idx=0,len=sentence.length();
+        char sArr[]=sentence.toCharArray();
+        while(idx<len)
+        {
+            StringBuffer sb=new StringBuffer();
+            while(sArr[idx]!=' ')
+                sb.append(sArr[idx++]);
+            result.append(' ');
+            if(sb.charAt(0)=='$')
+            {
+                double value=0;
+                try{
+                    value=Long.parseLong(sb.substring(1));
+                    value *= (100.0-discount)/100.0;
+                    result.append('$');
+                    result.append(String.format("%.2f",value));
+                }
+                catch(Exception e){
+                    result.append(sb);
+                }
+            }
+            else
+                result.append(sb);
+            idx++;
+        }
+        return result.toString().trim();
+    }
+    /*
+        329. PROBLEM DESCRIPTION (https://leetcode.com/problems/rearrange-characters-to-make-target-string/)
+    */
+    public int rearrangeCharacters(String s, String target)
+    {
+        HashMap<Character,Integer> hmap=new HashMap<>();
+        HashMap<Character,Integer> contains=new HashMap<>();
+        int result=Integer.MAX_VALUE;
+        for(char c:s.toCharArray())
+            hmap.put(c,hmap.getOrDefault(c,0)+1);
+        for(char c:target.toCharArray())
+            contains.put(c,contains.getOrDefault(c,0)+1);
+        for(Character c: contains.keySet())
+        {
+            result=Math.min(result,hmap.getOrDefault(c,0)/contains.get(c));
+        }
+        return result;
+    }
+    /*
+        330. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-obstacle-removal-to-reach-corner/)
+    */
+    public int minimumObstacles(int[][] grid)
+    {
+        m=grid.length;n=grid[0].length;
+        Deque<int[]> myq=new LinkedList<>();
+        myq.add(new int[]{0,0});
+        int level=0;
+        while(!myq.isEmpty())
+        {
+            for(int i=myq.size();i>0;i--)
+            {
+                int x[]=myq.removeFirst();
+                grid[x[0]][x[1]]=0;
+                if(helper(x,myq,grid))
+                    return level;
+            }
+            level++;
+        }
+        return m*n;
+    }
+    public boolean helper(int x[],Deque mylist,int[][] grid)
+    {
+        if(x[0]<0 || x[1]<0 || x[0]>=m || x[1]>=n || grid[x[0]][x[1]]==-1)
+            return false;
+        int cur_row=x[0], cur_col=x[1];
+        if(grid[x[0]][x[1]]==1)
+        {
+            mylist.addLast(new int[]{x[0],x[1]});
+            grid[x[0]][x[1]]=-1;
+            return false;
+        }
+        if(x[0]+x[1]==m+n-2)
+            return true;
+        grid[x[0]][x[1]]=-1;
+        return helper(new int[]{cur_row+1,cur_col},mylist,grid) || helper(new int[]{cur_row-1,cur_col},mylist,grid) || helper(new int[]{cur_row,cur_col+1},mylist,grid) || helper(new int[]{cur_row,cur_col-1},mylist,grid);
+    }
+
+    /*
+        331. PROBLEM DESCRIPTION (https://leetcode.com/problems/decode-the-message/)
+    */
+    public String decodeMessage(String key, String message)
+    {
+        char subs[]=new char[26];
+        int idx=0;
+        for(char c:key.toCharArray())
+        {
+            if(c==' ')
+                continue;
+            if(subs[c-'a']==0)
+                subs[c-'a']=(char)('a'+idx++);
+        }
+        StringBuffer sb=new StringBuffer();
+        for(char c:message.toCharArray())
+        {
+            if(Character.isLetter(c))
+                sb.append(subs[c-'a']);
+            else
+                sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /*
+        332. PROBLEM DESCRIPTION (https://leetcode.com/problems/spiral-matrix-iv/)
+    */
+    public int[][] spiralMatrix(int m, int n, ListNode head)
+    {
+        int result[][]=new int[m][n],row=0,col=0,level=0;
+        while(col!=n-level)
+        {
+            while(col<n-level)
+            {
+                result[row][col++]= (head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            col--;
+            row++;
+            if(row==m-level)
+                break;
+            while(row<m-level)
+            {
+                result[row++][col]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+
+            row--;
+            col--;
+            if(col<level)
+                break;
+            while(col>=level)
+            {
+                result[row][col--]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            col++;
+            row--;
+            if(row<level)
+                break;
+            while(row>level)
+            {
+                result[row--][col]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            row++;
+            col++;
+            level++;
+        }
+        return result;
+    }
+
+    /*
+        333. PROBLEM DESCRIPTION (https://leetcode.com/problems/spiral-matrix-iv/)
+    */
+    public int[][] spiralMatrix2(int m, int n, ListNode head)
+    {
+        int result[][]=new int[m][n],row=0,col=0,level=0;
+        while(col!=n-level)
+        {
+            while(col<n-level)
+            {
+                result[row][col++]= (head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            col--;
+            row++;
+            if(row==m-level)
+                break;
+            while(row<m-level)
+            {
+                result[row++][col]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+
+            row--;
+            col--;
+            if(col<level)
+                break;
+            while(col>=level)
+            {
+                result[row][col--]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            col++;
+            row--;
+            if(row<level)
+                break;
+            while(row>level)
+            {
+                result[row--][col]=(head==null?-1:head.val);
+                if(head!=null)
+                    head=head.next;
+            }
+            row++;
+            col++;
+            level++;
+        }
+        return result;
+    }
+
+    /*
+        334. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-people-aware-of-a-secret/)
+    */
+    public int peopleAwareOfSecret(int n, int delay, int forget)
+    {
+        long dp[]=new long[1001],current_people=2,modval=1000000007;
+        dp[0]=1;
+        dp[delay] = 1;
+        for(int i=delay+1;i<n;i++)
+        {
+            dp[i] = (dp[i-1] + modval+ dp[i-delay]- (i-forget<0?0:dp[i-forget]))%modval;
+            current_people = (current_people + modval+ dp[i] - (i-forget<0?0:dp[i-forget]))%modval;
+        }
+        return (int)current_people;
+    }
+
+    /*
+        334. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-people-aware-of-a-secret/)
+    */
+    int modval=1000000007;
+    public int countPaths(int[][] grid)
+    {
+        m=grid.length;
+        n=grid[0].length;
+        int dp_paths[][]=new int[m][n],result=0;
+        for(int i=0;i<m;i++)
+            Arrays.fill(dp_paths[i],-1);
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+                result= (result+helper(grid,i,j,dp_paths))%modval;
+        return result;
+    }
+    public int helper(int[][] grid,int row,int col,int dp[][])
+    {
+        if(dp[row][col]!=-1)
+            return dp[row][col];
+        int num_paths=1;
+        for(int d[]:dir)
+        {
+            int nr=d[0]+row, nc=d[1]+col;
+            if(nr>-1 && nc>-1 && nr<m && nc<n && grid[nr][nc]>grid[row][col])
+                num_paths = (num_paths+helper(grid,nr,nc,dp))%modval;
+        }
+        return dp[row][col]=num_paths;
+    }
+
+    /*
+        335. PROBLEM DESCRIPTION (https://leetcode.com/problems/inorder-successor-in-bst/)
+    */
+    boolean found;
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p)
+    {
+        found=false;
+        return helper(root,p);
+    }
+    public TreeNode helper(TreeNode root,TreeNode p)
+    {
+        if(root==null)
+            return root;
+        TreeNode left= helper(root.left,p);
+        if(found)
+        {
+            if(left==null)
+                return root;
+            return left;
+        }
+        if(root.val==p.val)
+            found=true;
+        if(left==null)
+            return helper(root.right,p);
+        return left;
+    }
+
+    /*
+        336. PROBLEM DESCRIPTION (https://leetcode.com/problems/walls-and-gates/)
+    */
+    public void wallsAndGates(int[][] rooms)
+    {
+        Queue<int[]> curr_q=new LinkedList<>(), next_q;
+        int inf=Integer.MAX_VALUE,m=rooms.length,n=rooms[0].length,step=1;
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(rooms[i][j]==0)
+                    curr_q.add(new int[]{i,j});
+            }
+        }
+        while(!curr_q.isEmpty())
+        {
+            next_q=new LinkedList<>();
+            for(int p[]:curr_q)
+            {
+                for(int d[]:dir)
+                {
+                    int nr=d[0]+p[0], nc=d[1]+p[1];
+                    if(nr>-1 && nc>-1 && nr<m && nc<n && rooms[nr][nc]==inf)
+                    {
+                        rooms[nr][nc]=step;
+                        next_q.add(new int[]{nr,nc});
+                    }
+                }
+            }
+            step++;
+            curr_q=next_q;
+        }
+    }
+
+    /*
+        337. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-vertical-order-traversal/)
+    */
+    public List<List<Integer>> verticalOrder(TreeNode root)
+    {
+        List<List<Integer>> result=new ArrayList<>();
+        if(root==null)
+            return result;
+        int left_max=-1,left_min=0;
+        Queue<Pair<TreeNode,Integer>> bfs_q=new LinkedList<>(),next_q;
+        bfs_q.add(new Pair<TreeNode,Integer>(root,0));
+        while(!bfs_q.isEmpty())
+        {
+            next_q=new LinkedList<>();
+            for(Pair<TreeNode,Integer> x:bfs_q)
+            {
+                int col=x.getValue();
+                if(col>left_max)
+                {
+                    left_max=col;
+                    result.add(new ArrayList<>());
+                }
+                else if(col<left_min)
+                {
+                    left_min=col;
+                    result.add(0,new ArrayList<>());
+                }
+                int list_idx= col-left_min;
+                TreeNode cur_node=x.getKey();
+                result.get(list_idx).add(cur_node.val);
+                if(cur_node.left!=null)
+                    next_q.add(new Pair<TreeNode,Integer>(cur_node.left,col-1));
+                if(cur_node.right!=null)
+                    next_q.add(new Pair<TreeNode,Integer>(cur_node.right,col+1));
+            }
+            bfs_q=next_q;
+        }
+        return result;
+    }
+
+    /*
+        338. PROBLEM DESCRIPTION (https://leetcode.com/problems/largest-bst-subtree/)
+    */
+    public int largestBSTSubtree(TreeNode root)
+    {
+        int result[]=helperBST(root);
+        return result[2];
+    }
+    public int[] helperBST(TreeNode root)
+    {
+        if(root==null)
+            return new int[]{Integer.MAX_VALUE,Integer.MIN_VALUE,0};
+        int left_result[]= helperBST(root.left);
+        int right_result[]= helperBST(root.right);
+        if(left_result[1]<root.val && right_result[0]>root.val)
+            return new int[]{Math.min(left_result[0],root.val),Math.max(right_result[1],root.val),left_result[2]+right_result[2]+1};
+        else
+            return new int[]{Integer.MIN_VALUE,Integer.MAX_VALUE,Math.max(left_result[2],right_result[2])};
+    }
+
+    /*
+        339. PROBLEM DESCRIPTION (https://leetcode.com/problems/logger-rate-limiter/)
+    */
+    class Logger {
+        HashMap<String,Integer> hmap;
+        List<Pair<String,Integer>> curr_q;
+        public Logger() {
+            hmap=new HashMap<>();
+            curr_q=new ArrayList<>();
+        }
+
+        public boolean shouldPrintMessage(int timestamp, String message)
+        {
+            Pair<String,Integer> temp;
+            while(!curr_q.isEmpty() && (temp=curr_q.get(0)).getValue()<=timestamp-10)
+            {
+                hmap.remove(temp.getKey());
+                curr_q.remove(0);
+            }
+            if(!hmap.containsKey(message))
+            {
+                curr_q.add(new Pair<String,Integer>(message,timestamp));
+                hmap.put(message,timestamp);
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    /*
+        339. PROBLEM DESCRIPTION (https://leetcode.com/problems/range-addition/)
+    */
+    public int[] getModifiedArray(int length, int[][] updates)
+    {
+        int inc[]=new int[length],result[]=new int[length];
+        for(int upd[]:updates)
+        {
+            inc[upd[1]]+=upd[2];
+            if(upd[0]!=0)
+                inc[upd[0]-1] -=upd[2];
+        }
+        int curval=0;
+        for(int i=length-1;i>=0;i--)
+        {
+            curval += inc[i];
+            result[i] = curval;
+        }
+        return result;
+    }
+
+    /*
+        340. PROBLEM DESCRIPTION (https://leetcode.com/problems/string-compression/)
+    */
+    public int compress(char[] chars)
+    {
+        int result_idx=0, char_idx=0,n=chars.length,temp;
+        while(char_idx<n)
+        {
+            char curr_c=chars[char_idx];
+            temp=char_idx;
+            while(char_idx<n && curr_c==chars[char_idx])
+                char_idx++;
+            chars[result_idx++]=curr_c;
+            int num=char_idx-temp;
+            if(num!=1)
+            {
+                int num_dig=0,count=0,num_cpy=num;
+                while(num>0)
+                {
+                    num_dig++;
+                    num/=10;
+                }
+                num=num_cpy;
+                while(num>0)
+                {
+                    chars[result_idx+num_dig-1-count++]= (char)(num%10 +'0');
+                    num /=10;
+                }
+                result_idx+=num_dig;
+            }
+        }
+        return result_idx;
+    }
+
+    /*
+        341. PROBLEM DESCRIPTION (https://leetcode.com/problems/add-two-numbers-ii/)
+    */
+    ListNode global_node;
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2)
+    {
+        global_node=null;
+        ListNode l1_rev=reversehelper(l1);
+        global_node=null;
+        ListNode l2_rev=reversehelper(l2),result=new ListNode(0),dummy_head=result;
+        int carry=0;
+        while(l1_rev!=null && l2_rev!=null)
+        {
+            ListNode new_node=new ListNode((l1_rev.val+l2_rev.val+carry)%10);
+            carry = (l1_rev.val+l2_rev.val+carry)/10;
+            result.next=new_node;
+            result=result.next;
+            l1_rev=l1_rev.next;
+            l2_rev=l2_rev.next;
+        }
+        while(l1_rev!=null)
+        {
+            if(carry==0)
+            {
+                result.next = l1_rev;
+                break;
+            }
+            ListNode new_node=new ListNode((l1_rev.val+carry)%10);
+            carry = (l1_rev.val+carry)/10;
+            result.next=new_node;
+            result=result.next;
+            l1_rev=l1_rev.next;
+        }
+        while(l2_rev!=null)
+        {
+            if(carry==0)
+            {
+                result.next = l2_rev;
+                break;
+            }
+            ListNode new_node=new ListNode((l2_rev.val+carry)%10);
+            carry = (l2_rev.val+carry)/10;
+            result.next=new_node;
+            result=result.next;
+            l2_rev=l2_rev.next;
+        }
+        if(carry==1)
+        {
+            ListNode new_node=new ListNode(1);
+            result.next=new_node;
+        }
+
+        return reversehelper(dummy_head.next);
+    }
+    public ListNode reversehelper(ListNode l1)
+    {
+        if(l1==null)
+            return null;
+        ListNode reversed = reversehelper(l1.next);
+        if(global_node!=null)
+            global_node.next=l1;
+        global_node=l1;
+        l1.next=null;
+        return reversed==null?l1:reversed;
+    }
+
+    /*
+        342. PROBLEM DESCRIPTION (https://leetcode.com/problems/construct-the-rectangle/)
+    */
+    public int[] constructRectangle(int area)
+    {
+        int W=1;
+        for(int i=2;i<=area/i;i++)
+        {
+            if(area%i==0)
+                W=i;
+        }
+        return new int[]{area/W,W};
+    }
+
+    /*
+        343. PROBLEM DESCRIPTION (https://leetcode.com/problems/coin-change-2/)
+    */
+    public int change(int amount, int[] coins)
+    {
+        Arrays.sort(coins);
+        int n=coins.length, dp[]=new int[amount+1];
+        dp[0]=1;
+        for(int c:coins)
+        {
+            for(int i=c;i<=amount;i++)
+                dp[i] += dp[i-c];
+        }
+        return dp[amount];
+    }
+
+    /*
+        344. PROBLEM DESCRIPTION (https://leetcode.com/problems/student-attendance-record-i/)
+    */
+    public boolean checkRecord(String s)
+    {
+        boolean isabsent=false;
+        int count_late=0;
+        for(char c:s.toCharArray())
+        {
+            if(c=='L')
+                count_late++;
+            else
+            {
+                count_late=0;
+                if(c=='A')
+                {
+                    if(isabsent)
+                        return false;
+                    isabsent=true;
+                }
+            }
+
+            if(count_late==3)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        345. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-ary-tree-preorder-traversal/)
+    */
+    public List<Integer> preorder(Node root)
+    {
+        List<Integer> result=new ArrayList<>();
+        helper(root,result);
+        return result;
+    }
+    public void helper(Node root,List<Integer> result)
+    {
+        if(root==null)
+            return;
+        result.add(root.val);
+        //for(Node c:root.children)
+            //helper(c,result);
+    }
+
+    /*
+        346. PROBLEM DESCRIPTION (https://leetcode.com/problems/robot-return-to-origin/)
+    */
+    public boolean judgeCircle(String moves)
+    {
+        int horizontal=0,vertical=0;
+        for(char c:moves.toCharArray())
+        {
+            if(c=='U')
+                vertical++;
+            else if(c=='D')
+                vertical--;
+            else if(c=='L')
+                horizontal--;
+            else if(c=='R')
+                horizontal++;
+        }
+        return vertical==0 && horizontal==0;
+    }
+
+    /*
+        347. PROBLEM DESCRIPTION (https://leetcode.com/problems/trim-a-binary-search-tree/)
+    */
+    public TreeNode trimBST(TreeNode root, int low, int high)
+    {
+        if(root==null)
+            return null;
+        if(root.val<low)
+            return trimBST(root.right,low,high);
+        if(root.val>high)
+            return trimBST(root.left,low,high);
+        root.left = trimBST(root.left,low,high);
+        root.right = trimBST(root.right,low,high);
+        return root;
+    }
+
+    /*
+        348. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-window-subsequence/)
+    */
+    public String minWindow(String s1, String s2)
+    {
+        int result[]={-1,-1},len2=s2.length(),len1=s1.length();
+        HashMap<Character,List<Integer>> hmap=new HashMap<>();
+        char s2Arr[]= s2.toCharArray(),s1Arr[]=s1.toCharArray();
+        for(int i=0;i<len2;i++)
+            hmap.put(s2Arr[i],new ArrayList<>());
+        for(int i=0;i<len1;i++)
+        {
+            if(hmap.containsKey(s1Arr[i]))
+                hmap.get(s1Arr[i]).add(i);
+        }
+        int start_pos[]=new int[len2];
+        Arrays.fill(start_pos,0);
+        for(int start_pos1:hmap.get(s2Arr[0]))
+        {
+            int left_bdry=start_pos1;
+            //System.out.print(left_bdry+":");
+            for(int j=1;j<len2;j++)
+            {
+                char curr_c=s2Arr[j];
+                int next_pos=-1;
+                List<Integer> cur_list=hmap.get(curr_c);
+                for(int i=start_pos[j];i<cur_list.size();i++)
+                {
+                    int x= cur_list.get(i);
+                    if(x<=left_bdry)
+                        continue;
+                    next_pos = x;
+                    start_pos[j] = i;
+                    break;
+                }
+                left_bdry=next_pos;
+                if(result[0]!=-1  && next_pos-start_pos1>=result[1]-result[0])
+                    break;
+                if(next_pos==-1)
+                    break;
+            }
+            if(left_bdry==-1)
+                break;
+            if( (result[0]!=-1 && left_bdry-start_pos1>=result[1]-result[0]))
+                continue;
+            //System.out.println(start_pos+" "+left_bdry);
+            result[0]=start_pos1;
+            result[1]=left_bdry;
+        }
+        if(result[0]==-1)
+            return "";
+        return s1.substring(result[0],result[1]+1);
+    }
+
+    /*
+        349. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-and-earn/)
+    */
+    public int deleteAndEarn(int[] nums)
+    {
+        Arrays.sort(nums);
+        return helper(nums);
+    }
+    public int helper(int nums[])
+    {
+        int idx=0,n=nums.length,curr=0,prev=0;
+        while(idx<n)
+        {
+            int cur_idx=idx,stepsum=0;
+            while(idx<n && nums[cur_idx]==nums[idx])
+                stepsum+=nums[idx++];
+            if(cur_idx>0 && nums[cur_idx]==nums[cur_idx-1]+1)
+            {
+                int temp=prev;
+                prev=curr;
+                curr=Math.max(temp+stepsum,curr);
+            }
+            else
+            {
+                prev=curr;
+                curr=curr+stepsum;
+            }
+        }
+        return Math.max(prev,curr);
+    }
+
+    /*
+        350. PROBLEM DESCRIPTION (https://leetcode.com/problems/network-delay-time/)
+    */
+    public int networkDelayTime(int[][] times, int n, int k)
+    {
+        HashMap<Integer,HashMap<Integer,Integer>> hmap = new HashMap<>();
+        for(int i=1;i<=n;i++)
+            hmap.put(i,new HashMap<>());
+        for(int t[]:times)
+            hmap.get(t[0]).put(t[1],t[2]);
+        int d[]=new int[n+1],result=0;
+        Arrays.fill(d,-1);
+        d[k]=0;
+        Stack<Integer> stck=new Stack<>();
+        stck.push(k);
+        while(!stck.isEmpty())
+        {
+            Stack<Integer> next_src=new Stack<>();
+            for(int x:stck)
+            {
+                HashMap<Integer,Integer> cur_map=hmap.get(x);
+                for(Integer adj:cur_map.keySet())
+                {
+                    if(d[adj]==-1 || cur_map.get(adj)+d[x]<d[adj])
+                    {
+                        next_src.push(adj);
+                        d[adj] = cur_map.get(adj)+d[x];
+                    }
+                }
+            }
+            stck=next_src;
+        }
+        for(int i=1;i<=n;i++)
+        {
+            int x=d[i];
+            if(x==-1)
+                return-1;
+            result=Math.max(result,x);
+        }
+        return result;
+    }
+
+    /*
+        351. PROBLEM DESCRIPTION (https://leetcode.com/problems/reaching-points/)
+    */
+    public boolean reachingPoints(int sx, int sy, int tx, int ty)
+    {
+        while (tx >= sx && ty >= sy)
+        {
+            if (tx == ty)
+                break;
+            if (tx > ty)
+            {
+                if (ty > sy)
+                    tx %= ty;
+                else
+                    return (tx - sx) % ty == 0;
+            }
+            else
+            {
+                if (tx > sx)
+                    ty %= tx;
+                else
+                    return (ty - sy) % tx == 0;
+            }
+        }
+        return (tx == sx && ty == sy);
+    }
+
+    /*
+        352. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-subarrays-with-bounded-maximum/)
+    */
+    public int numSubarrayBoundedMax(int[] nums, int left, int right)
+    {
+        return helper(nums,right)-helper(nums,left-1);
+
+    }
+    public int helper(int nums[],int bound)
+    {
+        int ans=0,count=0,n=nums.length,i=0;
+        while(i<n)
+        {
+            if(nums[i]<=bound)
+                count=count+1;
+            else
+                count=0;
+            ans += count;
+            i++;
+        }
+        return ans;
+    }
+
+    /*
+        352. PROBLEM DESCRIPTION (https://leetcode.com/problems/all-paths-from-source-to-target/)
+    */
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph)
+    {
+        n=graph.length;
+        List<List<Integer>> result=new ArrayList<>();
+        helper(graph,0,new ArrayList<Integer>(),result);
+        return result;
+    }
+    public void helper(int[][] graph,int cur_node,List<Integer> cur_path, List<List<Integer>> result)
+    {
+        cur_path.add(cur_node);
+        if(cur_node==n-1)
+        {
+            result.add(new ArrayList(cur_path));
+            cur_path.remove(cur_path.size()-1);
+            return;
+        }
+        for(int adj:graph[cur_node])
+            helper(graph,adj,cur_path,result);
+        cur_path.remove(cur_path.size()-1);
+    }
+
+    /*
+        353. PROBLEM DESCRIPTION (https://leetcode.com/problems/most-common-word/)
+        ' Character also treated as separator
+    */
+    public String mostCommonWord(String paragraph, String[] banned)
+    {
+        HashMap<String,Integer> hmap=new HashMap<>();
+        StringBuffer curr_sb=new StringBuffer();
+        HashSet<String> hset=new HashSet<>();
+        HashSet<Character> hset_punc=new HashSet();
+        hset_punc.addAll(Arrays.asList(new Character[]{'!','?',',',';','.',' ','\''}));
+        for(String w:banned)
+            hset.add(w);
+        paragraph +=".";
+        for(char c:paragraph.toCharArray())
+        {
+            if(hset_punc.contains(c))
+            {
+                String cur_word=curr_sb.toString();
+                curr_sb=new StringBuffer();
+                if(hset.contains(cur_word) || cur_word.length()==0)
+                    continue;
+                hmap.put(cur_word,hmap.getOrDefault(cur_word,0)+1);
+                continue;
+            }
+            curr_sb.append(Character.toLowerCase(c));
+        }
+        String result="";
+        int max=0;
+        for(String s:hmap.keySet())
+        {
+            //System.out.println(s+" "+hmap.get(s));
+            if(hmap.get(s)>max)
+            {
+                max=hmap.get(s);
+                result=s;
+            }
+        }
+        return result;
+    }
+
+    /*
+        354. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-amount-of-time-to-fill-cups/)
+    */
+    public int fillCups(int[] amount)
+    {
+        PriorityQueue<Integer> pq=new PriorityQueue<>(Collections.reverseOrder());
+        int result=0;
+        for(int x:amount)
+            if(x!=0)
+                pq.add(x);
+        while(pq.size()>1)
+        {
+
+            int cup1=pq.poll(),cup2=pq.poll();
+            if(cup1!=1)
+                pq.add(cup1-1);
+            if(cup2!=1)
+                pq.add(cup2-1);
+            result++;
+        }
+        if(pq.size()==1)
+            result += pq.poll();
+        return result;
+    }
+
+    /*
+        355. PROBLEM DESCRIPTION (https://leetcode.com/problems/smallest-number-in-infinite-set/)
+    */
+
+    class SmallestInfiniteSet {
+        HashSet removed_hset;
+        int smallest;
+        public SmallestInfiniteSet()
+        {
+            removed_hset=new HashSet<>();
+            smallest=1;
+        }
+
+        public int popSmallest() {
+            int retval=smallest;
+            removed_hset.add(smallest);
+            while(removed_hset.contains(smallest))
+                smallest=smallest+1;
+            return retval;
+        }
+
+        public void addBack(int num) {
+            if(removed_hset.contains(num))
+            {
+                removed_hset.remove(num);
+            }
+            smallest = Math.min(smallest,num);
+        }
+    }
+
+    /*
+        355. PROBLEM DESCRIPTION (https://leetcode.com/problems/move-pieces-to-obtain-a-string/)
+    */
+    public boolean canChange(String start, String target)
+    {
+        int len1=start.length(),idx1=0,idx2=0;
+        char startArr[]=start.toCharArray(), targetArr[]=target.toCharArray();
+        List<Integer> listL=new ArrayList<>(),listR=new ArrayList<>();
+        for(int i=0;i<len1;i++)
+        {
+            if(startArr[i]=='L')
+                listL.add(i);
+            else if(startArr[i]=='R')
+                listR.add(i);
+        }
+        int left=0,right=0;
+        for(int i=0;i<len1;i++)
+        {
+
+            if(targetArr[i]=='L')
+            {
+                int leftpos = (left==listL.size()?len1:listL.get(left));
+                int rightpos = (right==listR.size()?len1:listR.get(right));
+                if(leftpos<rightpos && leftpos>=i)
+                {
+                    left++;
+                    continue;
+                }
+
+                return false;
+            }
+            if(targetArr[i]=='R')
+            {
+
+                int leftpos = (left==listL.size()?len1:listL.get(left));
+                int rightpos = (right==listR.size()?len1:listR.get(right));
+                if(rightpos<leftpos && rightpos<=i)
+                {
+                    right++;
+                    continue;
+                }
+                return false;
+            }
+        }
+        return left==listL.size() && right==listR.size();
+    }
+
+    /*
+        356. PROBLEM DESCRIPTION (https://leetcode.com/problems/lfu-cache/)
+    */
+    public class LFUCache {
+        HashMap<Integer, Integer> vals;
+        HashMap<Integer, Integer> counts;
+        HashMap<Integer, LinkedHashSet<Integer>> lists;
+        int cap;
+        int min = -1;
+        public LFUCache(int capacity) {
+            cap = capacity;
+            vals = new HashMap<>();
+            counts = new HashMap<>();
+            lists = new HashMap<>();
+            lists.put(1, new LinkedHashSet<>());
+        }
+
+        public int get(int key) {
+            if(!vals.containsKey(key))
+                return -1;
+            int count = counts.get(key);
+            counts.put(key, count+1);
+            lists.get(count).remove(key);
+            if(count==min && lists.get(count).size()==0)
+                min++;
+            if(!lists.containsKey(count+1))
+                lists.put(count+1, new LinkedHashSet<>());
+            lists.get(count+1).add(key);
+            return vals.get(key);
+        }
+
+        public void put(int key, int value) {
+            if(cap<=0)
+                return;
+            if(vals.containsKey(key)) {
+                vals.put(key, value);
+                get(key);
+                return;
+            }
+            if(vals.size() >= cap) {
+                int evit = lists.get(min).iterator().next();
+                lists.get(min).remove(evit);
+                vals.remove(evit);
+            }
+            vals.put(key, value);
+            counts.put(key, 1);
+            min = 1;
+            lists.get(1).add(key);
+        }
+    }
+    /*
+        357. PROBLEM DESCRIPTION (https://leetcode.com/problems/consecutive-numbers-sum/)
+    */
+    public int consecutiveNumbersSum(int n)
+    {
+        int result=0;
+        for(int i=1;i<=Math.sqrt(2*n+0.25)-0.5;i++)
+        {
+            if((2*n-i*(i+1))%(2*i)==0)
+                result++;
+        }
+        return result;
+    }
+
+    /*
+        358. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-mountain-in-array/)
+    */
+    public int longestMountain(int[] arr)
+    {
+        int idx=0,len=arr.length,result=0;
+        while(idx<len)
+        {
+            int start_pos=idx;
+            while(idx+1<len && arr[idx+1]>arr[idx])
+                idx++;
+            if(idx==start_pos)
+            {
+                idx++;
+                continue;
+            }
+            if(idx+1==len)
+                break;
+            int mntn_top=idx;
+            while(idx+1<len && arr[idx+1]<arr[idx])
+                idx++;
+            if(idx==mntn_top)
+            {
+                idx++;
+                continue;
+            }
+            if(idx!=start_pos)
+                result=Math.max(result,idx-start_pos+1);
+            if(idx+1<len && arr[idx+1]==arr[idx])
+                idx++;
+        }
+        return result;
+    }
+
+    /*
+        359. PROBLEM DESCRIPTION (https://leetcode.com/problems/long-pressed-name/)
+    */
+    public boolean isLongPressedName(String name, String typed)
+    {
+        int idx1=1,len=typed.length();
+        if(name.charAt(0)!=typed.charAt(0))
+            return false;
+        for(int i=1;i<name.length();i++)
+        {
+            if(idx1==len)
+                return false;
+            char c=name.charAt(i);
+            if(c==typed.charAt(idx1))
+            {
+                idx1++;
+                continue;
+            }
+            while(idx1<len && typed.charAt(idx1)==typed.charAt(idx1-1))
+                idx1++;
+            if(idx1==len || typed.charAt(idx1)!=c)
+                return false;
+            idx1++;
+        }
+        while(idx1<len && typed.charAt(idx1)==typed.charAt(idx1-1))
+            idx1++;
+        return idx1==len;
+    }
+
+    /*
+        360. PROBLEM DESCRIPTION (https://leetcode.com/problems/concatenated-words/)
+    */
+    public List<String> findAllConcatenatedWordsInADict(String[] words)
+    {
+        List<String> result=new ArrayList<>();
+        HashSet<String> visited=new HashSet<>();
+        Arrays.sort(words,(a,b)->(a.length()-b.length()));
+        for(String w:words)
+        {
+            if(helper(w,visited))
+            {
+                result.add(w);
+            }
+            visited.add(w);
+        }
+        return result;
+    }
+    public boolean helper(String str,HashSet<String> hset)
+    {
+        if(hset.isEmpty())
+            return false;
+        boolean dp[]=new boolean[str.length()+1];
+        dp[0]=true;
+        for(int i=1;i<=str.length();i++)
+        {
+            for(int j=i;j>-1;j--)
+            {
+                if(!dp[j])
+                    continue;
+                if(hset.contains(str.substring(j,i)))
+                {
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        return dp[str.length()];
+    }
+
+    /*
+        361. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-falling-path-sum/)
+    */
+    public int minFallingPathSum(int[][] matrix)
+    {
+        int n=matrix.length,dp_prev[]=matrix[0],dp_next[];
+        for(int i=1;i<n;i++)
+        {
+            dp_next=new int[n];
+            if(n>1)
+            {
+                dp_next[0]=Math.min(dp_prev[0],dp_prev[1])+matrix[i][0];
+                dp_next[n-1]=Math.min(dp_prev[n-1],dp_prev[n-2])+matrix[i][n-1];
+            }
+            else
+                dp_next[0]=dp_prev[0]+matrix[i][0];
+
+            for(int j=1;j<n-1;j++)
+            {
+                dp_next[j] = Math.min(dp_prev[j-1],Math.min(dp_prev[j],dp_prev[j+1]))+matrix[i][j];
+            }
+            dp_prev=dp_next;
+        }
+        int result=dp_prev[0];
+        for(int i=1;i<n;i++)
+            result=Math.min(result,dp_prev[i]);
+        return result;
+    }
+
+    /*
+        362. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-increment-to-make-array-unique/)
+    */
+    public int minIncrementForUnique(int[] nums)
+    {
+        Arrays.sort(nums);
+        int prev_num=nums[0],idx=1,result=0;
+        while(idx<nums.length)
+        {
+            if(nums[idx]<=prev_num)
+            {
+                prev_num++;
+                result += (prev_num-nums[idx]);
+            }
+            else
+                prev_num=nums[idx];
+            idx++;
+        }
+        return result;
+    }
+
+    /*
+        363. PROBLEM DESCRIPTION (https://leetcode.com/problems/verifying-an-alien-dictionary/)
+    */
+    public boolean isAlienSorted(String[] words, String order)
+    {
+        HashMap<Character,Integer> hmap=new HashMap<>();
+        for(int i=order.length()-1;i>=0;i--)
+            hmap.put(order.charAt(i),i);
+        for(int i=1;i<words.length;i++)
+        {
+            char[] str1=words[i-1].toCharArray(),str2=words[i].toCharArray();
+            int idx1=0,idx2=0;
+            while(idx1<str1.length && idx2<str2.length)
+            {
+                if(str1[idx1]==str2[idx2])
+                {
+                    idx1++;
+                    idx2++;
+                    continue;
+                }
+                if(hmap.get(str1[idx1])>hmap.get(str2[idx2]))
+                    return false;
+                break;
+            }
+            if(idx1!=str1.length && idx2==str2.length)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+        364. PROBLEM DESCRIPTION (https://leetcode.com/problems/rotting-oranges/)
+    */
+    public int orangesRotting(int[][] grid)
+    {
+        int m=grid.length,n=grid[0].length,steps=0;
+        List<int[]> cur_list=new ArrayList<>(), next_list;
+        int count_fresh=0;
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(grid[i][j]==2)
+                    cur_list.add(new int[]{i,j});
+                else if(grid[i][j]==1)
+                    count_fresh++;
+            }
+        }
+        if(count_fresh==0)
+            return 0;
+        while(!cur_list.isEmpty())
+        {
+            next_list=new ArrayList<>();
+            for(int x[]:cur_list)
+            {
+                for(int d[]:dir)
+                {
+                    int nr=d[0]+x[0], nc=d[1]+x[1];
+                    if(nr>-1 && nc>-1 && nr<m && nc<n && grid[nr][nc]==1)
+                    {
+                        count_fresh--;
+                        grid[nr][nc]=2;
+                        next_list.add(new int[]{nr,nc});
+                    }
+                }
+            }
+            cur_list=next_list;
+            steps++;
+        }
+        return count_fresh==0?steps-1:-1;
+    }
+
+    /*
+        365. PROBLEM DESCRIPTION (https://leetcode.com/problems/pairs-of-songs-with-total-durations-divisible-by-60/)
+    */
+    public int numPairsDivisibleBy60(int[] time)
+    {
+        int modval[]=new int[60],result=0;;
+        for(int x:time)
+            modval[x%60]++;
+        for(int i=1;i<30;i++)
+            result+=modval[i]*modval[60-i];
+        System.out.println(modval[0]);
+        if(modval[0]%2==0)
+            result += modval[0]/2*(modval[0]-1);
+        else
+            result += (modval[0]-1)/2*modval[0];
+
+        if(modval[30]%2==0)
+            result += modval[30]/2*(modval[30]-1);
+        else
+            result += (modval[30]-1)/2*modval[30];
+        return result;
+    }
+
+    /*
+        366. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-prefix-divisible-by-5/)
+    */
+    public List<Boolean> prefixesDivBy5(int[] nums)
+    {
+        List<Boolean> result=new ArrayList<>();
+        int last_dig=0;
+        for(int x:nums)
+        {
+            last_dig= ((last_dig<<1) +x)%10;
+            if(last_dig==5 || last_dig==0)
+                result.add(true);
+            else
+                result.add(false);
+        }
+        return result;
+    }
+
+    /*
+        367. PROBLEM DESCRIPTION (https://leetcode.com/problems/robot-bounded-in-circle/)
+    */
+    public boolean isRobotBounded(String instructions)
+    {
+        int[][] directions = new int[][]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+        // Initial position is in the center
+        int x = 0, y = 0;
+        // facing north
+        int idx = 0;
+
+        for (char i : instructions.toCharArray()) {
+            if (i == 'L')
+                idx = (idx + 3) % 4;
+            else if (i == 'R')
+                idx = (idx + 1) % 4;
+            else {
+                x += directions[idx][0];
+                y += directions[idx][1];
+            }
+        }
+        return (x == 0 && y == 0) || (idx != 0);
+    }
+
+    /*
+        368. PROBLEM DESCRIPTION (https://leetcode.com/problems/high-five/)
+    */
+    public int[][] highFive(int[][] items)
+    {
+        HashMap<Integer,PriorityQueue<Integer>> hmap =new HashMap<>();
+        for(int i=0;i<items.length;i++)
+        {
+            if(!hmap.containsKey(items[i][0]))
+                hmap.put(items[i][0],new PriorityQueue<>());
+            PriorityQueue<Integer> curr_q=hmap.get(items[i][0]);
+            curr_q.add(items[i][1]);
+            if(curr_q.size()>5)
+                curr_q.poll();
+        }
+        int result[][]=new int[hmap.size()][2],idx=0;
+        for(int x:hmap.keySet())
+        {
+            int temp=0;
+            result[idx][0]=x;
+            PriorityQueue<Integer> cur_q=hmap.get(x);
+            for(int i=0;i<5;i++)
+                temp+=cur_q.poll();
+            result[idx++][1]=temp/5;
+        }
+        Arrays.sort(result,(a,b)->(a[0]-b[0]));
+        return result;
+    }
+
+    /*
+        369. PROBLEM DESCRIPTION (https://leetcode.com/problems/shortest-path-in-binary-matrix/)
+    */
+    public int shortestPathBinaryMatrix(int[][] grid)
+    {
+        int dir8[][]={{0,1},{0,-1},{1,0},{-1,0},{1,1},{-1,-1},{1,-1},{-1,1}},
+                m=grid.length,n=grid[0].length,steps=0;
+        if(grid[0][0]==1)
+            return -1;
+        List<int[]> cur_list=new ArrayList<>(),next_list;
+        boolean visited[][]=new boolean[m][n];
+        cur_list.add(new int[]{0,0});
+        if(m==1 && n==1)
+            return 1;
+        visited[0][0]=true;
+        while(!cur_list.isEmpty())
+        {
+            next_list=new ArrayList<>();
+            steps++;
+            for(int p[]:cur_list)
+            {
+                for(int d[]:dir8)
+                {
+                    int nr=p[0]+d[0], nc=p[1]+d[1];
+                    if(nr>-1 && nc>-1 && nr<m && nc<n && grid[nr][nc]==0 && !visited[nr][nc])
+                    {
+                        if(nr==m-1 && nc==n-1)
+                            return steps+1;
+                        visited[nr][nc]=true;
+                        next_list.add(new int[]{nr,nc});
+                    }
+                }
+            }
+            cur_list=next_list;
+        }
+        return -1;
+    }
+
+    /*
+        370. PROBLEM DESCRIPTION (https://leetcode.com/problems/largest-unique-number/)
+    */
+    public int largestUniqueNumber(int[] nums)
+    {
+        Map<Integer, Integer> count = new HashMap<Integer, Integer>();
+        for (int i : nums) {
+            count.put(i, count.getOrDefault(i, 0) + 1);
+        }
+        int result = -1;
+        for (Map.Entry<Integer, Integer> entry : count.entrySet())
+        {
+            if (entry.getValue() == 1)
+                result = Math.max(result, entry.getKey());
+        }
+        return result;
+    }
+
+    /*
+        371. PROBLEM DESCRIPTION (https://leetcode.com/problems/connecting-cities-with-minimum-cost/)
+    */
+    public int minimumCost(int n, int[][] connections)
+    {
+        Arrays.sort(connections,(a,b)->(a[2]-b[2]));
+        int parent[]=new int[n+1],idx=0,len=connections.length,result=0,count=0;
+        for(int i=0;i<=n;i++)
+            parent[i]=i;
+        while(count<n-1 && idx<len)
+        {
+            int parent_x=getParent(parent,connections[idx][0]), parent_y=getParent(parent,connections[idx][1]);
+            if(parent_x==parent_y)
+            {
+                idx++;
+                continue;
+            }
+            parent[parent_x]=parent[connections[idx][1]];
+            count++;
+            result += connections[idx++][2];
+        }
+        if(count<n-1)
+            return -1;
+        return result;
+    }
+    public int getParent(int parent[],int node)
+    {
+        if(parent[node]==node)
+            return node;
+        return getParent(parent,parent[node]);
+    }
+
+    /*
+        372. PROBLEM DESCRIPTION (https://leetcode.com/problems/two-sum-bsts/)
+    */
+    int top;
+    public boolean twoSumBSTs(TreeNode root1, TreeNode root2, int target)
+    {
+        int t1values[]=new int[5001];
+        top=0;
+        helpervalue(root1,t1values);
+        top--;
+        return helperexists(root2,target,t1values);
+    }
+    public boolean helperexists(TreeNode root,int target,int[] store)
+    {
+        if(root==null)
+            return false;
+        if(helperexists(root.left,target,store))
+            return true;
+        while(top>-1 && root.val+store[top]>target)
+            top--;
+        if(top!=-1 && root.val+store[top]==target)
+            return true;
+        return helperexists(root.right,target,store);
+    }
+
+    public void helpervalue(TreeNode root,int[] result)
+    {
+        if(root==null)
+            return;
+        helpervalue(root.left,result);
+        result[top++]=root.val;
+        helpervalue(root.right,result);
+    }
+
+    /*
+        373. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-cost-to-move-chips-to-the-same-position/)
+    */
+    public int minCostToMoveChips(int[] position)
+    {
+        int odd=0,even=0;
+        for(int x:position)
+        {
+            if(x%2==0)
+                even++;
+            else
+                odd++;
+        }
+        return Math.min(odd,even);
+    }
+
+    /*
+        374. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-profit-in-job-scheduling/) 1235
+    */
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit)
+    {
+        int n=startTime.length,jobs[][]=new int[n][4], dp[]=new int[n];
+        for(int i=0;i<n;i++)
+        {
+            jobs[i][0]=startTime[i];
+            jobs[i][1]=endTime[i];
+            jobs[i][2]=profit[i];
+        }
+        Arrays.sort(jobs,(a,b)->{
+            if(a[1]==b[1])
+                return a[0]-b[0];
+            return a[1]-b[1];
+        });
+        for(int i=0;i<n;i++)
+        {
+            int j=i-1;
+            while(j>-1 && jobs[j][1]>jobs[i][0])
+                j--;
+            jobs[i][3]=j;
+        }
+        dp[0]=jobs[0][2];
+        for(int i=1;i<n;i++)
+            dp[i]=Math.max((jobs[i][3]==-1?0:dp[jobs[i][3]])+jobs[i][2],dp[i-1]);
+        return dp[n-1];
+    }
+
+    /*
+        375. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-triangle-number/)
+    */
+    public int triangleNumber(int[] nums)
+    {
+        Arrays.sort(nums);
+        int n=nums.length,result=0,start_idx=0;
+        while(start_idx<n && nums[start_idx]==0)
+            start_idx++;
+        for(int i=start_idx;i<n;i++)
+        {
+            int triplet_index=i+2;
+            for(int j=i+1;j<n-1;j++)
+            {
+                while(triplet_index<n && nums[i]+nums[j]>nums[triplet_index])
+                    triplet_index++;
+                if(triplet_index==n)
+                {
+                    result+= (n-j-1)*(n-j)/2;
+                    break;
+                }
+                result+= (triplet_index-j-1);
+            }
+        }
+        return result;
+    }
+
+    /*
+        376. PROBLEM DESCRIPTION (https://leetcode.com/problems/candy/)
+    */
+    public int candy(int[] ratings)
+    {
+        int n=ratings.length,arr[]=new int[n],result=0,temp=0;
+        arr[0]=1;
+        for(int i=1;i<ratings.length;i++)
+        {
+            if(ratings[i]>ratings[i-1])
+                arr[i]=Math.max(arr[i-1]+1,2);
+            else if(ratings[i]==ratings[i-1])
+                arr[i]=1;
+        }
+        for(int i=n-1;i>=0;i--)
+        {
+            if(arr[i]==0)
+            {
+                while(arr[i]==0)
+                {
+                    temp++;
+                    i--;
+                }
+                i++;
+                result += temp*(temp+1)/2;
+            }
+            else
+            {
+                result += Math.max(arr[i],temp+1);
+                temp=0;
+            }
+        }
+        return result;
+    }
+
+    /*
+        376. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-median-from-data-stream/)
+    */
+    class MedianFinder {
+        PriorityQueue<Integer> pq_bottom, pq_top;
+        public MedianFinder() {
+            pq_bottom = new PriorityQueue<>(Collections.reverseOrder());
+            pq_top = new PriorityQueue<>();
+        }
+
+        public void addNum(int num) {
+            pq_bottom.add(num);
+            pq_top.add(pq_bottom.poll());
+            if(pq_bottom.size()<pq_top.size()-1)
+            {
+                pq_bottom.add(pq_top.poll());
+            }
+
+        }
+
+        public double findMedian() {
+            if(pq_bottom.size()==pq_top.size())
+                return (pq_bottom.peek()+pq_top.peek())/2.0;
+            else
+                return pq_top.peek();
+        }
+    }
+
+    /*
+        377. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/)
+    */
+
+    public String minRemoveToMakeValid(String s)
+    {
+        StringBuffer sb=new StringBuffer();
+        int count_open=0;
+        for(char c:s.toCharArray())
+        {
+            if(c=='(')
+                count_open++;
+            else if(c==')')
+                count_open--;
+            if(count_open==-1)
+                count_open++;
+            else
+                sb.append(c);
+        }
+
+        int idx=sb.length()-1;
+        while(idx>=0 && count_open!=0)
+        {
+            if(sb.charAt(idx)=='(')
+            {
+                sb.deleteCharAt(idx);
+                count_open--;
+            }
+            idx--;
+        }
+        return sb.toString();
+    }
+
+    /*
+        378. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-operations-to-make-network-connected/)
+    */
+
+    public int makeConnected(int n, int[][] connections)
+    {
+        int parent[]=new int[n], left_conn=0, num_subgraphs=0;
+        for(int i=0;i<n;i++)
+            parent[i]=i;
+        for(int conn[]:connections)
+        {
+            int parent_x=getParenthelper(parent,conn[0]), parent_y=getParenthelper(parent,conn[1]);
+            if(parent_x!=parent_y)
+                parent[parent_x]= parent_y;
+            else
+                left_conn++;
+        }
+        for(int i=0;i<n;i++)
+            if(i==parent[i])
+                num_subgraphs++;
+        if(num_subgraphs-1>left_conn)
+            return -1;
+        return num_subgraphs-1;
+
+
+    }
+    public int getParenthelper(int parent[], int x)
+    {
+        if(x==parent[x])
+            return x;
+        return parent[x]=getParenthelper(parent,parent[x]);
+    }
+
+    /*
+        379. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/)
+    */
+    public int findTheCity(int n, int[][] edges, int distanceThreshold)
+    {
+        int dist_matrix[][]=new int[n][n],count_min=n+1,result=0;
+        for(int i=0;i<n;i++)
+        {
+            Arrays.fill(dist_matrix[i],Integer.MAX_VALUE);
+            dist_matrix[i][i]=0;
+        }
+        for(int e[]:edges)
+        {
+            dist_matrix[e[0]][e[1]]=e[2];
+            dist_matrix[e[1]][e[0]]=e[2];
+
+        }
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                for(int k=0;k<n;k++)
+                {
+                    if(dist_matrix[j][i]!=Integer.MAX_VALUE && dist_matrix[i][k]!=Integer.MAX_VALUE)
+                        dist_matrix[j][k] = Math.min(dist_matrix[j][i]+dist_matrix[i][k],dist_matrix[j][k]);
+                }
+            }
+        }
+        for(int i=0;i<n;i++)
+        {
+            int curr_adj=0;
+            for(int j=0;j<n;j++)
+            {
+                if(dist_matrix[i][j]<=distanceThreshold)
+                    curr_adj++;
+            }
+            if(curr_adj<=count_min)
+            {
+                count_min=curr_adj;
+                result=i;
+            }
+        }
+        return result;
+    }
+
+    /*
+        380. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/)
+    */
+    public int maxEvents(int[][] events)
+    {
+        int n=events.length,idx=0,result=0;
+        Arrays.sort(events,(a,b)->(a[0]-b[0]));
+        PriorityQueue<Integer> pq=new PriorityQueue<>();
+        for(int i=1;i<=100000;i++)
+        {
+            while(!pq.isEmpty() && pq.peek()<i)
+                pq.poll();
+            while(idx<n && events[idx][0]==i)
+                pq.add(events[idx++][1]);
+            if(!pq.isEmpty())
+            {
+                pq.poll();
+                result++;
+            }
+        }
+        return result;
+    }
+
+    /*
+        381. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-good-nodes-in-binary-tree/)
+    */
+    public int goodNodes(TreeNode root)
+    {
+        return helper(root,Integer.MIN_VALUE);
+    }
+    public int helper(TreeNode root,int max_til_now)
+    {
+        if(root==null)
+            return 0;
+        int count=0;
+        if(root.val>=max_til_now)
+            count++;
+        return count+ helper(root.left,Math.max(max_til_now,root.val)) + helper(root.right,Math.max(root.val,max_til_now));
+    }
+
+    /*
+        382. PROBLEM DESCRIPTION (https://leetcode.com/problems/clone-n-ary-tree/)
+    */
+    public Node cloneTree(Node root)
+    {
+        if(root==null)
+            return null;
+        Node new_node= new Node(root.val);
+        //for(Node child:root.children)
+        //    new_node.children.add(cloneTree(child));
+        return new_node;
+    }
+
+    /*
+        383. PROBLEM DESCRIPTION (https://leetcode.com/problems/path-with-maximum-probability/)
+    */
+    public double maxProbability(int n, int[][] edges, double[] succProb, int start, int end)
+    {
+        int len_e=edges.length;
+        HashMap<Integer,Double> hmap[]=new HashMap[n];
+        for(int i=0;i<n;i++)
+            hmap[i]=new HashMap<>();
+        for(int i=0;i<len_e;i++)
+        {
+            hmap[edges[i][0]].put(edges[i][1],succProb[i]);
+            hmap[edges[i][1]].put(edges[i][0],succProb[i]);
+        }
+        double prob[]=new double[n];
+        HashSet<Integer> visited=new HashSet<>();
+        Arrays.fill(prob,0);
+        prob[start]=1;
+        PriorityQueue<Pair<Integer,Double>> bfs_q=new PriorityQueue<Pair<Integer,Double>>((a,b)->Double.compare(b.getValue(),a.getValue()));
+        bfs_q.add(new Pair<Integer,Double>(start,1.0));
+        while(!bfs_q.isEmpty())
+        {
+            Pair<Integer,Double> pop_node= bfs_q.poll();
+            int cur_node=pop_node.getKey();
+            visited.add(cur_node);
+            if(cur_node==end)
+                return prob[end];
+            for(int adj:hmap[cur_node].keySet())
+            {
+                if(visited.contains(adj) ||(prob[adj]!=0 && prob[adj]<1e-5))
+                    continue;
+                if(prob[adj]<prob[cur_node]*hmap[cur_node].get(adj))
+                {
+                    prob[adj]= prob[cur_node]*hmap[cur_node].get(adj);
+                    bfs_q.add(new Pair<>(adj,prob[adj]));
+                }
+            }
+        }
+        return 0;
+    }
+
+    /*
+        384. PROBLEM DESCRIPTION (https://leetcode.com/problems/water-bottles/)
+    */
+    public int numWaterBottles(int total, int n) {
+        int result=total;
+        int empty=total;
+        while(empty>=n)
+        {
+            result+=empty/n;
+            empty=empty/n+empty%n;
+        }
+        return result;
+    }
+
+    /*
+        385. PROBLEM DESCRIPTION (https://leetcode.com/problems/diameter-of-n-ary-tree/)
+    */
+    //int result;
+    public int diameter(Node root) {
+        result=0;
+        helperDiameter(root);
+        return result;
+    }
+    public int helperDiameter(Node root)
+    {
+        if(root==null)
+            return 0;
+        int max1=0,max2=0;
+        /*for(Node child:root.children)
+        {
+            int curr_nodes=helperDiameter(child);
+            if(curr_nodes>max1)
+            {
+                max2=max1;
+                max1=curr_nodes;
+            }
+            else if(curr_nodes>max2)
+                max2=curr_nodes;
+        }*/
+        result = Math.max(result,max1+max2);
+        return Math.max(max1,max2)+1;
+    }
+
+    /*
+        386. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-length-of-subarray-with-positive-product/)
+    */
+    public int getMaxLen(int[] nums)
+    {
+        int result=0,n=nums.length,cur_length=0,last_valid_index=0;
+        boolean isPos=true;
+        for(int i=0;i<n;i++)
+        {
+            if(nums[i]>0)
+                cur_length++;
+            else if(nums[i]<0)
+            {
+                if(isPos)
+                    cur_length=0;
+                else
+                    cur_length=i-last_valid_index+1;
+                isPos=!isPos;
+            }
+            else
+            {
+                last_valid_index=i+1;
+                cur_length=0;
+                isPos=true;
+            }
+            result=Math.max(result,cur_length);
+        }
+        cur_length=0;
+        last_valid_index=n-1;
+        isPos=true;
+        for(int i=n-1;i>-1;i--)
+        {
+            if(nums[i]>0)
+                cur_length++;
+            else if(nums[i]<0)
+            {
+                if(isPos)
+                    cur_length=0;
+                else
+                    cur_length=last_valid_index-i+1;
+                isPos=!isPos;
+            }
+            else
+            {
+                last_valid_index=i-1;
+                cur_length=0;
+                isPos=true;
+            }
+            result=Math.max(result,cur_length);
+        }
+        return result;
+    }
+
+    /*
+        387. PROBLEM DESCRIPTION (https://leetcode.com/problems/min-cost-to-connect-all-points/)
+    */
+    public int minCostConnectPoints(int[][] points)
+    {
+        int n=points.length,parent[]=new int[n],num_edges=0,result=0;
+        PriorityQueue<int[]> pq=new PriorityQueue<>((a,b)->(a[2]-b[2]));
+        for(int i=0;i<n;i++)
+            for(int j=i+1;j<n;j++)
+                pq.offer(new int[]{i,j,Math.abs(points[i][0]-points[j][0])+ Math.abs(points[i][1]-points[j][1])});
+        for(int i=0;i<n;i++)
+            parent[i]=i;
+        while(num_edges<n-1)
+        {
+            int polled[]=pq.poll(), parent_x= getParent(parent,polled[0]), parent_y= getParent(parent,polled[1]);
+            if(parent_x==parent_y)
+                continue;
+            num_edges++;
+            parent[parent_x]=parent_y;
+            result += polled[2];
+        }
+        return result;
+    }
+
+    public int minCostConnectPoints1(int[][] points)
+    {
+        int n=points.length,min_dist[]=new int[n],result=0;
+        Arrays.fill(min_dist,Integer.MAX_VALUE);
+        min_dist[0]=0;
+        for(int i=0;i<n;i++)
+        {
+            int curr_min_pos=-1;
+            for(int j=0;j<n;j++)
+            {
+                if(min_dist[j]==-1)
+                    continue;
+                if(curr_min_pos==-1 || min_dist[curr_min_pos]>min_dist[j])
+                    curr_min_pos=j;
+            }
+            result += min_dist[curr_min_pos];
+            min_dist[curr_min_pos]=-1;
+            for(int j=0;j<n;j++)
+            {
+                if(min_dist[j]!=-1)
+                {
+                    int cur_val=Math.abs(points[j][0]-points[curr_min_pos][0])+Math.abs(points[j][1]-points[curr_min_pos][1]);
+                    min_dist[j]=Math.min(min_dist[j],cur_val);
+                }
+            }
+        }
+        return result;
+    }
+
+    /*
+        388. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-all-odd-length-subarrays/)
+    */
+    public int sumOddLengthSubarrays(int[] arr)
+    {
+        int n=arr.length,result=0;
+        for(int i=0;i<n;i++)
+        {
+            result += arr[i]*(((i+1)*(n-i)+1)/2);
+        }
+        return result;
+    }
+
+    /*
+        389. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-nearest-right-node-in-binary-tree/)
+    */
+    int node_level;
+    //boolean found;
+    public TreeNode findNearestRightNode(TreeNode root, TreeNode u)
+    {
+        node_level=0;
+        found=false;
+        return helper(root,u,0);
+    }
+    public TreeNode helper(TreeNode root,TreeNode u, int level)
+    {
+        if(root==null)
+            return null;
+        if(found && level==node_level)
+            return root;
+        if(root.val==u.val)
+        {
+            found = true;
+            node_level = level;
+        }
+        TreeNode left = helper(root.left,u,level+1);
+        if(left!=null)
+            return left;
+        return helper(root.right,u,level+1);
+    }
+
+    /*
+        390. PROBLEM DESCRIPTION (https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iii/)
+    */
+    public Node lowestCommonAncestor(Node p, Node q)
+    {
+        Node node1=p,node2=q;
+        while(node1!=node2)
+        {
+            //node1= node1==null?q:node1.parent;
+            //node2= node2==null?p:node2.parent;
+        }
+        return node1;
+    }
+
+    /*
+        391. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-absolute-differences-in-a-sorted-array/)
+    */
+    public int[] getSumAbsoluteDifferences(int[] nums)
+    {
+        int sum=0,n=nums.length,result[]=new int[n], presum[]=new int[n];
+        presum[0]=nums[0];
+        for(int i=1;i<n;i++)
+            presum[i]=presum[i-1]+nums[i];
+        result[0]=presum[n-1]-n*nums[0];
+        for(int i=1;i<n;i++)
+            result[i]=presum[n-1]-2*presum[i-1] + (2*i-n)*nums[i];
+        return result;
+    }
+
+    /*
+        392. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-units-on-a-truck/)
+    */
+    public int maximumUnits(int[][] boxTypes, int truckSize)
+    {
+        int n=boxTypes.length,result=0,current_boxes=0;
+        Arrays.sort(boxTypes,(a,b)->(b[1]-a[1]));
+        for(int i=0;i<n;i++)
+        {
+            if(current_boxes+boxTypes[i][0]>truckSize)
+            {
+                result+=(truckSize-current_boxes)*boxTypes[i][1];
+                break;
+            }
+            result += boxTypes[i][0]*boxTypes[i][1];
+            current_boxes+=boxTypes[i][0];
+        }
+        return result;
+    }
+
+    /*
+        393. PROBLEM DESCRIPTION (https://leetcode.com/problems/swapping-nodes-in-a-linked-list/)
+    */
+    public ListNode swapNodes(ListNode head, int k)
+    {
+        ListNode node1=head,node2=head,fast;
+        for(int i=1;i<k;i++)
+            node1=node1.next;
+        fast=node1;
+        while(fast.next!=null)
+        {
+            fast=fast.next;
+            node2=node2.next;
+        }
+        int temp=node1.val;
+        node1.val=node2.val;
+        node2.val=temp;
+        return head;
+    }
+
+    /*
+        394. PROBLEM DESCRIPTION (https://leetcode.com/problems/shortest-path-to-get-food/)
+    */
+    public int getFood(char[][] grid)
+    {
+        int dir[][]={{0,1},{1,0},{-1,0},{0,-1}},m=grid.length,n=grid[0].length,step=0,t_row=0,t_col=0,steps=0;
+        Queue<int[]> bfs_q = new LinkedList<>();
+        boolean visited[][]=new boolean[m][n];
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(grid[i][j]=='#')
+                {
+                    bfs_q.add(new int[]{i,j});
+                    visited[i][j]=true;
+                }
+                else if(grid[i][j]=='*')
+                {
+                    t_row=i;
+                    t_col=j;
+                }
+            }
+        }
+        while(!bfs_q.isEmpty())
+        {
+            int size=bfs_q.size();
+            for(int i=0;i<size;i++)
+            {
+                int polled[]=bfs_q.poll();
+
+                for(int d[]:dir)
+                {
+                    int nr=d[0]+polled[0], nc=d[1]+polled[1];
+                    if(nr>-1 && nc>-1 && nr<m && nc<n && !visited[nr][nc] && (grid[nr][nc]=='O' ||grid[nr][nc]=='*'))
+                    {
+                        if(nr==t_row && nc==t_col)
+                            return steps+1;
+                        visited[nr][nc]=true;
+                        bfs_q.add(new int[]{nr,nc});
+                    }
+                }
+            }
+            steps++;
+        }
+        return -1;
+    }
+
+    /*
+        395. PROBLEM DESCRIPTION (https://leetcode.com/problems/buildings-with-an-ocean-view/)
+    */
+    public int[] findBuildings(int[] heights)
+    {
+        List<Integer> result=new ArrayList<>();
+        int n=heights.length,max_til_now=heights[n-1];
+        result.add(n-1);
+        for(int i=n-2;i>-1;i--)
+        {
+            if(max_til_now<heights[i])
+                result.add(0,i);
+            max_til_now=Math.max(max_til_now,heights[i]);
+        }
+        return result.stream().mapToInt(i->i).toArray();
+    }
+    
+    /*
+        396. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/)
+    */
+    public int[] minOperations(String boxes)
+    {
+        char cArr[]=boxes.toCharArray();
+        int count_right=0,count_left=0,n=cArr.length,result[]=new int[n],r_right=0,r_left=0;
+        for(int i=0;i<n;i++)
+        {
+            if(cArr[i]=='1')
+            {
+                r_right+=i;
+                count_right++;
+            }
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(i>0 && cArr[i-1]=='1')
+                count_left++;
+            r_left += count_left;
+            result[i] = r_right+r_left;
+            if(cArr[i]=='1')
+                count_right--;
+            r_right-=(count_right);
+        }
+        return result;
+    }
+
+    /*
+        397. PROBLEM DESCRIPTION (https://leetcode.com/problems/closest-dessert-cost/)
+    */
+    Integer closest_value;
+    public int closestCost(int[] baseCosts, int[] toppingCosts, int target)
+    {
+        closest_value= null;
+        m=baseCosts.length;
+        n=toppingCosts.length;
+        for(int i=0;i<m;i++)
+            helperdes(baseCosts,toppingCosts,target,baseCosts[i],0);
+        return closest_value;
+    }
+    public void helperdes(int[] base, int[] topping, int target,int cur_cost,int topping_idx)
+    {
+        if(closest_value!=null && cur_cost-target>Math.abs(closest_value-target))
+            return;
+        if(closest_value==null || Math.abs(cur_cost-target)<=Math.abs(closest_value-target))
+        {
+            if(closest_value==null)
+                closest_value=cur_cost;
+            else if(Math.abs(cur_cost-target)==Math.abs(closest_value-target) && cur_cost<closest_value)
+                closest_value=cur_cost;
+            else if(Math.abs(cur_cost-target)<Math.abs(closest_value-target))
+                closest_value=cur_cost;
+
+        }
+        if(topping_idx==n)
+            return;
+        helperdes(base,topping,target,cur_cost,topping_idx+1);
+        helperdes(base,topping,target,cur_cost+topping[topping_idx],topping_idx+1);
+        helperdes(base,topping,target,cur_cost+2*topping[topping_idx],topping_idx+1);
+    }
+
+
+    /*
+        398. PROBLEM DESCRIPTION (https://leetcode.com/problems/equal-sum-arrays-with-minimum-number-of-operations/)
+    */
+    public int minOperations(int[] nums1, int[] nums2)
+    {
+        int map1[]=new int[6],map2[]=new int[6],sum=0,result=0;
+        for(int x:nums1)
+        {
+            map1[x-1]++;
+            sum+=x;
+        }
+        for(int x:nums2)
+        {
+            map2[x-1]++;
+            sum-=x;
+        }
+        if(sum>0)
+            return minOperations(nums2,nums1);
+        int idx1=0,idx2=5;
+        while((idx1<5 || idx2>0) && sum<0)
+        {
+            if(idx1<5 && map1[idx1]==0)
+                idx1++;
+            else if(idx2>0 && map2[idx2]==0)
+                idx2--;
+            else
+            {
+                result++;
+                int inc=idx1==5?0:(5-idx1), dec=idx2;
+                if(inc>dec)
+                {
+                    map1[idx1]--;
+                    sum += inc;
+                }
+                else
+                {
+                    map2[idx2]--;
+                    sum += dec;
+                }
+            }
+        }
+        return sum>=0?result:-1;
+    }
+
+    /*
+        399. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-center-of-star-graph/)
+    */
+    public int findCenter(int[][] edges)
+    {
+        int a=edges[0][0],b=edges[0][1];
+        if(a==edges[1][0] || a==edges[1][1])
+            return a;
+        return b;
+    }
+
+    /*
+        400. PROBLEM DESCRIPTION (https://leetcode.com/problems/second-largest-digit-in-a-string/)
+    */
+    public int secondHighest(String s)
+    {
+        boolean digit[]=new boolean[10];
+        for(char c:s.toCharArray())
+        {
+            if(c<='9' && c>='0')
+                digit[c-'0']=true;
+        }
+        boolean largest_found=false;
+        for(int i=9;i>-1;i--)
+        {
+            if(!digit[i])
+                continue;
+            if(largest_found)
+                return i;
+            largest_found=true;
+        }
+        return -1;
+    }
+
+    /*
+        401. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-ascending-subarray-sum/)
+    */
+    public int maxAscendingSum(int[] nums)
+    {
+        int idx=1,n=nums.length,curr_sum=nums[0],result=nums[0];
+        while(idx<n)
+        {
+            curr_sum=nums[idx-1];
+            while(idx<n && nums[idx]>nums[idx-1])
+                curr_sum+=nums[idx++];
+            result=Math.max(curr_sum,result);
+            idx++;
+        }
+        return result;
+    }
+
+    /*
+        402. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-operations-to-make-the-array-increasing/)
+    */
+    public int minOperations(int[] nums)
+    {
+        int result=0,n=nums.length;
+        for(int i=1;i<n;i++)
+        {
+            result += Math.max(0,nums[i-1]-nums[i]+1);
+            nums[i] = Math.max(nums[i-1]+1,nums[i]);
+        }
+        return result;
+    }
+
+    /*
+        403. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-ice-cream-bars/)
+    */
+    public int maxIceCream(int[] costs, int coins)
+    {
+        Arrays.sort(costs);
+        int result=0,idx=0,n=costs.length;
+        while(idx<n && coins-costs[idx]>=0)
+        {
+            coins-=costs[idx++];
+            result++;
+        }
+        return result;
+    }
+
+    /*
+        404. PROBLEM DESCRIPTION (https://leetcode.com/problems/substrings-of-size-three-with-distinct-characters/)
+    */
+    public int countGoodSubstrings(String s)
+    {
+        HashSet<Character> hset=new HashSet<>();
+        int n=s.length(),start=0,result=0;
+        char cArr[]=s.toCharArray();
+        for(int i=0;i<n;i++)
+        {
+            if(i-start==3)
+                hset.remove(cArr[start++]);
+            if(hset.contains(cArr[i]))
+            {
+                while(cArr[i]!=cArr[start])
+                {
+                    hset.remove(cArr[start++]);
+                }
+                start++;
+            }
+            else
+                hset.add(cArr[i]);
+            if(i-start==2)
+                result++;
+        }
+        return result;
+    }
+
+    /*
+        405. PROBLEM DESCRIPTION (https://leetcode.com/problems/check-if-all-the-integers-in-a-range-are-covered/)
+    */
+    public boolean isCovered(int[][] ranges, int left, int right)
+    {
+        Arrays.sort(ranges,(a,b)->(a[0]-b[0]));
+        if(ranges[0][0]>left)
+            return false;
+        int curr_end=ranges[0][1];
+        for(int x[]:ranges)
+        {
+            if(curr_end<left)
+            {
+                curr_end=x[1];
+                continue;
+            }
+            if(curr_end>=right)
+                return true;
+            if(curr_end<x[0]-1)
+                return false;
+            curr_end = Math.max(curr_end,x[1]);
+        }
+        return curr_end>=right;
+    }
+
+    /*
+        406. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-sub-islands/)
+    */
+    public int countSubIslands(int[][] grid1, int[][] grid2)
+    {
+        int island_num=2;
+        m=grid1.length;
+        n=grid1[0].length;
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+                if(grid1[i][j]==1)
+                    island_helper(grid1,island_num++,i,j);
+        }
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+                if(grid2[i][j]==1)
+                    island_helper(grid2,island_num++,i,j);
+        }
+        HashMap<Integer,Integer> hmap = new HashMap<>();
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(grid2[i][j]!=0)
+                {
+                    if(!hmap.containsKey(grid2[i][j]))
+                        hmap.put(grid2[i][j],grid1[i][j]);
+                    else if(hmap.get(grid2[i][j])!=grid1[i][j])
+                        hmap.put(grid2[i][j],0);
+                }
+            }
+        }
+        int result=0;
+        for(int key:hmap.keySet())
+        {
+            if(hmap.get(key)!=0)
+                result++;
+        }
+        return result;
+    }
+    public void island_helper(int[][] grid,int island_num, int row, int col)
+    {
+        grid[row][col]=island_num;
+        for(int d[]:dir)
+        {
+            int nr=d[0]+row, nc=col+d[1];
+            if(nr>-1 && nr<m && nc>-1 && nc<n && grid[nr][nc]==1)
+                island_helper(grid,island_num,nr,nc);
+        }
+    }
+
+    /*
+        407. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-compatibility-score-sum/)
+    */
+    //int result,m,n;
+    public int maxCompatibilitySum(int[][] students, int[][] mentors)
+    {
+        m=students.length;
+        n=students[0].length;
+        result=-1;
+        int student_bin[]=new int[m], mentor_bin[]=new int[m], compat[][]=new int[m][m],idx=0;
+        for(int stud[]:students)
+        {
+            int curr_bin=0;
+            for(int x:stud)
+                curr_bin = (curr_bin<<1) + x;
+            student_bin[idx++]=curr_bin;
+        }
+        idx=0;
+        for(int ment[]:mentors)
+        {
+            int curr_bin=0;
+            for(int x:ment)
+                curr_bin = (curr_bin<<1) + x;
+            mentor_bin[idx++]=curr_bin;
+        }
+
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                int score=student_bin[i]^mentor_bin[j], cur_score=0;
+                for(int k=0;k<n;k++)
+                {
+                    cur_score +=(score%2==0?1:0);
+                    score= score>>>1;
+                }
+                compat[i][j]=cur_score;
+            }
+        }
+        boolean visited[]=new boolean[m];
+        helper(0,compat,visited,0);
+        return result;
+    }
+    public void helper(int cur_stud,int[][] compat,boolean[] visited,int cur_score)
+    {
+        if(cur_stud==m)
+        {
+            result=Math.max(cur_score,result);
+            return;
+        }
+        for(int i=0;i<m;i++)
+        {
+            if(!visited[i])
+            {
+                visited[i]=true;
+                helper(cur_stud+1,compat,visited,cur_score+compat[cur_stud][i]);
+                visited[i]=false;
+            }
+        }
     }
 
 }
