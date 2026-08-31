@@ -239,6 +239,440 @@ public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
 /*
     11. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
 */
+public int removeDuplicates(int[] nums) {
+    int current_ptr = 1;
+    for(int i=1;i<nums.length;i++)
+    {
+        if(nums[i] != nums[i-1])
+            nums[current_ptr++] = nums[i];
+    }
+    return current_ptr;
+}
+
+/*
+    12. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-element/)
+*/
+public int removeElement(int[] nums, int val) {
+    int cur_ptr = 0;
+    for (int i=0; i<nums.length; i++)
+    {
+        if(nums[i] != val)
+            nums[cur_ptr++] = nums[i];
+    }
+    return cur_ptr;
+}
+
+/*
+13. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-and-say/)
+*/
+public String countAndSay(int n) {
+    StringBuilder sb = new StringBuilder(), next_sb;
+    String prev_string = "1", next_string = "";
+    if(n==1)
+        return prev_string;
+    for(int i=1; i<n;i++)
+    {
+        int cur_idx = 1, cur_num=1;
+        char c = prev_string.charAt(0);
+        next_sb = new StringBuilder();
+        while(cur_idx<prev_string.length())
+        {
+            if(prev_string.charAt(cur_idx)==c)
+                cur_num++;
+            else
+            {
+                next_sb.append(cur_num);
+                next_sb.append(c);
+                cur_num = 1;
+                c = prev_string.charAt(cur_idx);
+            }
+            cur_idx++;
+        }
+        next_sb.append(cur_num);
+        next_sb.append(c);
+        prev_string = next_sb.toString();
+    }
+    return prev_string;
+}
+
+/*
+    14. PROBLEM DESCRIPTION (https://leetcode.com/problems/search-insert-position/)
+*/
+public int searchInsert(int[] nums, int target) {
+    int lb = 0, ub = nums.length, mid;
+    while(lb<ub)
+    {
+        mid = lb + (ub-lb)/2;
+        if(nums[mid] < target)
+            lb = mid+1;
+        else if(nums[mid] > target)
+            ub = mid;
+        else
+            return mid;
+    }
+    return lb;
+}
+
+/*
+    15. PROBLEM DESCRIPTION (https://leetcode.com/problems/plus-one/)
+*/
+public int[] plusOne(int[] digits) {
+    for(int i = digits.length-1; i>=0; i--)
+    {
+        if(digits[i]!=9)
+        {
+            digits[i]+=1;
+            return digits;
+        }
+        else
+            digits[i] = 0;
+    }
+    int new_arr[] = new int[digits.length+1];
+    Arrays.fill(new_arr, 0);
+    new_arr[0] = 1;
+    return new_arr;
+}
+
+/*
+    16. PROBLEM DESCRIPTION (https://leetcode.com/problems/sqrtx/)
+*/
+public int mySqrt(int x) {
+    long lb = 0, ub = Math.max(1,x/2),mid;
+    while(lb<ub)
+    {
+        mid = lb + (ub-lb)/2;
+        if((mid*mid<=x) && (mid+1)*(mid+1)>x)
+            return (int)mid;
+        else if(mid*mid>x)
+            ub = mid;
+        else
+            lb = mid+1;
+    }
+    return (int)lb;
+}
+
+/*
+    17. PROBLEM DESCRIPTION (https://leetcode.com/problems/length-of-last-word/)
+*/
+public int lengthOfLastWord(String s) {
+    String split[] = s.split(" ");
+    return split[split.length-1].length();
+}
+
+/*
+    18. PROBLEM DESCRIPTION (https://leetcode.com/problems/add-binary/)
+*/
+public String addBinary(String a, String b) {
+    int a_index = a.length()-1, b_index = b.length()-1, carry=0;
+    StringBuffer sb = new StringBuffer();
+    while( a_index>=0 || b_index>=0 || carry>0)
+    {
+        int cur_a = 0, cur_b = 0;
+        if(a_index >= 0)
+            cur_a = (int)(a.charAt(a_index)-'0');
+        if(b_index >= 0)
+            cur_b = (int)(b.charAt(b_index)-'0');
+        int total = cur_a + cur_b + carry;
+        if(total%2 == 0)
+            sb.append("0");
+        else
+            sb.append("1");
+        carry = 0;
+        if(total>1)
+            carry = 1;
+        a_index -=1;
+        b_index -=1;
+    }
+    return sb.reverse().toString();
+}
+
+/*
+    19. PROBLEM DESCRIPTION (https://leetcode.com/problems/climbing-stairs/)
+*/
+public int climbStairs(int n) {
+    int dp[] = new int[n+1];
+    dp[1] = dp[0] = 1;
+    for(int i=2; i<=n; i++)
+        dp[i] = dp[i-1]+ dp[i-2];
+    return dp[n];
+}
+
+/*
+    20. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-sorted-array/)
+*/
+public void merge(int[] nums1, int m, int[] nums2, int n) {
+    int index1 = m-1, index2 = n-1;
+    while(index2>=0)
+    {
+        if(index1<0 || nums2[index2]>=nums1[index1])
+        {
+            nums1[index1+index2+1] = nums2[index2];
+            index2 -= 1; 
+        }
+        else
+        {
+            nums1[index1+index2+1] = nums1[index1];
+            index1 -= 1;
+        }
+    }
+}
+
+/*
+    21. PROBLEM DESCRIPTION (https://leetcode.com/problems/single-number/)
+*/
+public int singleNumber(int[] nums) {
+    int xor_val = 0;
+    for (int x: nums)
+        xor_val ^= x;
+    return xor_val;
+}
+
+/*
+    22. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+*/
+public int maxProfit(int[] prices) {
+    int cur_min = prices[0], profit = 0;
+    for(int x:prices)
+    {
+        profit = Math.max(profit, x-cur_min);
+        cur_min = Math.min(cur_min, x);
+    }
+    return profit;
+}
+
+/*
+    23. PROBLEM DESCRIPTION (https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
+*/
+public int maxProfit(int[] prices) {
+    int profit = 0;
+    for(int i=1;i<prices.length;i++)
+        profit += Math.max(0, prices[i] - prices[i-1]);
+    return profit;
+}
+
+/*
+    24. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-palindrome/)
+*/
+public boolean isPalindrome(String s) {
+    int start_idx = 0, end_idx = s.length()-1;
+    while(start_idx<end_idx)
+    {
+        char cur_start_c = Character.toLowerCase(s.charAt(start_idx)), cur_end_c=Character.toLowerCase(s.charAt(end_idx));
+        if(!Character.isLetterOrDigit(cur_start_c))
+            start_idx++;
+        else if(!Character.isLetterOrDigit(cur_end_c))
+            end_idx--;
+        else
+        { 
+            if(cur_start_c != cur_end_c)
+                return false;
+            start_idx++;
+            end_idx--;
+        }
+    }
+    return true;
+}
+
+/*
+    25. PROBLEM DESCRIPTION (https://leetcode.com/problems/implement-strstr/)
+*/
+public int strStr(String haystack, String needle) {
+    int len_needle = needle.length();
+    for(int i=0;i<=haystack.length() - len_needle;i++)
+    {
+        String cur_substr = haystack.substring(i,len_needle+i);
+        if(cur_substr.equals(needle))
+            return i;
+    }
+    return -1;
+}
+
+/*
+    26. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations/)
+*/
+public List<List<Integer>> permute(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    permute_helper(0, nums, result);
+    return result;
+}
+public void permute_helper(int pos_idx, int nums[], List<List<Integer>> result)
+{
+    if(pos_idx == nums.length-1)
+    {
+        ArrayList<Integer> new_lst = new ArrayList<>();
+        for(int x:nums)
+            new_lst.add(x);
+        result.add(new_lst);
+    }
+    else
+    {
+        for(int idx=pos_idx; idx<nums.length; idx++)
+        {
+            swap(nums, pos_idx, idx);
+            permute_helper(pos_idx+1, nums, result);
+            swap(nums, pos_idx, idx);
+        }
+    }
+}
+public void swap(int nums[], int i, int j)
+{
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+
+/*
+    27. PROBLEM DESCRIPTION (https://leetcode.com/problems/permutations-ii/)
+*/
+public List<List<Integer>> permuteUnique(int[] nums) {
+    Arrays.sort(nums);
+    List<List<Integer>> result = new ArrayList<>();
+    boolean isplaced[] = new boolean[nums.length];
+    permute_helper(0, nums, isplaced, result, new ArrayList<Integer>());
+    return result;
+}
+public void permute_helper(int pos_idx, int[] nums, boolean isplaced[], List<List<Integer>> result, List<Integer> cur_list)
+{
+    if(pos_idx ==nums.length)
+    {
+        result.add(new ArrayList(cur_list));
+        return;
+    }
+    for(int i = 0; i<nums.length; i++)
+    {
+        if (i == 0 || (nums[i]==nums[i-1] && isplaced[i-1])|| nums[i]!=nums[i-1])
+        {
+            if(isplaced[i])
+                continue;
+            cur_list.add(nums[i]);
+            isplaced[i] = true;
+            permute_helper(pos_idx+1, nums, isplaced, result, cur_list);
+            cur_list.remove(cur_list.size()-1);
+            isplaced[i] = false;
+        }
+    }
+}
+
+/*
+    28. PROBLEM DESCRIPTION (https://leetcode.com/problems/multiply-strings/)
+*/
+public String multiply(String num1, String num2) {
+    int idx1 = num1.length()-1, result[] = new int[num1.length()+num2.length()], idx2;
+    char[] char_arr1 = num1.toCharArray(), char_arr2 = num2.toCharArray();
+    while(idx1>=0)
+    {
+        idx2 = num2.length()-1;
+        while(idx2>=0)
+        {
+            int c1 = char_arr1[idx1]-'0', c2 = char_arr2[idx2]-'0';
+            int product = c1*c2;
+            result[idx1+idx2+1] += product;
+            result[idx1+idx2] += result[idx1+idx2+1]/10;
+            result[idx1+idx2+1] %= 10;
+            idx2--;
+        }
+        idx1--;
+    }
+    int idx = 0;
+    while(idx<result.length-1 && result[idx]==0)
+        idx++;
+    StringBuffer sb = new StringBuffer();
+    for (int i= idx; i<result.length; i++)
+    {
+        sb.append(String.valueOf(result[i]));
+    }
+    return sb.toString();
+}
+
+/*
+    29. PROBLEM DESCRIPTION (http://leetcode.com/problems/generate-parentheses/)
+*/
+public List<String> generateParenthesis(int n) {
+    List<String> result = new ArrayList<>();
+    StringBuffer sb = new StringBuffer();
+    helper(0, 0, sb, result, 2*n);
+    return result;
+}
+public void helper(int cur_pos, int num_open, StringBuffer sb, List<String> result, int n)
+{
+    if( cur_pos == n && num_open == 0)
+    {
+        result.add(sb.toString());
+        return;
+    }
+    if(n-cur_pos > num_open)
+    {
+        sb.append("(");
+        helper(cur_pos+1, num_open+1, sb, result, n);
+        sb.deleteCharAt(sb.length()-1);
+    }
+    if(num_open>0)
+    {
+        sb.append(")");
+        helper(cur_pos+1, num_open-1, sb, result, n);
+        sb.deleteCharAt(sb.length()-1);
+    }
+}
+
+/*
+    30. PROBLEM DESCRIPTION (https://leetcode.com/problems/combination-sum/)
+*/
+public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<Integer> cur_list = new ArrayList<>();
+        List<List<Integer>> result = new ArrayList<>();
+        helper(0, candidates, target, cur_list, result);
+        return result;
+    }
+    public void helper(int cur_idx, int[] candidates, int sum_left, List<Integer> cur_list, List<List<Integer>> result)
+    {
+        if(sum_left == 0)
+        {
+            result.add(new ArrayList(cur_list));
+            return;
+        }
+        for(int i=cur_idx; i<candidates.length; i++)
+        {
+            if(candidates[i]>sum_left)
+                continue;
+            cur_list.add(candidates[i]);
+            helper(i, candidates, sum_left-candidates[i], cur_list, result);
+            cur_list.remove(cur_list.size()-1);
+        }
+    }
+
+/*
+    31. PROBLEM DESCRIPTION (https://leetcode.com/problems/combination-sum-ii/)
+*/
+public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+    Arrays.sort(candidates);
+    List<List<Integer>> result = new ArrayList<>();
+    List<Integer> cur_list = new ArrayList<>();
+    helper(0, target, candidates, cur_list, result);
+    return result;
+}
+public void helper(int cur_idx, int sum_left, int[] candidates, List<Integer> cur_list, List<List<Integer>> result)
+{
+    if(sum_left == 0)
+    {
+        result.add(new ArrayList(cur_list));
+        return;
+    }
+    for(int i=cur_idx; i<candidates.length; i++)
+    {
+        if(candidates[i]>sum_left)
+            break;
+        if( i>cur_idx && candidates[i]==candidates[i-1])
+            continue;
+
+        cur_list.add(candidates[i]);
+        helper(i+1, sum_left-candidates[i], candidates, cur_list, result);
+        cur_list.remove(cur_list.size()-1);
+    }
+}
+
+/*
+    32. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-sudoku/)
+*/
 
 public static void main(String args[])
 {
