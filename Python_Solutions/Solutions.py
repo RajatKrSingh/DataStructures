@@ -488,6 +488,129 @@ def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]
 '''
     32. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-sudoku/)
 '''
+def isValidSudoku(self, board: List[List[str]]) -> bool:
+    rowflag, colflag, subboardflag = [set() for _ in range(0,9)], [set() for _ in range(0,9)], [set() for _ in range(0,9)]
+    for row_idx in range(0,9):
+        for col_idx in range(0,9):
+            cur_val = board[row_idx][col_idx]
+            if cur_val == '.':
+                continue
+            if cur_val in rowflag[row_idx] or cur_val in colflag[col_idx] or cur_val in subboardflag[(row_idx//3)*3 + col_idx//3]:
+                return False
+            colflag[col_idx].add(cur_val)
+            rowflag[row_idx].add(cur_val)
+            subboardflag[(row_idx//3)*3 + col_idx//3].add(cur_val)
+    return True
+
+'''
+    33. PROBLEM DESCRIPTION (https://leetcode.com/problems/sudoku-solver/)
+'''
+def solveSudoku(self, board: List[List[str]]) -> None:
+    """
+    Do not return anything, modify board in-place instead.
+    """
+    def placeexisting():
+        emptylist = []
+        for row_idx in range(9):
+            for col_idx in range(9):
+                c = board[row_idx][col_idx]
+                if c == '.':
+                    emptylist.append((row_idx, col_idx))
+                    continue
+                rowflag[row_idx].add(c)
+                colflag[col_idx].add(c)
+                subblockflag[(row_idx//3)*3 + col_idx//3].add(c)
+        return emptylist
+
+    def fillboard(cur_idx: int):
+        if cur_idx == len(emptylist):
+            return True
+        cur_row, cur_col = emptylist[cur_idx]
+        subblock_idx = (cur_row//3)*3+cur_col//3
+        c = board[cur_row][cur_col]
+        for idx_c in "123456789":
+            if idx_c in rowflag[cur_row] or idx_c in colflag[cur_col] or idx_c in subblockflag[subblock_idx]:
+                continue
+            rowflag[cur_row].add(idx_c)
+            colflag[cur_col].add(idx_c)
+            subblockflag[subblock_idx].add(idx_c)
+            board[cur_row][cur_col] = idx_c
+            if fillboard(cur_idx+1):
+                return True
+            rowflag[cur_row].remove(idx_c)
+            colflag[cur_col].remove(idx_c)
+            subblockflag[subblock_idx].remove(idx_c)
+            board[cur_row][cur_col] = '.'
+        return False
+    rowflag, colflag, subblockflag = [set() for _ in range(9)], [set() for _ in range(9)], [set() for _ in range(9)]
+    emptylist = placeexisting()
+    fillboard(0)
+
+'''
+    34. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum/)
+'''
+def threeSum(self, nums: list[int]) -> list[list[int]]:
+    nums.sort()
+    result = []
+    for i in range(len(nums)-2):
+        if i>0 and nums[i] == nums[i-1]:
+            continue
+        k = len(nums)-1
+        for j in range(i+1, len(nums)-1):
+            if j>=k:
+                break
+            if (j>i+1 and nums[j] == nums[j-1]):
+                continue
+            sum_2 = nums[i]+ nums[j]
+            while k>j+1 and sum_2 + nums[k] > 0:
+                k-=1
+            if sum_2 + nums[k] == 0:
+                result.append([nums[i], nums[j], nums[k]])
+    return result
+
+'''
+    34_2. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum-closest/)
+'''
+def threeSumClosest(self, nums: List[int], target: int) -> int:
+    nums.sort()
+    closest = nums[0]+nums[1]+nums[2]
+    for i in range(len(nums)):
+        lb, ub = i+1, len(nums)-1
+        while(lb<ub):
+            cur_sum = nums[i]+nums[lb]+nums[ub]
+            if abs(cur_sum-target) < abs(closest-target):
+                closest = cur_sum
+            if cur_sum == target:
+                return target
+            if cur_sum < target:
+                lb +=1
+            else:
+                ub -=1
+    return closest
+
+'''
+    35. PROBLEM DESCRIPTION (https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
+'''
+def letterCombinations(self, digits: str) -> List[str]:
+    result = [""]
+    phone_dict = ["abc","def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"]
+    def helper(idx: int)-> None:
+        if idx == len(digits):
+            return
+        nonlocal result
+        c = digits[idx]
+        newresult = []
+        for cur_cand in result:
+            for cur_c in phone_dict[int(c)-2]:
+                newresult.append(cur_cand+cur_c)
+        result = newresult
+        helper(idx+1)
+    helper(0)
+    return result
+
+'''
+    36. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-valid-parentheses/)
+'''
 
 def main():
     print("Entering Main")

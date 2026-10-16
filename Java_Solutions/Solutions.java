@@ -673,6 +673,187 @@ public void helper(int cur_idx, int sum_left, int[] candidates, List<Integer> cu
 /*
     32. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-sudoku/)
 */
+public boolean isValidSudoku(char[][] board) {
+    HashSet<Character>[] rowflag = new HashSet[9], colflag = new HashSet[9], subboardflag = new HashSet[9];
+    for(int idx=0; idx<9; idx++)
+    {
+        rowflag[idx] = new HashSet();
+        colflag[idx] = new HashSet();
+        subboardflag[idx] = new HashSet();
+    }
+    for(int row_idx=0; row_idx<9; row_idx++)
+    {
+        for(int col_idx=0; col_idx<9; col_idx++)
+        {
+            char cur_c = board[row_idx][col_idx];
+            if(cur_c == '.')
+                continue;
+            if(!rowflag[row_idx].add(cur_c))
+                return false;
+            if(!colflag[col_idx].add(cur_c))
+                return false;
+            if(!subboardflag[(row_idx/3)*3 + col_idx/3].add(cur_c))
+                return false;
+        }
+    }
+    return true;
+}
+
+/*
+    33. PROBLEM DESCRIPTION (https://leetcode.com/problems/sudoku-solver/)
+*/
+public void solveSudoku(char[][] board) {
+    HashSet<Character>[] rowflag = new HashSet[9], colflag = new HashSet[9], subboardflag = new HashSet[9];
+    for(int idx=0; idx<9; idx++)
+    {
+        rowflag[idx] = new HashSet();
+        colflag[idx] = new HashSet();
+        subboardflag[idx] = new HashSet();
+    }
+    setboard(rowflag, colflag, subboardflag, board);
+    fillboard(rowflag, colflag, subboardflag, board, 0);
+}
+
+public boolean fillboard(HashSet<Character> rowflag[], HashSet<Character> colflag[], HashSet<Character> subboardflag[], char[][] board, int cur_idx)
+{
+    if(cur_idx == 81)
+        return true;
+    int currow_idx = cur_idx/9, curcol_idx = cur_idx%9;
+    char c = board[currow_idx][curcol_idx];
+    if( c != '.')
+        return fillboard(rowflag, colflag, subboardflag, board, cur_idx+1);
+    for(char iter_c='1'; iter_c<='9'; iter_c++)
+    {
+        if(!rowflag[currow_idx].contains(iter_c) && !colflag[curcol_idx].contains(iter_c) && !subboardflag[(currow_idx/3)*3 + curcol_idx/3].contains(iter_c))
+        {
+            rowflag[currow_idx].add(iter_c);
+            colflag[curcol_idx].add(iter_c);
+            subboardflag[(currow_idx/3)*3 + curcol_idx/3].add(iter_c);
+            board[currow_idx][curcol_idx] = iter_c;
+            if(fillboard(rowflag, colflag, subboardflag, board, cur_idx+1))
+                return true;
+            rowflag[currow_idx].remove(iter_c);
+            colflag[curcol_idx].remove(iter_c);
+            subboardflag[(currow_idx/3)*3 + curcol_idx/3].remove(iter_c);
+            board[currow_idx][curcol_idx] = '.';
+        }
+    }
+    return false;
+}
+
+public void setboard(HashSet<Character>[] rowflag, HashSet<Character>[] colflag, HashSet<Character>[] subboardflag, char[][] board)
+{
+    for(int row_idx=0; row_idx<9; row_idx++)
+    {
+        for(int col_idx=0; col_idx<9; col_idx++)
+        {
+            char cur_c = board[row_idx][col_idx];
+            if(cur_c == '.')
+                continue;
+            rowflag[row_idx].add(cur_c);
+            colflag[col_idx].add(cur_c);
+            subboardflag[(row_idx/3)*3+ col_idx/3].add(cur_c);
+        }
+    }
+}
+
+/*
+    34. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum/)
+*/
+public List<List<Integer>> threeSum(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    Arrays.sort(nums);
+    for(int i=0; i<nums.length-2; i++)
+    {
+        if(i>0 && nums[i]==nums[i-1])
+            continue;
+        int k = nums.length-1;
+        for(int j=i+1; j<nums.length-1; j++)
+        {
+            if(j>=k)
+                break;
+            if (j>i+1 && nums[j]==nums[j-1])
+                continue;
+            while(k>j+1 && (nums[i] + nums[j] + nums[k]>0))
+                k -= 1;
+            if(nums[k]+nums[i]+nums[j] == 0)
+                result.add(new ArrayList<>(List.of(nums[i], nums[j], nums[k])));
+        }
+    }
+    return result;
+}
+
+/*
+    34_2. PROBLEM DESCRIPTION (https://leetcode.com/problems/3sum-closest/)
+*/
+public int threeSumClosest(int[] nums, int target) {
+    Arrays.sort(nums);
+    int closest = Integer.MAX_VALUE, min_difference = Integer.MAX_VALUE;
+    for(int i=0; i<nums.length-2;i++)
+    {
+        if (i>0 && nums[i]==nums[i-1])
+            continue;
+        int k = nums.length-1;
+        for(int j=i+1; j<nums.length-1; j++)
+        {
+            if(j>=k)
+                break;
+            if(j>i+1 && nums[j]==nums[j-1])
+                continue;
+            int cur_sum = nums[i]+nums[j];
+            while(k>j+1 && cur_sum+nums[k]>target)
+                k--;
+            cur_sum = nums[i]+nums[j]+nums[k];
+            int abs_diff = Math.abs(target-cur_sum);
+            //Check currnt val and then next val if present
+            if(k>j && min_difference>abs_diff)
+            {
+                closest = cur_sum;
+                min_difference = abs_diff;
+            }
+            if(k+1<nums.length)
+            {
+                cur_sum = nums[i]+nums[j]+nums[k+1];
+                abs_diff = Math.abs(target-cur_sum);
+                if(min_difference>abs_diff)
+                {
+                    closest = cur_sum;
+                    min_difference = abs_diff;
+                }
+            }
+        }
+    }
+    return closest;
+}
+
+/*
+    35. PROBLEM DESCRIPTION (https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
+*/
+String map[] = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+public List<String> letterCombinations(String digits) {
+    List<String> result = new ArrayList<>();
+    helper(digits, new StringBuffer(), 0, result);
+    return result;
+}
+public void helper(String digits, StringBuffer sb, int idx, List<String> result)
+{
+    if(digits.length()==idx)
+    {
+        result.add(sb.toString());
+        return;
+    }
+    char cur_c = digits.charAt(idx); 
+    for(char c: map[cur_c-'2'].toCharArray())
+    {
+        sb.append(c);
+        helper(digits, sb, idx+1, result);
+        sb.deleteCharAt(sb.length()-1);
+    }
+}
+
+/*
+    36. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-valid-parentheses/)
+*/
 
 public static void main(String args[])
 {
