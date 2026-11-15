@@ -7,6 +7,18 @@ class ListNode:
         self.val = val
         self.next = next
 
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Node:
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+
 ## END OF CLASS OBJECTS
 
 '''
@@ -611,7 +623,302 @@ def letterCombinations(self, digits: str) -> List[str]:
 '''
     36. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-valid-parentheses/)
 '''
+def longestValidParentheses(self, s: str) -> int:
+    s_len, dp = len(s), [0]*(len(s)+1)
+    cur_max, global_max = 0, 0
+    for i in range(2, s_len+1):
+        cur_max = 0
+        if s[i-1]==')':
+            if s[i-2] == '(':
+                cur_max = 2+dp[i-2]
+            if i-2-dp[i-1]!=-1 and s[i-2-dp[i-1]]=='(':
+                cur_max = max(cur_max, 2+dp[i-1]+dp[i-2-dp[i-1]])
+            
+        dp[i] = cur_max
+        global_max = max(global_max, cur_max)
+    return global_max
 
+def longestValidParentheses(self, s: str) -> int:
+    stck, result = [-1], 0
+    for i in range(len(s)):
+        if s[i] == '(':
+            stck.append(i)
+        else:
+            stck.pop()
+            if not stck:
+                stck.append(i)
+            else:
+                result = max(result, i-stck[-1])
+
+    return result
+
+'''
+    37. PROBLEM DESCRIPTION (https://leetcode.com/problems/decode-ways/)
+'''
+def numDecodings(self, s: str) -> int:
+    num_ways_prev, num_ways = 0, 1
+    for i in range(len(s)):
+        cur_ways = 0
+        if s[i]!='0':
+            cur_ways = num_ways
+        if i>=1 and (s[i-1]=='1' or (s[i-1]=='2' and s[i]<'7')):
+            cur_ways += num_ways_prev
+        num_ways_prev, num_ways = num_ways, cur_ways
+    return num_ways
+
+'''
+    38. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/)
+'''
+def findBestValue(self, arr: list[int], target: int) -> int:
+    arr.sort()
+    for idx in range(len(arr)):
+        cur_total = (len(arr)-idx)*arr[idx]
+        if cur_total > target:
+            mid_val = math.ceil(target/(len(arr)-idx) - 0.5)
+            return mid_val
+        target -= arr[idx]
+    return arr[-1]
+
+def findBestValue(self, arr: list[int], target: int) -> int:
+    def sumhelper(arr, potential_num):
+        total = 0
+        for x in arr:
+            total += min(x, potential_num)
+        return total
+    lb, ub = 1, 0
+    for x in arr:
+        ub = max(x, ub)
+    while lb<ub:
+        mid = int((lb+ub)/2)
+        if sumhelper(arr, mid) >= target:
+            ub = mid
+        else:
+            lb = mid+1
+    potential_lower = target - sumhelper(arr, lb-1)
+    potential_higher = sumhelper(arr, lb) - target
+
+    return lb-1 if potential_lower<=potential_higher else lb
+
+'''
+    39. PROBLEM DESCRIPTION (https://leetcode.com/problems/happy-number/)
+'''
+def isHappy(self, n: int) -> bool:
+    fast, tracker, tracker_idx, skipbool =  n, [n], 0, False
+    while n!=1:
+        slow = tracker[tracker_idx]
+        fast = 0
+        while n>0:
+            modval = n%10
+            fast += modval**2
+            n //= 10
+        if fast == slow:
+            return False
+        tracker.append(fast)
+        if skipbool:
+            tracker_idx += 1
+        skipbool = not skipbool
+        n = fast
+    return True
+
+'''
+    40. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-inorder-traversal/)
+'''
+def inorderTraversal(self, root: TreeNode | None) -> list[int]:
+    stck, result, cur_node = [], [] , root
+    while cur_node or len(stck)>0:
+        while cur_node:
+            stck.append(cur_node)
+            cur_node = cur_node.left
+        cur_node = stck.pop()
+        result.append(cur_node.val)
+        cur_node = cur_node.right
+    return result
+
+'''
+    41. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-nodes-and-return-forest/)
+'''
+def delNodes(self, root: Optional[TreeNode], to_delete: List[int]) -> List[TreeNode]:
+    result = []
+    to_delete = set(to_delete)
+    def helper(root, to_delete, result):
+        if not root:
+            return
+        root.left = helper(root.left, to_delete, result)
+        root.right = helper(root.right, to_delete, result)
+        to_delete_cur_node = root.val in to_delete
+        if to_delete_cur_node:
+            if root.right:
+                result.append(root.right)
+            if root.left:
+                result.append(root.left)
+            return None
+        return root
+    if helper(root, to_delete, result):
+        result.append(root)
+    return result
+
+'''
+    42. PROBLEM DESCRIPTION (https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+'''
+def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+    if not root:
+        return root
+    if root == p or root == q:
+        return root
+    leftAncestor, rightAncestor = self.lowestCommonAncestor(root.left, p, q), self.lowestCommonAncestor(root.right, p, q)
+    if leftAncestor and rightAncestor:
+        return root
+    return leftAncestor if leftAncestor else rightAncestor
+
+'''
+    43. PROBLEM DESCRIPTION (https://leetcode.com/problems/subarray-sum-equals-k/)
+'''
+def subarraySum(self, nums: List[int], k: int) -> int:
+    hmap, cur_sum, result = {0:1}, 0, 0
+    for x in nums:
+        cur_sum += x
+        result += hmap.get(cur_sum-k, 0)
+        hmap[cur_sum] = hmap.get(cur_sum,0)+1
+    return result
+
+'''
+    44. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-subarray/)
+'''
+def maxSubArray(self, nums: list[int]) -> int:
+    cur_max, cur_sum = nums[0], 0
+    for x in nums:
+        cur_sum += x
+        cur_max = max(cur_max, cur_sum)
+        cur_sum = max(0, cur_sum)
+    return cur_max
+
+'''
+    45. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-palindromic-substring)
+'''
+def longestPalindrome(self, s: str) -> str:
+    def expandFromCenter(s, i, cur_max):
+        left, right = i, i
+        while left>-1 and right<len(s) and s[left]==s[right]:
+            left -=1
+            right+=1
+        
+        if right-left-1 > len(cur_max):
+            cur_max = s[left+1:right]
+        left, right = i, i+1
+        while left>-1 and right<len(s) and s[left]==s[right]:
+            left-=1
+            right+=1
+        
+        if right-left-1 > len(cur_max):
+            cur_max = s[left+1:right]
+        return cur_max
+    
+    cur_max = ""
+    for i in range(len(s)):
+        cur_max = expandFromCenter(s, i, cur_max)
+    return cur_max
+
+'''
+    46. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+'''
+def removeNthFromEnd(self, head: ListNode | None, n: int) -> ListNode | None:
+    dummy_head = ListNode(0, head)
+    fast, slow = dummy_head, dummy_head
+    for i in range(n):
+        fast = fast.next
+    while fast.next:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy_head.next
+
+'''
+    47. PROBLEM DESCRIPTION (https://leetcode.com/problems/container-with-most-water/)
+'''
+def maxArea(self, height: list[int]) -> int:
+    left, right, result = 0, len(height)-1, 0
+    while left<right:
+        cur_vol = (right-left)*min(height[left], height[right])
+        result = max(result, cur_vol)
+        if height[left] < height[right]:
+            left+=1
+        else:
+            right-=1
+    return result
+
+'''
+    48. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-colors/)
+'''
+def sortColors(self, nums: list[int]) -> None:
+    """
+    Do not return anything, modify nums in-place instead.
+    """
+    boundary1, boundary2 = 0, 0
+    for x in nums:
+        if x == 0:
+            boundary1+=1
+            boundary2+=1
+        elif x == 1:
+            boundary2+=1
+    for i in range(boundary1):
+        nums[i] = 0
+    for i in range(boundary1, boundary2):
+        nums[i] = 1
+    for i in range(boundary2, len(nums)):
+        nums[i] = 2
+
+'''
+    49. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+'''
+def searchRange(self, nums: list[int], target: int) -> list[int]:
+    left, right = 0, len(nums)-1
+    while left < right:
+        mid = (left+right)//2
+        if nums[mid]>=target:
+            right = mid
+        else:
+            left = mid + 1
+    if left==len(nums) or nums[left]!=target:
+        return [-1,-1]
+
+    start_pos, right = left, len(nums)-1
+    while left < right:
+        mid = (left+right+1)//2
+        if nums[mid] == target:
+            left = mid
+        else:
+            right = mid-1
+    return [start_pos, left]
+
+'''
+    50. PROBLEM DESCRIPTION (https://leetcode.com/problems/copy-list-with-random-pointer/)
+'''
+def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+    def duplicate_nodes(head):
+        while head:
+            new_node = Node(head.val, head.next, None)
+            head.next = new_node
+            head = new_node.next
+    
+    def assign_random_ptr(head):
+        while head:
+            added_node = head.next
+            added_node.random = head.random.next if head.random else None
+            head = added_node.next
+    
+    def reassign_next_ptr(head, dummy_head):
+        while head:
+            dummy_head.next = head.next
+            head.next = head.next.next
+            dummy_head = dummy_head.next
+            head = head.next
+            
+    dummy_head=Node(0)
+    duplicate_nodes(head)
+    assign_random_ptr(head)
+    reassign_next_ptr(head, dummy_head)
+    return dummy_head.next
+                
 def main():
     print("Entering Main")
     return 0

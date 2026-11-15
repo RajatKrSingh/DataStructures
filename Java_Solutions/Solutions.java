@@ -854,6 +854,405 @@ public void helper(String digits, StringBuffer sb, int idx, List<String> result)
 /*
     36. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-valid-parentheses/)
 */
+public int longestValidParentheses(String s) {
+    int len= s.length(), dp[] = new int[len+1], cur_max=0, global_max=0;
+    char sArr[] = s.toCharArray();
+    for(int i=2; i<=len; i++)
+    {
+        cur_max = 0;
+        if(sArr[i-1]==')')
+        {
+            if(sArr[i-2]=='(')
+                cur_max = 2+dp[i-2];
+            if((i-2-dp[i-1]!=-1) && sArr[i-2-dp[i-1]]=='(')
+                cur_max = Math.max(cur_max, 2+dp[i-2-dp[i-1]]+dp[i-1]);
+        }
+        dp[i] = cur_max;
+        global_max = Math.max(global_max, cur_max);
+    }
+    return global_max;
+}
+
+public int longestValidParentheses(String s) {
+    Deque<Integer> stck = new ArrayDeque<>();
+    stck.push(-1);
+    int len = s.length(), result=0;
+    for(int i=0; i<len; i++)
+    {
+        if(s.charAt(i)=='(')
+            stck.push(i);
+        else
+        {
+            stck.pop();
+            if(stck.size()==0)
+                stck.push(i);
+            else
+                result = Math.max(result, i-stck.peek());
+        }
+    }
+    return result;
+}
+
+/*
+    37. PROBLEM DESCRIPTION (https://leetcode.com/problems/decode-ways/)
+*/
+public int numDecodings(String s) {
+    int num_ways_til_prev=1, num_ways_til_now = 1, len = s.length(),temp;
+    for(int i=0;i<len;i++)
+    {
+        temp = num_ways_til_prev;
+        num_ways_til_prev = num_ways_til_now;
+        if(s.charAt(i)=='0')
+            num_ways_til_now = 0;
+        if(i>0 && (s.charAt(i-1)=='1' || (s.charAt(i-1)=='2' && s.charAt(i)<'7')))
+            num_ways_til_now += temp;
+    }
+    return num_ways_til_now;
+}
+
+/*
+    38. PROBLEM DESCRIPTION (https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/)
+*/
+public int findBestValue(int[] arr, int target) {
+    Arrays.sort(arr);
+    int cur_sum = 0, cur_total = 0, len = arr.length;
+    for(int i=0; i<len; i++)
+    {
+        cur_total = cur_sum + (len-i)*arr[i];
+        if(cur_total > target)
+            return (int)(Math.ceil(1.0*target/(len-i) - 0.5));
+        target -= arr[i];
+    }
+    return arr[len-1];
+}
+
+public int findBestValue(int[] arr, int target) {
+    int lb=1, ub=0, mid;
+    for(int x: arr)
+        ub = Math.max(x, ub);
+    while(lb<ub)
+    {
+        mid = (lb + ub)/2;
+        if(sumhelper(arr, mid) > target)
+            ub = mid;
+        else
+            lb = mid + 1;
+    }
+    int candidate_lower = target - sumhelper(arr, lb-1), candidate_higher = sumhelper(arr, lb) - target;
+    return (candidate_lower<=candidate_higher?lb-1:lb);
+}
+
+public int sumhelper(int[] arr, int candidate)
+{
+    int total = 0;
+    for(int x: arr)
+        total += Math.min(x, candidate);
+    return total;
+}
+
+/*
+    39. PROBLEM DESCRIPTION (https://leetcode.com/problems/happy-number/)
+*/
+public boolean isHappy(int n) {
+    HashSet<Integer> hset = new HashSet<>();
+    int cur_total, modval;
+    while(n!=1)
+    {
+        cur_total = 0;
+        while(n>0)
+        {
+            modval = n%10;
+            cur_total += modval*modval;
+            n /= 10;
+        }
+        if(!hset.add(cur_total))
+            return false;
+        n = cur_total;
+    }
+    return true;
+}
+
+/*
+    40. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-inorder-traversal/)
+*/
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> result = new ArrayList<>();
+    TreeNode cur_node = root;
+    Stack<TreeNode> stck = new Stack<>();
+    while(true)
+    {
+        if(cur_node!=null)
+        {
+            stck.push(cur_node);
+            cur_node = cur_node.left;
+        }
+        else
+        {
+            if(stck.isEmpty())
+                return result;
+            cur_node = stck.pop();
+            result.add(cur_node.val);
+            cur_node = cur_node.right;
+        }
+    }
+}
+
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> result = new ArrayList<>();
+    helper(result, root);
+    return result;
+}
+public void helper(List<Integer> result, TreeNode root)
+{
+    if(root==null)
+        return;
+    helper(result, root.left);
+    result.add(root.val);
+    helper(result, root.right);
+}
+
+/*
+    41. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-nodes-and-return-forest/)
+*/
+public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+    List<TreeNode> result = new ArrayList<>();
+    HashSet<Integer> hset = new HashSet<>();
+    for(int x: to_delete)
+        hset.add(x);
+    if(!helper(root, hset, result))
+        result.add(root);
+    return result;
+}
+public boolean helper(TreeNode root, HashSet<Integer> hset, List<TreeNode> result)
+{
+    if(root == null)
+        return false;
+    boolean is_left_deleted = helper(root.left, hset, result);
+    boolean is_right_deleted = helper(root.right, hset, result);
+    boolean this_node_deleted = hset.contains(root.val);
+    
+    if(this_node_deleted)
+    {
+        if(!is_left_deleted && root.left!=null)
+            result.add(root.left);
+        if(!is_right_deleted && root.right!=null)
+            result.add(root.right);
+            
+    }
+    if(is_left_deleted)
+        root.left = null;       
+    if(is_right_deleted)
+        root.right = null;
+    return this_node_deleted;
+}
+
+/*
+    42. PROBLEM DESCRIPTION (https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+*/
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if(root==null || root == p || root == q)
+        return root;
+    TreeNode leftAncestor = lowestCommonAncestor(root.left, p, q), rightAncestor = lowestCommonAncestor(root.right, p, q);
+    if(leftAncestor!=null && rightAncestor!=null)
+        return root;
+    return leftAncestor!=null?leftAncestor:rightAncestor;
+}
+
+/*
+    43. PROBLEM DESCRIPTION (https://leetcode.com/problems/subarray-sum-equals-k/)
+*/
+public int subarraySum(int[] nums, int k) {
+    int cur_sum = 0, result = 0;
+    HashMap<Integer, Integer> hmap = new HashMap<>();
+    hmap.put(0,1);
+    for(int x:nums)
+    {
+        cur_sum += x;
+        result += hmap.getOrDefault(cur_sum-k,0); 
+        hmap.put(cur_sum, hmap.getOrDefault(cur_sum,0)+1);
+    }
+    return result;
+}
+
+/*
+    44. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-subarray/)
+*/
+public int maxSubArray(int[] nums) {
+    int current_max = 0, result = nums[0];
+    for(int x:nums)
+    {
+        current_max += x;
+        result = Math.max(result, current_max);
+        current_max = Math.max(0, current_max);
+    }
+    return result;
+}
+
+/*
+    45. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-palindromic-substring)
+*/
+public String longestPalindrome(String s) {
+    char[] sArr = s.toCharArray();
+    String subresult="", temp;
+    int len = s.length(), result = 0;
+    for(int i=0; i<len;i++)
+    {
+        temp = expandFromCenter(sArr, i, i);
+        if(temp.length() > subresult.length() )
+            subresult = temp;
+
+        temp = expandFromCenter(sArr, i, i+1);
+        if(temp.length() > subresult.length() )
+            subresult = temp;
+    }
+    return subresult;
+}
+
+public String expandFromCenter(char[] sArr, int left, int right)
+{
+    int result = 0;
+    while(left>-1 && right<sArr.length && sArr[left]==sArr[right])
+    {
+        result = right-left+1;
+        left--;
+        right++;
+    }
+    return new String(sArr, left+1, result);
+}
+
+/*
+    46. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+*/
+public ListNode removeNthFromEnd(ListNode head, int n) {
+    ListNode dummyhead = new ListNode(0, head), slow = dummyhead, fast = dummyhead;
+    for(int i=0;i<n;i++)
+        fast = fast.next;
+    while(fast.next!=null)
+    {
+        fast = fast.next;
+        slow = slow.next;
+    }
+    slow.next = slow.next.next;
+    return dummyhead.next;
+}
+
+/*
+    47. PROBLEM DESCRIPTION (https://leetcode.com/problems/container-with-most-water/)
+*/
+public int maxArea(int[] height) {
+    int result = 0, left = 0, right = height.length-1;
+    while(left<right)
+    {
+        int current_volume = (right-left)*Math.min(height[right], height[left]);
+        result = Math.max(result, current_volume);
+        if(height[left]<height[right])
+            left++;
+        else
+            right--;
+    }
+    return result;
+}
+
+/*
+    48. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-colors/)
+*/
+public void sortColors(int[] nums) {
+    int boundary1=0, boundary3=nums.length-1, cur_num, i=0, temp;
+    while(i<=boundary3)
+    {
+        cur_num = nums[i];
+        if(cur_num==0)
+        {
+            temp= nums[i];
+            nums[i] = nums[boundary1];
+            nums[boundary1++] = temp;
+            i++;
+        }
+        else if(cur_num==1)
+        {
+            i++;
+        }
+        else
+        {
+            temp = nums[i];
+            nums[i] = nums[boundary3];
+            nums[boundary3--] = temp;
+        }
+    }
+}
+
+/*
+    49. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+*/
+public int[] searchRange(int[] nums, int target) {
+    int left = 0, right = nums.length-1, mid;
+    while(left<right)
+    {
+        mid = (left+right)/2;
+        if(nums[mid]>=target)
+            right = mid;
+        else
+            left = mid+1;
+    }
+    if( left==nums.length || nums[left]!=target)
+        return new int[]{-1,-1};
+    
+    int start_pos = left;
+    right=nums.length-1;
+    while(left<right)
+    {
+        mid = (left+right+1)/2;
+        if(nums[mid]==target)
+            left = mid;
+        else
+            right = mid-1;
+    }
+    return new int[]{start_pos, left};
+}
+
+/*
+    50. PROBLEM DESCRIPTION (https://leetcode.com/problems/copy-list-with-random-pointer/)
+*/
+public Node copyRandomList(Node head) {
+    Node dummyhead = new Node(0);
+    addNodes(head);
+    set_random_ptr(head);
+    reassign_next_ptr(head, dummyhead);
+    return dummyhead.next;
+}
+
+public void addNodes(Node head)
+{
+    while(head!=null)
+    {
+        Node new_node = new Node(head.val);
+        new_node.next = head.next;
+        head.next = new_node;
+        head = new_node.next;
+    }
+}
+
+public void set_random_ptr(Node head)
+{
+    while(head!=null)
+    {
+        Node added_node = head.next;
+        if(head.random!=null)
+            added_node.random = head.random.next;
+        head = added_node.next;
+    }
+}
+
+public void reassign_next_ptr(Node head, Node dummy_head)
+{
+    while(head!=null)
+    {
+        dummy_head.next = head.next;
+        head.next = head.next.next;
+        head = head.next;
+        dummy_head = dummy_head.next;
+    }
+}
 
 public static void main(String args[])
 {
