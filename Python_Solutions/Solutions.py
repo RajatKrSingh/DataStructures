@@ -1,6 +1,7 @@
 ## START OF CLASS OBJECTS
 import collections
 import re
+import heapq
 
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -918,7 +919,403 @@ def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
     assign_random_ptr(head)
     reassign_next_ptr(head, dummy_head)
     return dummy_head.next
-                
+
+'''
+    51. PROBLEM DESCRIPTION (https://leetcode.com/problems/daily-temperatures/)
+'''
+def dailyTemperatures(self, temperatures: list[int]) -> list[int]:
+    stck, result = [], [0]*len(temperatures)
+    for i in range(len(temperatures)):
+        cur_temp = temperatures[i]
+        while stck and temperatures[stck[-1]]<cur_temp:
+            popped_day = stck.pop()
+            result[popped_day] = i - popped_day
+        stck.append(i)
+    return result
+
+'''
+    52. PROBLEM DESCRIPTION (https://leetcode.com/problems/invert-binary-tree/)
+'''
+def invertTree(self, root: TreeNode | None) -> TreeNode | None:
+    if not root:
+        return None
+    lefttree = self.invertTree(root.right)
+    root.right = self.invertTree(root.left)
+    root.left = lefttree
+    return root
+
+'''
+    53. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle/)
+'''
+def hasCycle(self, head: Optional[ListNode]) -> bool:
+    slow_ptr, fast_ptr = head, head
+    while fast_ptr and fast_ptr.next:
+        fast_ptr = fast_ptr.next.next
+        slow_ptr = slow_ptr.next
+        if slow_ptr == fast_ptr:
+            return True
+    return False
+
+'''
+    54. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle-ii/)
+'''
+def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    fast, slow = head, head
+    while fast and fast.next:
+        fast = fast.next.next
+        slow = slow.next
+        if fast == slow:
+            break
+    if not fast or not fast.next:
+        return None
+
+    slow = head
+    while slow!=fast:
+        slow=slow.next
+        fast=fast.next
+    return slow
+
+'''
+    55. PROBLEM DESCRIPTION (https://leetcode.com/problems/palindrome-linked-list/)
+'''
+def isPalindrome(self, head: ListNode | None) -> bool:
+    slow, fast = head, head
+    while fast and fast.next:
+        fast = fast.next.next
+        slow = slow.next
+    fast = slow
+    prev = None
+    while fast:
+        temp = fast.next
+        fast.next = prev
+        prev = fast
+        fast = temp
+    slow = head
+    while prev:
+        if prev.val!=slow.val:
+            return False
+        prev = prev.next
+        slow = slow.next
+    return True
+
+
+'''
+    56. PROBLEM DESCRIPTION (https://leetcode.com/problems/majority-element/)
+'''
+def majorityElement(self, nums: list[int]) -> int:
+    cur_num, cur_count = nums[0], 1
+    for x in nums[1:]:
+        if x == cur_num:
+            cur_count+=1
+        else:
+            if cur_count == 0:
+                cur_num = x
+                cur_count = 1
+            else:
+                cur_count-=1
+    return cur_num
+
+'''
+    57. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-largest-element-in-an-array/)
+'''
+
+def findKthLargest(self, nums: list[int], k: int) -> int:
+    myheap = nums[:k]
+    heapq.heapify(myheap)
+    for x in nums[k:]:
+        heapq.heappush(myheap,x)
+        heapq.heappop(myheap)
+    return myheap[0]
+
+def findKthLargest(self, nums: list[int], k: int) -> int:
+    max_val, min_val = nums[0], nums[0]
+    for x in nums:
+        max_val = max(max_val, x)
+        min_val = min(min_val, x)
+    
+    count_list = [0]*(max_val-min_val+1)
+    for x in nums:
+        count_list[x-min_val]+=1
+    for x in range(max_val-min_val, -1, -1):
+        k -= count_list[x]
+        if k<=0:
+            return x+min_val
+    return min_val
+
+def findKthLargest(self, nums: list[int], k: int) -> int:
+    def getpivot(nums, lb, ub):
+        pivot, lower, same, index = nums[ub], 0, 0, lb
+        while index < ub:
+            if nums[index] > pivot:
+                nums[index], nums[lb+lower] = nums[lb+lower], nums[index]
+                if nums[index]==pivot:
+                    index-=1
+                    same-=1
+                lower+=1
+            elif nums[index] == pivot:
+                nums[index], nums[lb+lower+same] = nums[lb+lower+same], nums[index]
+                same+=1
+            index+=1
+        nums[ub], nums[lb+lower+same] = nums[lb+lower+same], nums[ub]
+        return lower+lb-1, same+1; 
+
+
+    def quickselect(nums, lb, ub, k):
+        pivot_bdry, pivot_same = getpivot(nums, lb, ub)
+
+        if k>pivot_bdry and k<=pivot_bdry+pivot_same:
+            return nums[pivot_bdry+pivot_same]
+        if k<=pivot_bdry:
+            return quickselect(nums, lb, pivot_bdry, k)
+        else:
+            return quickselect(nums, pivot_bdry+pivot_same+1, ub, k)
+
+    return quickselect(nums, 0, len(nums)-1, k-1)
+
+'''
+    58. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-two-binary-trees/)
+'''
+def mergeTrees(self, root1: TreeNode | None, root2: TreeNode | None) -> TreeNode | None:
+    if not root1:
+        return root2
+    if root2:
+        root1.val += root2.val
+        root1.left = self.mergeTrees(root1.left, root2.left)
+        root1.right = self.mergeTrees(root1.right, root2.right)
+    return root1
+
+'''
+    59. PROBLEM DESCRIPTION (https://leetcode.com/problems/game-of-life/)
+'''
+def gameOfLife(self, board: list[list[int]]) -> None:
+    """
+    Do not return anything, modify board in-place instead.
+    """
+    m, n, directions = len(board), len(board[0]), [(0,1), (1,0), (1,1), (-1,1), (-1,-1), (1,-1), (-1,0),(0,-1)]
+    
+    def count_neighbors(row, col):
+        count=0
+        for d in directions:
+            new_row, new_col = row+d[0], col+d[1]
+            if new_row>-1 and new_row<m and new_col>-1 and new_col<n and board[new_row][new_col]>0:
+                count+=1
+        return count
+    
+    def perform_transitions():
+        for i in range(m):
+            for j in range(n):
+                count = count_neighbors(i, j)
+                if board[i][j]:
+                    if count <2:
+                        board[i][j] = 2
+                    elif count >3:
+                        board[i][j] = 3
+                else:
+                    if count==3:
+                        board[i][j]=-1
+    
+    def update_next_state():
+        for i in range(m):
+            for j in range(n):
+                cur_num = board[i][j]
+                if cur_num >= 2:
+                    board[i][j] = 0
+                elif cur_num == -1:
+                    board[i][j] = 1
+    
+    perform_transitions()
+    update_next_state()
+
+'''
+    60. PROBLEM DESCRIPTION (https://leetcode.com/problems/diameter-of-binary-tree/)
+'''
+def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+    self.result_max = 0
+    def helper(root):
+        if not root:
+            return 0
+        count_left, count_right = helper(root.left), helper(root.right)
+        self.result_max = max(count_left+count_right, self.result_max)
+        # print(root.val, count_left, count_right, result_max)
+        return 1+max(count_left, count_right)
+    helper(root)
+    return self.result_max
+
+'''
+    61. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-linked-lists/)
+'''
+def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+    ptr1, ptr2 = headA, headB
+    while ptr1 is not ptr2:
+        ptr1 = ptr1.next if ptr1 else headB
+        ptr2 = ptr2.next if ptr2 else headA
+    return ptr1
+
+'''
+    62. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list/)
+'''
+def reverseList(self, head: ListNode | None) -> ListNode | None:
+    prev=None
+    while head:
+        temp = head.next
+        head.next = prev
+        prev = head
+        head = temp
+    return prev
+
+'''
+    63. PROBLEM DESCRIPTION (https://leetcode.com/problems/house-robber/)
+'''
+def rob(self, nums: list[int]) -> int:
+    prev, current = 0, nums[0]
+    for x in nums[1:]:
+        prev, current = current, max(current, prev+x)
+    return current
+
+'''
+    64. PROBLEM DESCRIPTION (https://leetcode.com/problems/lru-cache/)
+'''
+class LRUCache:
+
+    class Node:
+        def __init__(self, key, value):
+            self.key, self.value = key, value                                                                                    
+            self.next, self.prev = None, None
+
+    def __init__(self, capacity: int):
+        self.cache, self.capacity = {}, capacity
+        self.headnode, self.tailnode = self.Node(0,0), self.Node(0, 0)
+        self.headnode.next, self.tailnode.prev = self.tailnode, self.headnode
+
+    def get(self, key: int) -> int:
+        if key not in self.cache:
+            return -1
+        mynode = self.cache[key]
+        self.move_to_front(mynode)
+        return mynode.value
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            mynode = self.cache[key]
+            mynode.value = value
+            self.move_to_front(mynode)
+        else:
+            if len(self.cache) == self.capacity:
+                self.remove_node()
+            mynode = self.Node(key, value)
+            self.cache[key] = mynode
+            self.add_to_front(mynode)
+    
+    def add_to_front(self, mynode):
+        mynode.next, mynode.prev = self.headnode.next, self.headnode
+        self.headnode.next.prev , self.headnode.next = mynode, mynode
+
+    def remove_node(self):
+        del self.cache[self.tailnode.prev.key]
+        self.tailnode.prev = self.tailnode.prev.prev
+        self.tailnode.prev.next = self.tailnode
+
+    def move_to_front(self, node):
+        node.prev.next, node.next.prev = node.next, node.prev
+        node.next, node.prev = None, None
+        self.add_to_front(node)
+
+'''
+    65. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/)
+'''
+def findDisappearedNumbers(self, nums: list[int]) -> list[int]:
+    for i in range(len(nums)):
+        index_value = abs(nums[i])-1
+        if nums[index_value] > 0:
+            nums[index_value] = 0-nums[index_value]
+    
+    result = []
+    for i in range(len(nums)):
+        if nums[i] > 0:
+            result.append(i+1)
+        else:
+            nums[i] = 0-nums[i]
+    return result
+
+'''
+    66. PROBLEM DESCRIPTION (https://leetcode.com/problems/target-sum/)
+'''
+def findTargetSumWays(self, nums: list[int], target: int) -> int:
+        max_sum = sum(nums)
+        dp_prev = [0]*max_sum + [1] + [0]*max_sum
+        for i in range(len(nums)):
+            dp_next = [0]*(2*max_sum+1)
+            cur_num = nums[i]
+            for j in range(cur_num, 2*max_sum+1):
+                dp_next[j] +=  dp_prev[j-cur_num]
+            for j in range(0, 2*max_sum+1-cur_num):
+                dp_next[j] += dp_prev[j+cur_num]
+            dp_prev = dp_next
+        target_index = target+max_sum
+        if target_index<0 or target_index>2*max_sum:
+            return 0
+        return dp_prev[target_index]
+
+'''
+    67. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+'''
+def maxDepth(self, root: TreeNode | None) -> int:
+    if not root:
+        return 0
+    return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))
+
+'''
+    68. PROBLEM DESCRIPTION (https://leetcode.com/problems/flatten-binary-tree-to-linked-list/)
+'''
+def flatten(self, root: TreeNode | None) -> None:
+    """
+    Do not return anything, modify root in-place instead.
+    """
+    if not root:
+        return
+    if root.left:
+        self.flatten(root.left)
+        ptr = root.left
+        while ptr.right:
+            ptr = ptr.right
+        ptr.right = root.right
+        root.right = root.left
+        root.left = None
+        root = ptr
+    self.flatten(root.right)
+
+'''
+    69. PROBLEM DESCRIPTION (https://leetcode.com/problems/subsets/)
+'''
+def subsets(self, nums: list[int]) -> list[list[int]]:
+    self.result, self.cur_list = [], []
+    def helper(index):
+        if index == len(nums):
+            self.result.append(self.cur_list[:])
+            return
+        helper(index+1)
+        self.cur_list.append(nums[index])
+        helper(index+1)
+        self.cur_list = self.cur_list[:-1]
+    helper(0)
+    return self.result
+
+
+'''
+    70. PROBLEM DESCRIPTION (https://leetcode.com/problems/symmetric-tree/)
+'''
+def isSymmetric(self, root: TreeNode | None) -> bool:
+    def helper(leftnode, rightnode):
+        if bool(leftnode) ^ bool(rightnode):
+            return False
+        if not leftnode:
+            return True
+        if leftnode and leftnode.val!=rightnode.val:
+            return False
+        return helper(leftnode.left, rightnode.right) and helper(leftnode.right, rightnode.left) 
+    return helper(root.left, root.right)
+
+        
 def main():
     print("Entering Main")
     return 0

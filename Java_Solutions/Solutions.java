@@ -1254,6 +1254,554 @@ public void reassign_next_ptr(Node head, Node dummy_head)
     }
 }
 
+/*
+    51. PROBLEM DESCRIPTION (https://leetcode.com/problems/daily-temperatures/)
+*/
+public int[] dailyTemperatures(int[] temperatures) {
+    Stack<Integer> stck = new Stack<>();
+    int answer[] = new int[temperatures.length], cur_temp;
+    for(int i=temperatures.length-1; i>=0; i--)
+    {
+        cur_temp = temperatures[i];
+        while(!stck.isEmpty() && temperatures[stck.peek()]<=cur_temp)
+            stck.pop();
+        if(stck.isEmpty())
+            answer[i] = 0;
+        else
+            answer[i] = stck.peek()-i;
+        stck.push(i);
+    }
+    return answer;
+}
+
+/*
+    52. PROBLEM DESCRIPTION (https://leetcode.com/problems/invert-binary-tree/)
+*/
+public TreeNode invertTree(TreeNode root) {
+    if(root==null)
+        return root;
+    TreeNode right = invertTree(root.left);
+    root.left = invertTree(root.right);
+    root.right = right;
+    return root;
+}
+
+/*
+    53. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle/)
+*/
+public boolean hasCycle(ListNode head) {
+    ListNode slow=head, fast=head;
+    while(fast!=null && fast.next!=null)
+    {
+        fast = fast.next.next;
+        slow = slow.next;
+        if(slow==fast)
+            return true;
+    }
+    return false;
+}
+/*
+    54. PROBLEM DESCRIPTION (https://leetcode.com/problems/linked-list-cycle-ii/)
+*/
+public ListNode detectCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while(fast!=null && fast.next!=null)
+    {
+        fast = fast.next.next;
+        slow = slow.next;
+        if(fast==slow)
+            break;
+    }
+    if(fast==null || fast.next==null)
+        return null;
+    slow = slow.next;
+    int cycle_length = 1;
+    while(slow!=fast)
+    {
+        slow = slow.next;
+        cycle_length++;
+    }
+    fast = head;
+    slow = head;
+    for(int i=0; i<cycle_length;i++)
+        fast = fast.next;
+    while(slow!=fast)
+    {
+        slow = slow.next;
+        fast = fast.next;
+    }
+    return slow;
+}
+
+/*
+    55. PROBLEM DESCRIPTION (https://leetcode.com/problems/palindrome-linked-list/)
+*/
+public boolean isPalindrome(ListNode head) {
+    ListNode midpoint = head, fast = head, front=head, temp, prev=null;
+    while(fast!=null && fast.next!=null)
+    {
+        fast = fast.next.next;
+        midpoint = midpoint.next;
+    }
+    fast = midpoint;
+    while(fast!=null)
+    {
+        temp = fast.next;
+        fast.next = prev;
+        prev = fast;
+        fast = temp;
+    }
+    while(prev!=null)
+    {
+        if(prev.val != front.val)
+            return false;
+        prev = prev.next;
+        front = front.next;
+    }
+    return true;
+}
+
+/*
+    56. PROBLEM DESCRIPTION (https://leetcode.com/problems/majority-element/)
+*/
+public int majorityElement(int[] nums) {
+    int cur_max=0, cur_count=0;
+    for(int cur_num:nums)
+    {
+        if(cur_count==0)
+        {
+            cur_count = 1;
+            cur_max = cur_num;
+        }
+        else if(cur_num==cur_max)
+            cur_count++;
+        else
+            cur_count--;
+    }
+    return cur_max;
+}
+
+/*
+    57. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-largest-element-in-an-array/)
+*/
+// Heap Technique
+public int findKthLargest(int[] nums, int k) {
+    PriorityQueue<Integer> pq = new PriorityQueue();
+    for(int x : nums)
+    {
+        pq.add(x);
+        if(pq.size()>k)
+            pq.poll();
+    }
+    return pq.poll();
+}
+
+// Counting sort
+public int findKthLargest(int[] nums, int k) {
+    int max_ele = nums[0], min_ele = nums[0], left = k;
+    for(int x: nums)
+    {
+        max_ele = Math.max(max_ele, x);
+        min_ele = Math.min(min_ele, x);
+    }
+    int count[]= new int[max_ele-min_ele+1];
+    for(int x: nums)
+        count[x-min_ele]++;
+    for(int i=max_ele; i>=min_ele; i--)
+    {
+        left -= count[i-min_ele];
+        if(left<=0)
+            return i;
+    }
+    return -1;
+}
+
+public int findKthLargest(int[] nums, int k) {
+    return quickselect(nums, 0, nums.length-1, k-1);
+}
+
+public int quickselect(int nums[], int lb, int ub, int k)
+{
+    int partition[] = partition(nums, lb, ub);
+    int lower = partition[0], same = partition[1];
+    if(k<=lower+same && k>lower)
+        return nums[lower+same];
+    if(k<=lower)
+        return quickselect(nums, lb, lower, k);
+    if(k>lower+same)
+        return quickselect(nums, lower+same+1, ub, k);
+    return nums[lower+same];
+}
+
+public int[] partition(int nums[], int lb, int ub)
+{
+    int pivot = nums[ub], same=0, lower=0, temp, i=lb;
+    while(i<ub)
+    {
+        if(nums[i]>pivot)
+        {
+            temp = nums[lb+lower];
+            nums[lb+lower] = nums[i];
+            nums[i] = temp;
+            if(nums[i]==pivot)
+            {
+                i--;
+                same--;
+            }
+            lower++;
+        }
+        else if (nums[i]==pivot)
+        {
+            temp = nums[lb+lower+same];
+            nums[lb+lower+same] = nums[i];
+            nums[i] = temp;
+            same++;
+        }
+        i++;
+    }
+    temp = nums[lb+lower+same];
+    nums[lb+lower+same] = nums[ub];
+    nums[ub] = temp;
+    same++;
+    return new int[]{lb+lower-1, same};
+}
+
+/*
+    58. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-two-binary-trees/)
+*/
+public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {
+    if(root1 == null)
+        return root2;
+    if(root2 != null)
+    {
+        root1.val += root2.val;
+        root1.left = mergeTrees(root1.left, root2.left);
+        root1.right = mergeTrees(root1.right, root2.right);
+    }
+    return root1;
+}
+
+/*
+    59. PROBLEM DESCRIPTION (https://leetcode.com/problems/game-of-life/)
+*/
+int dir[][] = {{1,1},{1,0},{0,1}, {0,-1},{-1,0}, {-1,-1}, {1,-1}, {-1, 1}};
+public void gameOfLife(int[][] board) {
+    performTransitions(board);
+    substituteNextState(board);
+}
+
+public void substituteNextState(int[][] board)
+{
+    int m=board.length, n=board[0].length, cur_status;
+    for(int i=0;i<m;i++)
+    {
+        for(int j=0; j<n;j++)
+        {
+            cur_status = board[i][j];
+            if(cur_status>=2)
+                board[i][j] = 0;
+            else if(cur_status==-1)
+                board[i][j] = 1;
+        }
+    }
+}
+
+public void performTransitions(int[][] board)
+{
+    int m=board.length, n=board[0].length, count, cur_status;
+    for(int i=0; i<m;i++)
+    {
+        for(int j=0; j<n; j++)
+        {
+            cur_status = board[i][j];
+            count = getCountLiveNeighbors(board, i, j, m, n);
+            if(cur_status==1)
+            {
+                if(count<2)
+                    board[i][j] = 2;
+                else if(count>3)
+                    board[i][j] = 3;
+            }
+            else
+            {
+                if(count==3)
+                    board[i][j] = -1;
+            }
+        }
+    }
+}
+public int getCountLiveNeighbors(int[][] board, int row, int col, int m, int n)
+{
+    int new_row, new_col, result=0;
+    for(int[] d: dir)
+    {
+        new_row = row+d[0];
+        new_col = col+d[1];
+        if(new_row>-1 && new_row<m && new_col>-1 && new_col<n && board[new_row][new_col]>0)
+            result++;
+    }
+    return result;
+}
+
+/*
+    60. PROBLEM DESCRIPTION (https://leetcode.com/problems/diameter-of-binary-tree/)
+*/
+public int diameterOfBinaryTree(TreeNode root) {
+    return helper(root)[1];
+}
+public int[] helper(TreeNode root)
+{
+    if(root==null)
+        return new int[]{0,0};
+    int[] count_left = helper(root.left);
+    int[] count_right = helper(root.right);
+    int result[] = {1+Math.max(count_left[0],count_right[0]) , Math.max(count_left[1], count_right[1])};
+    result[1] = Math.max(result[1], count_left[0]+count_right[0]);
+    return result;
+}
+
+/*
+    61. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-linked-lists/)
+*/
+public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+    ListNode ptr1 = headA, ptr2 = headB;
+    int reset_count = 0;
+    while(reset_count<3)
+    {
+        if(ptr1 == null)
+        {
+            ptr1 = headB;
+            reset_count++;
+        }
+        if(ptr2 == null)
+        {
+            ptr2 = headA;
+            reset_count++;
+        }
+        if(ptr1==ptr2)
+            return ptr1;
+        ptr1 = ptr1.next;
+        ptr2 = ptr2.next;
+    }
+    return null;
+}
+
+/*
+    62. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list/)
+*/
+public ListNode reverseList(ListNode head) {
+    ListNode prev = null, temp;
+    while(head!=null)
+    {
+        temp = head.next;
+        head.next = prev;
+        prev = head;
+        head = temp;
+    }
+    return prev;
+}
+
+/*
+    63. PROBLEM DESCRIPTION (https://leetcode.com/problems/house-robber/)
+*/
+public int rob(int[] nums) {
+    int prev = 0, current = nums[0], next;
+    for(int i=1; i<nums.length; i++)
+    {
+        next = Math.max(current, prev+nums[i]);
+        prev = current;
+        current = next;
+    }
+    return current;
+}
+
+/*
+    64. PROBLEM DESCRIPTION (https://leetcode.com/problems/lru-cache/)
+*/
+class LRUCache {
+
+    class DNode
+    {
+        int key, value;
+        DNode next, prev;
+        public DNode(int key, int value)
+        {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    DNode head = new DNode(0,0), tail = new DNode(0,0);
+    Map<Integer, DNode> cache;
+    int capacity;
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        this.cache = new HashMap<>();
+        this.head.next = this.tail;
+        this.tail.prev = this.head;
+    }
+
+    public void move_to_front(DNode mynode)
+    {
+        mynode.prev.next = mynode.next;
+        mynode.next.prev = mynode.prev;
+        mynode.next = null;
+        mynode.prev = null;
+        add_to_front(mynode);
+    }
+
+    public void add_to_front(DNode mynode)
+    {
+        mynode.next = this.head.next;
+        mynode.prev = this.head;
+        this.head.next.prev = mynode;
+        this.head.next = mynode;
+    }
+    
+    public int get(int key) {
+        if(this.cache.containsKey(key))
+        {
+            DNode mynode = cache.get(key);
+            move_to_front(mynode);
+            return mynode.value;
+        }
+        return -1;
+    }
+
+    public void remove_node()
+    {
+        this.cache.remove(this.tail.prev.key);
+        this.tail.prev.prev.next = this.tail;
+        this.tail.prev = this.tail.prev.prev;
+    }
+    
+    public void put(int key, int value) {
+        if(this.cache.containsKey(key))
+        {
+            DNode mynode = cache.get(key);
+            mynode.value = value;
+            move_to_front(mynode);
+        }
+        else
+        {
+            if(this.cache.size()==this.capacity)
+                remove_node();
+            DNode newnode = new DNode(key, value);
+            this.cache.put(key, newnode);
+            add_to_front(newnode);
+        }
+    }
+}
+
+/*
+    65. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/)
+*/
+public List<Integer> findDisappearedNumbers(int[] nums) {
+    int len = nums.length, index_value;
+    for(int i=0;i<len;i++)
+    {
+        index_value = Math.abs(nums[i])-1;
+        if(nums[index_value]>0)
+            nums[index_value] = 0 - nums[index_value];
+    }
+    List<Integer> result = new ArrayList<>();
+    for(int i=0; i<len; i++)
+    {
+        if(nums[i]<0)
+            nums[i] = 0-nums[i];
+        else
+            result.add(i+1);
+    }
+    return result;
+}
+
+/*
+    66. PROBLEM DESCRIPTION (https://leetcode.com/problems/target-sum/)
+*/
+public int findTargetSumWays(int[] nums, int target) {
+    int dp_prev[] = new int[2001], len=nums.length, cur_num;
+    dp_prev[1000]=1;
+    for(int i=0; i<len; i++)
+    {
+        int dp_next[] = new int[2001];
+        cur_num = nums[i];
+        for(int j= cur_num; j<=2000;j++)
+            dp_next[j] += dp_prev[j-cur_num];
+        for(int j= 0; j<=2000-cur_num;j++)
+            dp_next[j] += dp_prev[j+cur_num];
+        dp_prev = dp_next;
+    }
+    return dp_prev[target+1000];
+}
+
+/*
+    67. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+*/
+public int maxDepth(TreeNode root) {
+    if(root == null)
+        return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}
+
+/*
+    68. PROBLEM DESCRIPTION (https://leetcode.com/problems/flatten-binary-tree-to-linked-list/)
+*/
+public void flatten(TreeNode root) {
+    if(root==null)
+        return;
+    flatten(root.left);
+    flatten(root.right);
+    TreeNode right = root.right;
+    root.right = root.left;
+    root.left = null;
+    while(root.right!=null)
+        root = root.right;
+    root.right = right;
+}
+
+/*
+    69. PROBLEM DESCRIPTION (https://leetcode.com/problems/subsets/)
+*/
+public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    helper(nums, 0, new ArrayList<Integer>(), result);
+    return result;
+}
+
+public void helper(int[] nums, int index, List<Integer> cur_list, List<List<Integer>> result)
+{
+    if(index == nums.length)
+    {
+        result.add(new ArrayList(cur_list));
+        return;
+    }
+    helper(nums, index+1, cur_list, result);
+    cur_list.add(nums[index]);
+    helper(nums, index+1, cur_list, result);
+    cur_list.remove(cur_list.size()-1);
+}
+
+
+/*
+    70. PROBLEM DESCRIPTION (https://leetcode.com/problems/symmetric-tree/)
+*/
+public boolean isSymmetric(TreeNode root) {
+    return helper(root.left, root.right);
+}
+public boolean helper(TreeNode left, TreeNode right)
+{
+    if(left==null ^ right==null)
+        return false;
+    if(left==null)
+        return true;
+    if(left.val != right.val)
+        return false;
+    return helper(left.right, right.left) && helper(left.left, right.right);
+}
+
 public static void main(String args[])
 {
     Scanner in = new Scanner(System.in);
