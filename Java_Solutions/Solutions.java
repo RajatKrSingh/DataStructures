@@ -1802,6 +1802,606 @@ public boolean helper(TreeNode left, TreeNode right)
     return helper(left.right, right.left) && helper(left.left, right.right);
 }
 
+/*
+    71. PROBLEM DESCRIPTION (https://leetcode.com/problems/subsets-ii/)
+*/
+public List<List<Integer>> subsetsWithDup(int[] nums) {
+    Arrays.sort(nums);
+    List<List<Integer>> result = new ArrayList<>();
+    boolean isplaced[] = new boolean[nums.length];
+    helper(nums, 0, isplaced, new ArrayList<Integer>(), result);
+    return result; 
+}
+public void helper(int[] nums, int index, boolean isplaced[], List<Integer> cur_list, List<List<Integer>> result)
+{
+    if(index == nums.length)
+    {
+        result.add(new ArrayList(cur_list));
+        return;
+    }
+    helper(nums, index+1, isplaced, cur_list, result);
+    if(index==0 || (nums[index]!=nums[index-1] || isplaced[index-1]))
+    {
+        isplaced[index] = true;
+        cur_list.add(nums[index]);
+        helper(nums, index+1, isplaced, cur_list, result);
+        cur_list.remove(cur_list.size()-1);
+        isplaced[index] = false;
+    }
+}
+
+/*
+    72. PROBLEM DESCRIPTION (https://leetcode.com/problems/jump-game/)
+*/
+public boolean canJump(int[] nums) {
+    int len = nums.length-1, index = 0, max_reach=0;
+    while(index<=max_reach)
+    {
+        max_reach = Math.max(max_reach, nums[index]+index);
+        if(max_reach>=len)
+            break;
+        index++;
+    }
+    return max_reach>=len;
+}
+
+/*
+    73. PROBLEM DESCRIPTION (https://leetcode.com/problems/group-anagrams/)
+*/
+public List<List<String>> groupAnagrams(String[] strs) {
+    HashMap<String, List<String>> hmap = new HashMap<>();
+    for(String s: strs)
+    {
+        char sArr[] = s.toCharArray();
+        Arrays.sort(sArr);
+        String hashcode = new String(sArr);
+        if(!hmap.containsKey(hashcode))
+            hmap.put(hashcode, new ArrayList<>());
+        hmap.get(hashcode).add(s);
+    }
+    return new ArrayList<>(hmap.values());
+}
+
+/*
+    74. PROBLEM DESCRIPTION (https://leetcode.com/problems/unique-paths/)
+*/
+public int uniquePaths(int m, int n) {
+    int dp[] = new int[n];
+    dp[0] = 1;
+    for(int i=0; i<m; i++)
+        for(int j=1; j<n; j++)
+            dp[j] += dp[j-1];
+    return dp[n-1];
+}
+
+/*
+    75. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-path-sum/)
+*/
+public int minPathSum(int[][] grid) {
+    int m = grid.length, n = grid[0].length, dp[] = grid[0];
+    for(int i=1;i<n;i++)
+        dp[i] += dp[i-1];
+    for(int i=1; i<m; i++)
+    {
+        dp[0] += grid[i][0];
+        for(int j=1; j<n; j++)
+            dp[j] = Math.min(dp[j-1], dp[j])+grid[i][j];
+    }
+    return dp[n-1];
+}
+
+/*
+    76. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-level-order-traversal/)
+*/
+public List<List<Integer>> levelOrder(TreeNode root) {
+    record Pair<T>(T node, int level){}
+    List<List<Integer>> result= new ArrayList<>();
+    if(root==null)
+        return result;
+    Deque<Pair<TreeNode>> myqueue = new ArrayDeque();
+    myqueue.add(new Pair(root, 0));
+    while(!myqueue.isEmpty())
+    {
+        Pair<TreeNode> popped_pair = myqueue.pollFirst();
+        TreeNode popped_node = popped_pair.node();
+        int level = popped_pair.level();
+        if(popped_node.left!=null)
+            myqueue.offerLast(new Pair(popped_node.left, level+1));
+        if(popped_node.right!=null)
+            myqueue.offerLast(new Pair(popped_node.right, level+1));
+        if(level==result.size())
+            result.add(new ArrayList<>());
+        result.get(level).add(popped_node.val);
+    }
+    return result;
+}
+
+/*
+    77. PROBLEM DESCRIPTION (https://leetcode.com/problems/validate-binary-search-tree/)
+*/
+public boolean isValidBST(TreeNode root) {
+    return helper(root, null, null);
+}
+
+public boolean helper(TreeNode root, Integer lb, Integer ub)
+{
+    if(root==null)
+        return true;
+    if((lb!=null && root.val<=lb) || (ub!=null && root.val>=ub))
+        return false;
+    return helper(root.left, lb, root.val) && helper(root.right, root.val, ub);
+}
+
+/*
+    78. PROBLEM DESCRIPTION (https://leetcode.com/problems/word-search/)
+*/
+public boolean exist(char[][] board, String word) {
+    int m=board.length, n=board[0].length;
+    char[] wordArr = word.toCharArray();
+    for(int i=0; i<m; i++)
+        for(int j=0; j<n; j++)
+            if(helper(board, wordArr, i, j, 0, m, n))
+                return true;
+    return false;
+}
+public boolean helper(char[][] board, char[] word, int row, int col, int word_idx, int m, int n)
+{
+    if(word_idx==word.length)
+        return true;
+    if(row<0 || row>=m || col<0 || col>=n || board[row][col]!=word[word_idx])
+        return false;
+    char temp = board[row][col];
+    board[row][col] = '#';
+    boolean isfound = helper(board, word, row-1, col, word_idx+1, m, n)
+        || helper(board, word, row+1, col, word_idx+1, m, n)
+        || helper(board, word, row, col-1, word_idx+1, m, n)
+        || helper(board, word, row, col+1, word_idx+1, m, n);
+    board[row][col] = temp;
+    return isfound;
+}
+
+/*
+    79. PROBLEM DESCRIPTION (https://leetcode.com/problems/contains-duplicate/)
+*/
+public boolean containsDuplicate(int[] nums) {
+    HashSet<Integer> hset = new HashSet<>();
+    for(int x: nums)
+    {
+        if(!hset.add(x))
+            return true;
+    }
+    return false;
+}
+
+/*
+    80. PROBLEM DESCRIPTION (https://leetcode.com/problems/count-primes/)
+*/
+public int countPrimes(int n) {
+    if(n<3)
+        return 0;
+    boolean is_prime[] = new boolean[n];
+    Arrays.fill(is_prime, true);
+    is_prime[0] = is_prime[1] = false;
+    int max_limit = (int)(Math.pow(n, 0.5))+1, result=0;
+    for(int i=2; i<max_limit; i++)
+    {
+        if(is_prime[i])
+        {
+            for(int j=i*i; j<n; j+=i)
+                is_prime[j] = false;
+        }
+    }
+    for(boolean x:is_prime)
+        result += (x?1:0);
+    return result;
+}
+
+/*
+    81. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-islands/)
+*/
+public int numIslands(char[][] grid) {
+    int result = 0, m=grid.length, n=grid[0].length;
+    for(int i=0;i<m;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            if(grid[i][j]=='1')
+            {
+                helper(grid, i, j, m, n);
+                result++;
+            }
+        }
+    }
+    return result;
+}
+public void helper(char[][] grid, int row, int col, int m, int n)
+{
+    if(row<0 || row>=m || col<0 || col>=n || grid[row][col]!='1')
+        return;
+    grid[row][col]='#';
+    helper(grid, row+1, col, m, n);
+    helper(grid, row-1, col, m, n);
+    helper(grid, row, col+1, m, n);
+    helper(grid, row, col-1, m, n);
+}
+
+/*
+    82. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-peak-element/)
+*/
+public int findPeakElement(int[] nums) {
+    int left=0, right=nums.length-1, mid;
+    while(left<right)
+    {
+        mid = (left+right)/2;
+        if(nums[mid]>nums[mid+1])
+            right = mid;
+        else
+            left = mid+1;
+    }
+    return left;
+}
+
+/*
+    83. PROBLEM DESCRIPTION (https://leetcode.com/problems/fizz-buzz/)
+*/
+public List<String> fizzBuzz(int n) {
+    List<String> result = new ArrayList<>();
+    for(int iter=1; iter<=n; iter++)
+    {
+        StringBuffer sb = new StringBuffer();
+        if(iter%3==0)
+            sb.append("Fizz");
+        if(iter%5==0)
+            sb.append("Buzz");
+        if(sb.length()==0)
+            result.add(String.valueOf(iter));
+        else
+            result.add(sb.toString());
+    }
+    return result;
+}
+
+/*
+    84. PROBLEM DESCRIPTION (https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)
+*/
+public int kthSmallest(int[][] matrix, int k) {
+    int n = matrix.length;
+    int lb=matrix[0][0], ub=matrix[n-1][n-1], mid, count_elements_less_equal;
+    while(lb<=ub)
+    {
+        mid = (lb+ub)/2;
+        count_elements_less_equal = get_rank(matrix, mid);
+        if(k<=count_elements_less_equal)
+            ub = mid-1;
+        else
+            lb = mid+1;
+    }
+    return lb;
+}
+public int get_rank(int[][] matrix, int cur_num)
+{
+    int result = 0 , n = matrix.length;
+    int col_index = n-1;
+    for(int i=0; i<n;i++)
+    {
+        while(col_index>-1 && matrix[i][col_index]>cur_num)
+            col_index--;
+        result += col_index+1;
+    }
+    return result;
+}
+
+/*
+    85. PROBLEM DESCRIPTION (https://leetcode.com/problems/odd-even-linked-list/)
+*/
+public ListNode oddEvenList(ListNode head) {
+    ListNode evenhead = new ListNode(), iter = head, oddhead = new ListNode();
+    ListNode evenhead_cpy = evenhead;
+    boolean iseven = false;
+    while(iter!=null)
+    {
+        if(!iseven)
+        {
+            oddhead.next = iter;
+            oddhead = oddhead.next;
+        }
+        else
+        {
+            evenhead.next = iter;
+            evenhead = evenhead.next;
+        }
+        iseven = !iseven;
+        iter = iter.next;
+    }
+    evenhead.next = null;
+    oddhead.next = evenhead_cpy.next;
+    return head;
+}
+
+/*
+    86. PROBLEM DESCRIPTION (https://leetcode.com/problems/find-the-duplicate-number/)
+*/
+public int findDuplicate(int[] nums) {
+    int slow = nums[0], fast = nums[0];
+    while(true)
+    {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+        if(slow == fast)
+            break;
+    }
+    slow = nums[0];
+    while(slow!=fast)
+    {
+        slow = nums[slow];
+        fast = nums[fast];
+    }
+    return slow;
+}
+
+/*
+    87. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-anagram/)
+*/
+public boolean isAnagram(String s, String t) {
+    char sArr[] = s.toCharArray(), tArr[] = t.toCharArray();
+    Arrays.sort(sArr);
+    Arrays.sort(tArr);
+    return (new String(sArr)).equals(new String(tArr));
+}
+
+/*
+    88. PROBLEM DESCRIPTION (https://leetcode.com/problems/product-of-array-except-self/)
+*/
+public int[] productExceptSelf(int[] nums) {
+    int n = nums.length, cur_prod = 1;
+    int result[] = new int[n];
+    for(int i=0; i<n; i++)
+    {
+        result[i] = cur_prod;
+        cur_prod *= nums[i];
+    }
+    cur_prod = 1;
+    for(int i=n-1; i>=0; i--)
+    {
+        result[i] *= cur_prod;
+        cur_prod *=nums[i];
+    }
+    return result;
+}
+
+/*
+    89. PROBLEM DESCRIPTION (https://leetcode.com/problems/factorial-trailing-zeroes/)
+*/
+public int trailingZeroes(int n) {
+    int result = 0;
+    while(n>0)
+    {
+        n /= 5;
+        result += n;
+    }
+    return result;
+}
+
+/*
+    90. PROBLEM DESCRIPTION (https://leetcode.com/problems/basic-calculator-ii/)
+*/
+public int calculate(String s) {
+    int cur_num = 0;
+    char op = '+';
+    Stack<Integer> operand_stck = new Stack<>();
+    s += "+";
+    for(char c: s.toCharArray())
+    {
+        if(c == ' ')
+            continue;
+        if(Character.isDigit(c))
+        {
+            cur_num = cur_num*10 + (c-'0');
+            continue;
+        }
+        if(op == '+')
+            operand_stck.add(cur_num);
+        else if (op == '-')
+            operand_stck.add(0-cur_num);
+        else if (op == '*')
+            operand_stck.add(operand_stck.pop() * cur_num);
+        else
+            operand_stck.add(operand_stck.pop() / cur_num);
+        op = c;
+        cur_num = 0;
+    }
+    int result = 0;
+    while(!operand_stck.isEmpty())
+        result += operand_stck.pop();
+    return result+cur_num;
+}
+
+/*
+    91. PROBLEM DESCRIPTION (https://leetcode.com/problems/search-a-2d-matrix-ii/)
+*/
+public boolean searchMatrix(int[][] matrix, int target) {
+    int m=matrix.length, n=matrix[0].length;
+    int row_idx=0, col_idx=n-1, cur_num;
+    while(row_idx<m && col_idx>=0)
+    {
+        cur_num = matrix[row_idx][col_idx];
+        if(cur_num>target)
+            col_idx--;
+        else if(cur_num<target)
+            row_idx++;
+        else
+            return true;
+    }
+    return false;
+}
+
+/*
+    92. PROBLEM DESCRIPTION (https://leetcode.com/problems/delete-node-in-a-linked-list/)
+*/
+public void deleteNode(ListNode node) {
+    node.val = node.next.val;
+    node.next = node.next.next;
+}
+
+/*
+    93. PROBLEM DESCRIPTION (https://leetcode.com/problems/course-schedule/)
+*/
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+    HashMap<Integer, List<Integer>> hmap = new HashMap<>();
+    for(int prereq[]: prerequisites)
+    {
+        if(!hmap.containsKey(prereq[1]))
+            hmap.put(prereq[1], new ArrayList<>());
+        hmap.get(prereq[1]).add(prereq[0]);
+    }
+    boolean is_global_visited[] = new boolean[numCourses], is_local_visited[] = new boolean[numCourses];
+    for(int i=0; i<numCourses; i++)
+    {
+        if(!topologicalSort(i, hmap, is_global_visited, is_local_visited))
+            return false;
+    }
+    return true;
+}
+
+public boolean topologicalSort(int course_num, HashMap<Integer, List<Integer>> hmap, boolean global_visited[], boolean local_visited[])
+{
+    if(global_visited[course_num])
+        return true;
+    local_visited[course_num] = true;
+    global_visited[course_num] = true;
+    for(Integer v: hmap.getOrDefault(course_num, new ArrayList<>()))
+    {
+        if(local_visited[v])
+            return false;
+        if(!topologicalSort(v, hmap, global_visited, local_visited))
+            return false;
+    }
+    local_visited[course_num] = false;
+    return true;
+}
+
+/*
+    94. PROBLEM DESCRIPTION (https://leetcode.com/problems/surrounded-regions/)
+*/
+public void solve(char[][] board) {
+    int m = board.length, n = board[0].length;
+    for(int i=0; i<m;i++)
+    {
+        surround_region(board, i, 0, m, n);
+        surround_region(board, i, n-1, m, n);
+    }
+    for(int j=1; j<n-1; j++)
+    {
+        surround_region(board, 0, j, m, n);
+        surround_region(board, m-1, j, m, n);
+    }
+    update_board(board, m, n);
+}
+public void surround_region(char[][] board, int row, int col, int m, int n)
+{
+    if(row>-1 && col>-1 && row<m && col<n && board[row][col]=='O')
+    {
+        board[row][col] = 'Y';
+        surround_region(board, row+1, col, m, n);
+        surround_region(board, row-1, col, m, n);
+        surround_region(board, row, col+1, m, n);
+        surround_region(board, row, col-1, m, n);
+    }
+}
+public void update_board(char[][] board, int m, int n)
+{
+    char cur_val;
+    for(int i=0; i<m;i++)
+    {
+        for(int j=0; j<n; j++)
+        {
+            cur_val = board[i][j];
+            if(cur_val == 'O')
+                board[i][j] = 'X';
+            else if(cur_val == 'Y')
+                board[i][j] = 'O';
+        }
+    }
+}
+
+/*
+    95. PROBLEM DESCRIPTION (https://leetcode.com/problems/number-of-1-bits/)
+*/
+public int hammingWeight(int n) {
+    int result = 0;
+    while(n>0)
+    {
+        n = n & (n-1);
+        result++;
+    }
+    return result;
+}
+
+/*
+    96. PROBLEM DESCRIPTION (https://leetcode.com/problems/excel-sheet-column-number/)
+*/
+public int titleToNumber(String columnTitle) {
+    int result=0;
+    for(char c: columnTitle.toCharArray())
+        result = result*26 + (c-'A'+1);
+    return result;
+}
+
+/*
+    97. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximum-product-subarray/)
+*/
+public int maxProduct(int[] nums) {
+    int max_positive=1, least_negative = 1, result = nums[0], temp;
+    for(int x: nums)
+    {
+        temp = Math.max(least_negative*x,Math.max(max_positive*x, x));
+        least_negative = Math.min(max_positive*x ,Math.min(least_negative*x, x));
+        max_positive = temp;
+        result = Math.max(result, max_positive);
+    }
+    return result;
+}
+
+/*
+    98. PROBLEM DESCRIPTION (https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)
+*/
+public TreeNode sortedArrayToBST(int[] nums) {
+    return helper(nums, 0, nums.length-1);
+}
+public TreeNode helper(int[] nums, int lb, int ub)
+{
+    if(lb>ub)
+        return null;
+    int mid = (lb+ub)/2;
+    TreeNode root = new TreeNode(nums[mid]);
+    root.left = helper(nums, lb, mid-1);
+    root.right = helper(nums, mid+1, ub);
+    return root;
+}
+/*
+    99. PROBLEM DESCRIPTION (https://leetcode.com/problems/middle-of-the-linked-list/)
+*/
+public ListNode middleNode(ListNode head) {
+    ListNode slow = head, fast = head;
+    while(fast!=null && fast.next!=null)
+    {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow;
+}
+
+/*
+    100. PROBLEM DESCRIPTION (https://leetcode.com/problems/move-zeroes/)
+*/
+public void moveZeroes(int[] nums) {
+    int non_zero_index = 0, n = nums.length;
+    for(int i=0; i<n; i++)
+        if(nums[i]!=0)
+            nums[non_zero_index++] = nums[i];
+    Arrays.fill(nums, non_zero_index, n, 0);
+}
+
 public static void main(String args[])
 {
     Scanner in = new Scanner(System.in);
