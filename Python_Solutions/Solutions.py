@@ -1806,7 +1806,361 @@ def moveZeroes(self, nums: list[int]) -> None:
             non_zero_index+=1
 
     nums[non_zero_index:len(nums)]= [0]*(len(nums)-non_zero_index)
-        
+
+'''
+    101. PROBLEM DESCRIPTION (https://leetcode.com/problems/contiguous-array/)
+'''
+def findMaxLength(self, nums: List[int]) -> int:
+    mydict, cur_count, result = {0:-1}, 0, 0
+    for idx, x in enumerate(nums):
+        cur_count += (1 if x==1 else -1)
+        if cur_count in mydict:
+            result = max(result, idx - mydict[cur_count])
+        else:
+            mydict[cur_count] = idx
+    return result
+
+'''
+    102. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-queens/)
+'''
+def solveNQueens(self, n: int) -> list[list[str]]:
+    self.result, self.queen_pos, self.col_placed_set, self.diag1_placed_set, self.diag2_placed_set = [], [], set(), set(), set()
+    self.board = [['.']*n for _ in range(n)]
+    
+    def isValidCell(row, col):
+        if col in self.col_placed_set or col+row in self.diag1_placed_set or col-row in self.diag2_placed_set:
+            return False
+        return True
+
+    def helper(row):
+        if row == n:
+            copy = self.board[:]
+            sol = []
+            for c in copy:
+                sol.append("".join(c[:]))
+            self.result.append(sol)
+            return
+        for col_cand in range(n):
+            if isValidCell(row, col_cand):
+                self.col_placed_set.add(col_cand)
+                self.diag1_placed_set.add(col_cand+row)
+                self.diag2_placed_set.add(col_cand-row)
+                self.board[row][col_cand] = 'Q'
+                helper(row+1)
+                self.col_placed_set.remove(col_cand)
+                self.diag1_placed_set.remove(col_cand+row)
+                self.diag2_placed_set.remove(col_cand-row)
+                self.board[row][col_cand] = '.'
+
+    helper(0)
+    return self.result
+
+'''
+    103. PROBLEM DESCRIPTION (https://leetcode.com/problems/backspace-string-compare/)
+'''
+def backspaceCompare(self, s: str, t: str) -> bool:
+    index1, index2 = len(s)-1, len(t)-1
+    
+    def get_next_character_index(string, index):
+        num_backspaces = 0
+        while index>-1:
+            if index>-1 and string[index]=='#':
+                num_backspaces+=1
+            elif num_backspaces>0:
+                num_backspaces-=1
+            else:
+                break
+            index-=1
+        return index
+    count =0
+    while index1>-1 or index2>1:
+        index1 = get_next_character_index(s, index1)
+        index2 = get_next_character_index(t, index2)
+        if index1<0 or index2<0:
+            return index1==index2
+        if s[index1] != t[index2]:
+            return False
+        index1-=1
+        index2-=1
+    return True
+
+'''
+    104. PROBLEM DESCRIPTION (https://leetcode.com/problems/last-stone-weight/)
+'''
+def lastStoneWeight(self, stones: list[int]) -> int:
+    mymap, max_stone = defaultdict(int), stones[0]
+    for x in stones:
+        mymap[x]+=1
+        max_stone = max(max_stone, x)
+    index = max_stone
+    while index>=1:
+        if mymap[index]%2==1:
+            prev_stone = index-1
+            while prev_stone>=1 and mymap[prev_stone]==0:
+                prev_stone-=1
+            if prev_stone<1:
+                return index
+            mymap[index-prev_stone]+=1
+            mymap[prev_stone]-=1
+            index = max(prev_stone, index-prev_stone)
+        else:
+            index-=1
+    return 0
+
+def lastStoneWeight(self, stones: list[int]) -> int:
+    heapq.heapify_max(stones)
+    while len(stones)>1:
+        current_largest = heapq.heappop_max(stones)
+        current_second_largest = heapq.heappop_max(stones)
+        if current_largest != current_second_largest:
+            heapq.heappush_max(stones, current_largest - current_second_largest) 
+    return stones[-1] if stones else 0
+
+'''
+    105. PROBLEM DESCRIPTION (http://leetcode.com/problems/convert-bst-to-greater-tree/)
+'''
+def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+    self.sum_til_now = 0
+    def helper(root):
+        if not root:
+            return
+        helper(root.right)
+        root.val += self.sum_til_now
+        self.sum_til_now = root.val
+        helper(root.left)
+    helper(root)
+    return root
+
+'''
+    106. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+'''
+def minDepth(self, root: TreeNode | None) -> int:
+    if not root:
+        return 0
+    if not root.left:
+        return 1+self.minDepth(root.right)
+    elif not root.right:
+        return 1+self.minDepth(root.left)
+    return 1+min(self.minDepth(root.left), self.minDepth(root.right))
+
+'''
+    107. PROBLEM DESCRIPTION (https://leetcode.com/problems/reorder-list/)
+'''
+def reorderList(self, head: ListNode | None) -> None:
+    """
+    Do not return anything, modify head in-place instead.
+    """
+    slow, fast = head, head
+    while (fast and fast.next):
+        slow = slow.next
+        fast = fast.next.next
+    prev, curr = None, slow
+    while curr:
+        curr.next, prev, curr = prev, curr, curr.next
+    while (prev.next):
+        head.next, head = prev, head.next
+        prev.next, prev = head, prev.next
+
+'''
+    108. PROBLEM DESCRIPTION (https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/)
+'''
+def bstFromPreorder(self, preorder: list[int]) -> TreeNode | None:
+    n = len(preorder)
+    def helper(index, ub):
+        if index>ub:
+            return None
+        cur_num = preorder[index]
+        root = TreeNode(cur_num)
+        inflection_point = index+1
+        while inflection_point<=ub and preorder[inflection_point]<cur_num:
+            inflection_point+=1
+        root.left = helper(index+1, inflection_point-1)
+        root.right = helper(inflection_point, ub)
+        return root
+
+    return helper(0, n-1)
+
+'''
+    109. PROBLEM DESCRIPTION (https://leetcode.com/problems/is-subsequence/)
+'''
+def isSubsequence(self, s: str, t: str) -> bool:
+    s_index, t_index, s_len, t_len = 0, 0, len(s), len(t) 
+    while s_index<s_len and t_index<t_len:
+        if s[s_index]==t[t_index]:
+            s_index+=1
+        t_index+=1
+    return s_index == s_len
+
+'''
+    110. PROBLEM DESCRIPTION (https://leetcode.com/problems/detect-capital/)
+'''
+def detectCapitalUse(self, word: str) -> bool:
+    if len(word) ==1:
+        return True
+    firstCapital, secondCapital = 'A' <= word[0] <= 'Z', 'A' <= word[1] <= 'Z'
+    allLower = not firstCapital or not secondCapital
+    allHigher = firstCapital and secondCapital
+    for c in word[1:]:
+        if allLower and (c<'a' or c>'z'):
+            return False
+        if allHigher and (c<'A' or c>'Z'):
+            return False
+    return True
+
+'''
+    111. PROBLEM DESCRIPTION (https://leetcode.com/problems/sort-list/)
+'''
+def sortList(self, head: ListNode | None) -> ListNode | None:
+    if not head or not head.next:
+        return head
+    slow, fast = head, head.next
+    while fast and fast.next:
+        slow, fast = slow.next, fast.next.next
+    fast = slow.next
+    slow.next = None
+    head1 = self.sortList(head)
+    head2 = self.sortList(fast)
+    return self.mergehelper(head1, head2)
+
+def mergehelper(self, head1, head2):
+    dummyhead = ListNode(0)
+    node_iter = dummyhead
+    while head1 and head2:
+        if head1.val<head2.val:
+            node_iter.next = head1
+            head1 = head1.next
+        else:
+            node_iter.next = head2
+            head2 = head2.next
+        node_iter = node_iter.next
+    if head1:
+        node_iter.next = head1
+    else:
+        node_iter.next = head2
+    return dummyhead.next
+
+'''
+    112. PROBLEM DESCRIPTION (https://leetcode.com/problems/pascals-triangle/)
+'''
+def generate(self, numRows: int) -> list[list[int]]:
+    result = [[1]]
+    for i in range(2, numRows+1):
+        prev_row, new_row_result = result[-1], [1]
+        for col_idx in range(0, (i+1)//2-1):
+            new_row_result.append(prev_row[col_idx]+ prev_row[col_idx+1])
+        if i%2==0:
+            new_row_result = new_row_result + new_row_result[::-1]
+        else:
+            new_row_result = new_row_result + new_row_result[-2::-1]
+        result.append(new_row_result)
+    return result
+
+'''
+    113. PROBLEM DESCRIPTION (https://leetcode.com/problems/house-robber-ii/)
+'''
+def rob(self, nums: list[int]) -> int:
+    n = len(nums)
+    if n==1:
+        return nums[0]
+
+    def helper(nums, lb, ub):
+        prev_sum, cur_sum = 0, 0
+        for x in nums[lb:ub]:
+            prev_sum, cur_sum = cur_sum, max(prev_sum+x, cur_sum)
+        return cur_sum
+
+    return max(helper(nums, 0, n-1), helper(nums, 1, n))
+
+'''
+    114. PROBLEM DESCRIPTION (https://leetcode.com/problems/flipping-an-image/)
+'''
+def flipAndInvertImage(self, image: list[list[int]]) -> list[list[int]]:
+    n = len(image)
+    for row in range(n):
+        for col in range(0,n//2):
+            image[row][col], image[row][n-1-col] = 1 - image[row][n-1-col], 1 - image[row][col]
+        if n%2==1:
+            image[row][n//2]=1-image[row][n//2]
+    return image
+
+'''
+    115. PROBLEM DESCRIPTION (https://leetcode.com/problems/lexicographical-numbers/)
+'''
+def lexicalOrder(self, n: int) -> list[int]:
+    cur_num, result = 1, []
+    for _ in range(n):
+        result.append(cur_num)
+        if cur_num * 10 <= n:
+            cur_num*=10
+        else:
+            while cur_num%10==9 or cur_num==n:
+                cur_num //= 10
+            cur_num+=1
+    return result
+
+'''
+    116. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximal-square/)
+'''
+def maximalSquare(self, matrix: list[list[str]]) -> int:
+    result, m, n = 0, len(matrix), len(matrix[0])
+    dp_prev = [0]*n
+    for i in range(m):
+        dp_next = [0]*n
+        dp_next[0] = 1 if matrix[i][0]=='1' else 0
+        for j in range(1,n):
+            if matrix[i][j] == '1':
+                dp_next[j] = 1 + min([dp_next[j-1], dp_prev[j-1], dp_prev[j]])
+        dp_prev = dp_next
+        result = max(result, max(dp_next))
+    return result*result
+
+def maximalSquare(self, matrix: list[list[str]]) -> int:
+    result, m, n = 0, len(matrix), len(matrix[0])
+    height, stck = [0]*(n+1), []
+    for i in range(m):
+        stck = []
+        for j in range(n+1):
+            cur_num = matrix[i][j] if j<n else 0
+            if cur_num == '1':
+                height[j]+=1
+            else:
+                height[j] = 0
+            while stck and height[j]<=height[stck[-1]]:
+                popped_index = stck.pop()
+                width = j-1-(stck[-1] if stck else -1)
+                result = max(result, min(width, height[popped_index]))
+            stck.append(j)
+    return result*result
+    
+'''
+    117. PROBLEM DESCRIPTION (https://leetcode.com/problems/jewels-and-stones/)
+'''
+def numJewelsInStones(self, jewels: str, stones: str) -> int:
+    jewelset, result = set(jewels), 0
+    for x in stones:
+        if x in jewelset:
+            result +=1
+    return result
+
+'''
+    118. PROBLEM DESCRIPTION (https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/)
+'''
+def findMinArrowShots(self, points: list[list[int]]) -> int:
+    points.sort(key = lambda x: x[0])
+    cur_reach, result = points[0][1], 1
+    for p in points:
+        if p[0]>cur_reach:
+            result += 1
+            cur_reach = p[1]
+        else:
+            cur_reach = min(cur_reach, p[1])
+
+    return result
+
+'''
+    119. PROBLEM DESCRIPTION (https://leetcode.com/problems/132-pattern/)
+'''
+
 def main():
     print("Entering Main")
     return 0
