@@ -2852,6 +2852,359 @@ public int findMinArrowShots(int[][] points) {
 /*
     119. PROBLEM DESCRIPTION (https://leetcode.com/problems/132-pattern/)
 */
+public boolean find132pattern(int[] nums) {
+    Stack<Integer> stck = new Stack<>();
+    int min[] = new int[nums.length], n= nums.length;
+    min[0] = nums[0];
+    for(int i=1; i<n; i++)
+        min[i] = Math.min(min[i-1], nums[i]);
+    for(int i=nums.length-1; i>=0; i--)
+    {
+        int cur_num = nums[i];
+        while(!stck.isEmpty() && min[i]>=nums[stck.peek()])
+        {
+            stck.pop();
+        }
+        // System.out.println(i+" "+cur_num);
+        if(!stck.isEmpty() && cur_num>nums[stck.peek()] && cur_num>min[i])
+            return true;
+            
+        stck.push(i);
+    }
+    return false;
+}
+
+/*
+    120. PROBLEM DESCRIPTION (https://leetcode.com/problems/lemonade-change/)
+*/
+public boolean lemonadeChange(int[] bills) {
+    int num_5=0, num_10=0;
+    for(int x: bills)
+    {
+        if(x==5)
+            num_5++;
+        else if(x==10)
+        {
+            num_10++;
+            num_5--;
+        }
+        else
+        {
+            if(num_10>0)
+                num_10--;
+            else
+                num_5-=2;
+            num_5--;
+        }
+        if(num_5<0)
+            return false;
+    }
+    return true;
+}
+
+/*
+    121. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-parenthesis-string/)
+*/
+public boolean checkValidString(String s) {
+    int max_open=0, min_open=0;
+    for(char c:s.toCharArray())
+    {
+        if(c=='(')
+        {
+            max_open++;
+            min_open++;
+        }
+        else if(c==')')
+        {
+            max_open--;
+            min_open--;
+        }
+        else
+        {
+            max_open++;
+            min_open--;
+        }
+        if(max_open<0)
+            return false;
+        min_open = Math.max(min_open, 0);
+    }
+    return min_open==0;
+}
+
+/*
+    122. PROBLEM DESCRIPTION (https://leetcode.com/problems/arranging-coins/)
+*/
+public int arrangeCoins(int n) {
+    int lb = 1, ub = (int)Math.sqrt(2.0*n)+1, mid;
+    long total;
+    while(lb<=ub)
+    {
+        mid = lb+(ub-lb)/2;
+        total = (long)mid*(mid+1)/2;
+        if(total<=n)
+            lb = mid+1;
+        else
+            ub = mid-1;
+    }
+    return ub;
+}
+
+/*
+    123. PROBLEM DESCRIPTION (https://leetcode.com/problems/minesweeper/)
+*/
+public char[][] updateBoard(char[][] board, int[] click) {
+    if(board[click[0]][click[1]] == 'M')
+    {
+        board[click[0]][click[1]] = 'X';
+        return board;
+    }
+    revealhelper(click[0], click[1], board);
+    return board;
+}
+
+public void revealhelper(int row, int col, char[][] board)
+{
+    int m = board.length, n = board[0].length;
+    if(row<0 || col<0 || row>=m || col>=n || board[row][col]!='E')
+        return;
+    int dir[][] = {{1,0},{1,1},{0,1}, {0,-1}, {-1,-1}, {1,-1}, {-1, 1}, {-1,0}};
+    int count_empty = get_count_empty(dir, board, m, n, row, col);
+    if(count_empty ==0)
+    {
+        board[row][col] = 'B';
+        for(int[] d: dir)
+            revealhelper(row+d[0], col+d[1], board);
+    }
+    else
+        board[row][col] = (char)(count_empty+'0');
+}
+public int get_count_empty(int dir[][], char[][] board, int m, int n, int row, int col)
+{
+    int new_row, new_col, total_count=0;
+    for(int d[]: dir)
+    {
+        new_row = d[0]+row;
+        new_col = d[1]+col;
+        if(new_row>-1 && new_col>-1 && new_row<m && new_col<n && board[new_row][new_col]=='M')
+            total_count+=1;
+    }
+    return total_count;
+}
+
+/*
+    124. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-perfect-square/)
+*/
+public boolean isPerfectSquare(int num) {
+    int lb=1, ub = num/2, mid;
+    while(lb<ub)
+    {
+        mid = lb + (ub-lb)/2;
+        if (1.0*num/mid > mid)
+            lb = mid+1;
+        else
+            ub = mid;
+    }
+    return lb*lb == num;
+}
+
+/*
+    125. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-queens-ii/)
+*/
+public int totalNQueens(int n) {
+    boolean col[] = new boolean[n], diag1[] = new boolean[2*n-1], diag2[] = new boolean[2*n-1];
+    return solve(0, col, diag1, diag2, n);
+}
+public int solve(int row, boolean col[], boolean diag1[], boolean diag2[], int n)
+{
+    if(row==n)
+        return 1;
+
+    int total_count = 0;
+    for(int iter_col=0; iter_col<n; iter_col++)
+    {
+        if(col[iter_col] || diag1[row+iter_col] || diag2[n-1+row-iter_col])
+            continue;
+        col[iter_col] = true;
+        diag1[row+iter_col] = true;
+        diag2[n-1+row-iter_col] = true;
+        total_count += solve(row+1, col, diag1, diag2, n);
+        col[iter_col] = false;
+        diag1[iter_col+row] = false;
+        diag2[n-1+row-iter_col] = false;
+    }
+    return total_count;
+}
+
+/*
+    126. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list/)
+*/
+public ListNode deleteDuplicates(ListNode head) {
+    ListNode cur_node = head, next_node;
+    while(cur_node != null)
+    {
+        next_node = cur_node.next;
+        while(next_node!=null && next_node.val==cur_node.val)
+            next_node = next_node.next;
+        cur_node.next = next_node;
+        cur_node = cur_node.next;
+    }
+    return head;
+}
+
+/*
+    127. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/)
+*/
+public ListNode deleteDuplicates(ListNode head) {
+    ListNode dummyhead = new ListNode();
+    ListNode result_iter = dummyhead;
+    while(head!=null)
+    {
+        int cur_val = head.val;
+        if(head.next!=null && head.next.val==cur_val)
+        {
+            while(head!=null && head.val==cur_val)
+                head = head.next;
+        }
+        else
+        {
+            result_iter.next = head;
+            result_iter = result_iter.next;
+            head = head.next;
+        }
+    }
+    result_iter.next = null;
+    return dummyhead.next;
+}
+
+/*
+    128. PROBLEM DESCRIPTION (https://leetcode.com/problems/partition-list/)
+*/
+public ListNode partition(ListNode head, int x) {
+    ListNode greater_than_head = new ListNode(), less_than_head = new ListNode();
+    ListNode iter_greater_than_head = greater_than_head, iter_less_than_head = less_than_head;
+    while(head!=null)
+    {
+        if(head.val<x)
+        {
+            iter_less_than_head.next = head;
+            iter_less_than_head = iter_less_than_head.next;
+        }
+        else
+        {
+            iter_greater_than_head.next = head;
+            iter_greater_than_head = iter_greater_than_head.next;
+        }
+        head = head.next;
+    }
+    iter_less_than_head.next = greater_than_head.next;
+    iter_greater_than_head.next = null;
+    return less_than_head.next;
+}
+
+/*
+    129. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximal-rectangle/)
+*/
+public int maximalRectangle(char[][] matrix) {
+    int m = matrix.length, n = matrix[0].length, result = 0, popped_index, cur_length;
+    int height[] = new int[n+1];
+    Stack<Integer> stck;
+    for(int i=0; i<m;i++)
+    {
+        stck = new Stack<>();
+        for(int j=0;j<=n;j++)
+        {
+            int cur_value = (j<n?matrix[i][j]-'0':-1);
+            if(cur_value==1)
+                height[j]++;
+            else if(j<n)
+                height[j]=0;
+            while(!stck.isEmpty() && height[j]<=height[stck.peek()])
+            {
+                popped_index = stck.pop();
+                cur_length = j-1-(stck.isEmpty()?-1:stck.peek());
+                result = Math.max(result, cur_length*height[popped_index]);
+            }
+            stck.push(j);
+        }
+    }
+    return result;
+}
+
+/*
+    130. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list
+*/
+public ListNode reverseBetween(ListNode head, int left, int right) {
+    ListNode dummyhead = new ListNode(), prev; 
+    dummyhead.next = head;
+    head = dummyhead;
+    for(int i=1; i<left; i++)
+        head = head.next;
+    prev = head;
+    head = head.next;
+    for(int i=0; i<right-left; i++)
+    {
+        ListNode temp = head.next;
+        head.next = temp.next;
+        temp.next = prev.next;
+        prev.next = temp;
+    }
+    return dummyhead.next;
+}
+
+/*
+    131. PROBLEM DESCRIPTION (https://leetcode.com/problems/array-partition/)
+*/
+public int arrayPairSum(int[] nums) {
+    Arrays.sort(nums);
+    int total_sum = 0;
+    for(int i=0; i<nums.length; i+=2)
+        total_sum += nums[i];
+    return total_sum;
+}
+
+/*
+    132. PROBLEM DESCRIPTION (https://leetcode.com/problems/super-ugly-number/)
+*/
+public int nthSuperUglyNumber(int n, int[] primes) {
+    record Tuple(long product, int prime, int index){};
+
+    PriorityQueue<Tuple> pq = new PriorityQueue<>(Comparator.comparingLong(Tuple::product).thenComparingInt(Tuple::prime));
+    int cur_idx = 1;
+    int result[] = new int[n];
+    result[0] = 1;
+    for(int p: primes)
+        pq.offer(new Tuple(1, p, 0));
+    while(cur_idx<n)
+    {
+        Tuple popped_ele = pq.poll();
+        if(popped_ele.product()!=result[cur_idx-1])
+            result[cur_idx++] = (int)popped_ele.product();
+        
+        pq.offer(new Tuple((long)popped_ele.prime()*result[popped_ele.index()], popped_ele.prime(), popped_ele.index+1 ));
+    }
+    return result[n-1];
+}
+
+public int nthSuperUglyNumber(int n, int[] primes) {
+    int result[]= new int[n], len= primes.length;
+    result[0]=1;
+    int count_idx[] = new int[len];
+    for(int i=1; i<n;i++)
+    {
+        long min_num_now = (long)primes[0] * result[count_idx[0]];
+        for(int j=1; j<len; j++)
+            min_num_now = Math.min(min_num_now, (long)primes[j]*result[count_idx[j]]);
+        for(int j=0; j<len; j++)
+            if(min_num_now == (long)primes[j]*result[count_idx[j]])
+                count_idx[j]++;
+        result[i] = (int)min_num_now;
+    }
+    return result[n-1];
+}
+
+/*
+    133. PROBLEM DESCRIPTION (https://leetcode.com/problems/image-smoother/)
+*/
 
 public static void main(String args[])
 {

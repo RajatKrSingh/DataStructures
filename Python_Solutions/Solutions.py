@@ -2160,6 +2160,262 @@ def findMinArrowShots(self, points: list[list[int]]) -> int:
 '''
     119. PROBLEM DESCRIPTION (https://leetcode.com/problems/132-pattern/)
 '''
+def find132pattern(self, nums: list[int]) -> bool:
+    mystck = []
+    second = None
+    for x in reversed(nums):
+        if second and x<second:
+            return True
+        while mystck and x>mystck[-1]:
+            second = mystck.pop()
+        mystck.append(x)
+    return False
+
+'''
+    120. PROBLEM DESCRIPTION (https://leetcode.com/problems/lemonade-change/)
+'''
+def lemonadeChange(self, bills: list[int]) -> bool:
+    num_5, num_10 = 0, 0
+    for x in bills:
+        if x == 5:
+            num_5+=1
+        elif x == 10:
+            num_10+=1
+            num_5-=1
+        else:
+            if num_10 > 0:
+                num_10-=1
+                num_5-=1
+            else: 
+                num_5-=3
+        if num_5<0:
+            return False
+    return True
+
+'''
+    121. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-parenthesis-string/)
+'''
+def checkValidString(self, s: str) -> bool:
+    max_open, min_open = 0, 0
+    for x in s:
+        if x=='(':
+            max_open+=1
+            min_open+=1
+        elif x==')':
+            max_open-=1
+            min_open-=1
+        else:
+            max_open+=1
+            min_open-=1
+        if max_open<0:
+            return False
+        min_open = max(min_open, 0)
+    return min_open==0
+
+'''
+    122. PROBLEM DESCRIPTION (https://leetcode.com/problems/arranging-coins/)
+'''
+def arrangeCoins(self, n: int) -> int:
+    lb, ub = 1, n//2+1
+    while lb<=ub:
+        mid = (lb+ub)//2
+        total = mid*(mid+1)//2
+        if total<=n:
+            lb = mid+1
+        else:
+            ub = mid-1
+    return ub
+
+'''
+    123. PROBLEM DESCRIPTION (https://leetcode.com/problems/minesweeper/)
+'''
+def updateBoard(self, board: List[List[str]], click: List[int]) -> List[List[str]]:
+    self.m, self.n, self.board, self.dir = len(board), len(board[0]), board, [[0,1],[0,-1], [1,1], [1,-1], [1,0], [-1,0], [-1,1], [-1,-1]]
+    if board[click[0]][click[1]] == 'M':
+        board[click[0]][click[1]] = 'X'
+        return board
+
+    def get_adjacent_count(row, col):
+        total_count =0
+        for d in self.dir:
+            new_row, new_col = row+d[0], col+d[1]
+            if new_row>-1 and new_col>-1 and new_row<self.m and new_col<self.n and self.board[new_row][new_col]=='M':
+                total_count+=1
+        return total_count
+
+    def revealsquare(row, col):
+        count_zeros = get_adjacent_count(row, col)
+        if count_zeros ==0:
+            self.board[row][col] = 'B'
+            for d in self.dir:
+                new_row, new_col = row+d[0], col+d[1]
+                if new_row>-1 and new_col>-1 and new_row<self.m and new_col<self.n and self.board[new_row][new_col]=='E':
+                    revealsquare(new_row, new_col)
+        else:
+            self.board[row][col] = str(count_zeros)
+    revealsquare(click[0], click[1])
+    return board
+
+'''
+    124. PROBLEM DESCRIPTION (https://leetcode.com/problems/valid-perfect-square/)
+'''
+def isPerfectSquare(self, num: int) -> bool:
+    lb, ub = 1, num//2
+    while lb<ub:
+        mid = (lb+ub)//2
+        if mid*mid>=num:
+            ub = mid
+        else:
+            lb = mid+1
+    return lb*lb==num
+
+'''
+    125. PROBLEM DESCRIPTION (https://leetcode.com/problems/n-queens-ii/)
+'''
+def totalNQueens(self, n: int) -> int:
+    self.n, col, diag1, diag2 = n, 0, 0, 0
+    
+    def solve(row, col, diag1, diag2):
+        if row==self.n:
+            return 1
+        total_count = 0
+        for iter_col in range(0, self.n):
+            col_bit = 1<<iter_col
+            diag1_bit = 1<<(row+iter_col)
+            diag2_bit = 1<<(self.n-1+row-iter_col)
+            if  (col & col_bit) or (diag1 & diag1_bit) or (diag2 & diag2_bit): 
+                continue    
+            total_count += solve(row+1, col|col_bit, diag1|diag1_bit, diag2|diag2_bit)
+        return total_count
+
+    return solve(0, col, diag1, diag2)
+
+'''
+    126. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list/)
+'''
+def deleteDuplicates(self, head: ListNode | None) -> ListNode | None:
+    cur_node = head
+
+    while cur_node:
+        next_node = cur_node.next
+        while next_node and next_node.val==cur_node.val:
+            next_node = next_node.next
+        cur_node.next = next_node
+        cur_node = cur_node.next
+
+    return head
+
+'''
+    127. PROBLEM DESCRIPTION (https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/)
+'''
+def deleteDuplicates(self, head: ListNode | None) -> ListNode | None:
+    dummyhead = ListNode()
+    result_iter = dummyhead
+    while head:
+        cur_val = head.val
+        if head.next and head.next.val==cur_val:
+            while head and head.val==cur_val:
+                head = head.next
+        else:
+            result_iter.next = head
+            head = head.next
+            result_iter = result_iter.next
+    result_iter.next = None
+    return dummyhead.next
+
+'''
+    128. PROBLEM DESCRIPTION (https://leetcode.com/problems/partition-list/)
+'''
+def partition(self, head: ListNode | None, x: int) -> ListNode | None:
+    less_than_head, more_than_head = ListNode(), ListNode()
+    iter_less_than, iter_more_than = less_than_head, more_than_head
+    while head:
+        if head.val<x:
+            iter_less_than.next = head
+            iter_less_than = iter_less_than.next
+        else:
+            iter_more_than.next = head
+            iter_more_than = iter_more_than.next
+        head = head.next
+    iter_less_than.next = more_than_head.next
+    iter_more_than.next = None
+    return less_than_head.next
+
+'''
+    129. PROBLEM DESCRIPTION (https://leetcode.com/problems/maximal-rectangle/)
+'''
+def maximalRectangle(self, matrix: list[list[str]]) -> int:
+    m, n, result = len(matrix), len(matrix[0]), 0
+    height = [0]*(n+1)
+    for i in range(m):
+        stck = []
+        for j in range(n+1):
+            cur_val = '0' if j==n else matrix[i][j]
+            if cur_val == '1':
+                height[j]+=1
+            else:
+                height[j]=0
+            while stck and height[j]<=height[stck[-1]]:
+                popped_idx = stck.pop()
+                cur_len = j - 1 -(stck[-1] if stck else -1)
+                result = max(result, cur_len*height[popped_idx])
+            stck.append(j)
+    return result
+
+'''
+    130. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-linked-list-ii/)
+'''
+def reverseBetween(self, head: ListNode | None, left: int, right: int) -> ListNode | None:
+    dummyhead = ListNode()
+    dummyhead.next, head = head, dummyhead 
+    self.last_node, self.next_node = None, None
+    for i in range(left-1):
+        head = head.next
+
+    def reverse_helper(head, num_nodes):
+        if num_nodes == 0:
+            self.prev_node = head
+            self.next_node = head.next if head else None
+            return head
+        next_reversed_node = reverse_helper(head.next, num_nodes-1)
+        self.prev_node.next = head
+        self.prev_node = head
+        return next_reversed_node
+
+    head.next = reverse_helper(head.next, right-left)
+    self.prev_node.next = self.next_node
+    return dummyhead.next
+
+'''
+    131. PROBLEM DESCRIPTION (https://leetcode.com/problems/array-partition/)
+'''
+def arrayPairSum(self, nums: List[int]) -> int:
+    total = 0
+    nums.sort()
+    for i in range(0, len(nums), 2):
+        total+=nums[i]
+    return total
+
+'''
+    132. PROBLEM DESCRIPTION (https://leetcode.com/problems/super-ugly-number/)
+'''
+def nthSuperUglyNumber(self, n: int, primes: list[int]) -> int:
+    result, pq, num_elements = [1], [0]*len(primes), 1
+    for p in primes:
+        pq.append((1, p, 1))
+    heapq.heapify(pq)
+    while num_elements < n:
+        popped_product, popped_prime, popped_prime_count = heapq.heappop(pq)
+
+        if popped_product != result[-1]:
+            result.append(popped_product)
+            num_elements +=1
+        heapq.heappush(pq, (popped_prime*result[popped_prime_count-1], popped_prime, popped_prime_count+1))
+    return result[-1]
+
+'''
+    133. PROBLEM DESCRIPTION (https://leetcode.com/problems/image-smoother/)
+'''
 
 def main():
     print("Entering Main")
