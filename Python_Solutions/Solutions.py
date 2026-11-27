@@ -2416,6 +2416,216 @@ def nthSuperUglyNumber(self, n: int, primes: list[int]) -> int:
 '''
     133. PROBLEM DESCRIPTION (https://leetcode.com/problems/image-smoother/)
 '''
+def imageSmoother(self, img: list[list[int]]) -> list[list[int]]:
+    m, n, dir = len(img), len(img[0]), [[1,0],[1,-1],[1,1],[-1,0],[-1,-1],[-1,1],[0,1],[0,-1]]
+    result = [[0]*n for _ in range(m)]
+    
+    def average_helper(row, col):
+        cur_total, neighbor_count = img[row][col], 1
+        for d in dir:
+            new_row, new_col = d[0]+row, d[1]+col
+            if new_row>-1 and new_row<m and new_col<n and new_col>-1:
+                cur_total += img[new_row][new_col]
+                neighbor_count +=1
+        return cur_total//neighbor_count
+
+    
+    for i in range(m):
+        for j in range(n):
+            result[i][j] = average_helper(i, j)
+    return result
+
+'''
+    134. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-tilt/)
+'''
+def findTilt(self, root: Optional[TreeNode]) -> int:
+    self.tilt = 0
+    def tilt_helper(root) -> int: #(tilt, sum)
+        if not root:
+            return 0
+        leftsum, rightsum = tilt_helper(root.left), tilt_helper(root.right)
+        self.tilt += abs(leftsum-rightsum)
+        return leftsum+rightsum+root.val
+    tilt_helper(root)
+    return self.tilt
+    
+'''
+    135. PROBLEM DESCRIPTION (https://leetcode.com/problems/distribute-candies/)
+'''
+def distributeCandies(self, candyType: list[int]) -> int:
+    return min(len(set(candyType)), len(candyType)//2)
+
+'''
+    136. PROBLEM DESCRIPTION (https://leetcode.com/problems/trapping-rain-water/)
+'''
+def trap(self, height: list[int]) -> int:
+    n, stck, total_water = len(height), [], 0
+    for i in range(n):
+        cur_height = height[i]
+        while stck and cur_height>=height[stck[-1]]:
+            popped_idx = stck.pop()
+            if stck:
+                cur_len, cur_water_height = i - stck[-1]-1, min(cur_height, height[stck[-1]]) - height[popped_idx]
+                total_water += cur_len*cur_water_height
+        stck.append(i)
+    return total_water
+
+'''
+    137. PROBLEM DESCRIPTION (https://leetcode.com/problems/first-unique-character-in-a-string/)
+'''
+def firstUniqChar(self, s: str) -> int:
+    mymap = defaultdict(int)
+    for c in s:
+        mymap[c]+=1
+    for idx, c in enumerate(s):
+        if mymap[c]==1:
+            return idx
+    return -1
+
+'''
+    138. PROBLEM DESCRIPTION (https://leetcode.com/problems/perfect-squares/)
+'''
+def numSquares(self, n: int) -> int:
+    dp = [0]*(n+1)
+    dp[0] = 0
+    for idx in range(1, n+1):
+        dp[idx] = idx
+        for perfect_square in range(1, math.isqrt(idx)+1):
+            cur_square = perfect_square*perfect_square
+            dp[idx]=min(dp[idx], 1+dp[idx-cur_square])
+    return dp[n]
+
+'''
+    139. PROBLEM DESCRIPTION (https://leetcode.com/problems/path-sum/)
+'''
+def hasPathSum(self, root: TreeNode | None, targetSum: int) -> bool:
+    if not root:
+        return False
+    cur_num = targetSum-root.val
+    if cur_num==0 and not root.left and not root.right:
+        return True
+    return self.hasPathSum(root.left, cur_num) | self.hasPathSum(root.right, cur_num)
+
+'''
+    140. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-k-sorted-lists/)
+'''
+def mergeKLists(self, lists: list[ListNode | None]) -> ListNode | None:
+        
+    def mergelists(left, right)->ListNode:
+        dummynode = ListNode()
+        head = dummynode
+        while left and right:
+            if left.val <= right.val:
+                dummynode.next = left
+                left = left.next
+            else:
+                dummynode.next = right
+                right = right.next
+            dummynode = dummynode.next
+        dummynode.next = left if left else right
+        return head.next
+
+    def mergelisthelper(lists, lb, ub) -> ListNode:
+        if lb==ub:
+            return lists[lb]
+        mid = (lb+ub)//2
+        leftmerged = mergelisthelper(lists, lb, mid)
+        rightmerged = mergelisthelper(lists, mid+1, ub)
+
+        return mergelists(leftmerged, rightmerged)
+
+    if not lists:
+        return None
+    return mergelisthelper(lists, 0, len(lists)-1)
+
+'''
+    141. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-increasing-path-in-a-matrix/)
+'''
+def longestIncreasingPath(self, matrix: list[list[int]]) -> int:
+    m, n, answer, directions = len(matrix), len(matrix[0]), 0, [[0,1],[0,-1],[-1,0],[1,0]]
+    self.memo = [[0]*n for _ in range(m)]
+    
+    def helper(row, col):
+        if self.memo[row][col]>0:
+            return self.memo[row][col]
+        cur_num, cur_max_path = matrix[row][col], 0
+        for d in directions:
+            new_row, new_col = d[0]+row, d[1]+col
+            if new_row>-1 and new_row<m and new_col>-1 and new_col<n and matrix[new_row][new_col]>cur_num:
+                cur_max_path = max(cur_max_path, helper(new_row, new_col))
+        self.memo[row][col] = 1+cur_max_path
+        return self.memo[row][col]
+    
+    for i in range(m):
+        for j in range(n):
+            answer = max(answer, helper(i, j))
+    return answer
+
+'''
+    142. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-arrays-ii/)
+'''
+def intersect(self, nums1: list[int], nums2: list[int]) -> list[int]:
+    mymap, answer = defaultdict(int), []
+    for x in nums1:
+        mymap[x]+=1
+    for x in nums2:
+        if mymap[x]:
+            answer.append(x)
+            mymap[x]-=1
+    return answer
+
+'''
+    143. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-string/)
+'''
+def reverseString(self, s: list[str]) -> None:
+    """
+    Do not return anything, modify s in-place instead.
+    """
+    l = len(s)
+    for i in range(l//2):
+        s[i], s[l-i-1] = s[l-i-1], s[i]
+
+'''
+    144. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-intervals/)
+'''
+def merge(self, intervals: list[list[int]]) -> list[list[int]]:
+    intervals.sort(key=lambda x: x[0])
+    current_end, result, current_start = intervals[0][1], [], intervals[0][0] 
+    for interval in intervals[1:]:
+        if current_end<interval[0]:
+            result.append([current_start, current_end])
+            current_start, current_end = interval[0], interval[1]
+        else:
+            current_end = max(current_end, interval[1])
+    result.append([current_start, current_end])
+    return result
+
+'''
+    145. PROBLEM DESCRIPTION (https://leetcode.com/problems/median-of-two-sorted-arrays/)
+'''
+def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:
+    len1, len2 = len(nums1), len(nums2)
+    if len1>len2:
+        return self.findMedianSortedArrays(nums2,nums1)
+    lb, ub = 0, 2*len1
+    while lb<=ub:
+        mid1 = (lb+ub)//2
+        mid2 = len1+len2-mid1
+        L1 = float(-inf) if mid1==0 else nums1[(mid1-1)//2]
+        L2 = float(-inf) if mid2==0 else nums2[(mid2-1)//2]
+        R1 = float(inf) if mid1==2*len1 else nums1[mid1//2]
+        R2 = float(inf) if mid2==2*len2 else nums2[mid2//2]
+        if L1>R2:
+            ub = mid1-1
+        elif L2>R1:
+            lb = mid1+1
+        else:
+            return (min(R1,R2)+max(L1, L2))/2
+    return -1
+
+'''
+    146. PROBLEM DESCRIPTION (https://leetcode.com/problems/excel-sheet-column-title/)
+'''
 
 def main():
     print("Entering Main")

@@ -3205,6 +3205,279 @@ public int nthSuperUglyNumber(int n, int[] primes) {
 /*
     133. PROBLEM DESCRIPTION (https://leetcode.com/problems/image-smoother/)
 */
+public int[][] imageSmoother(int[][] img) {
+    int m = img.length, n = img[0].length, dir[][] = {{0,1},{0,-1},{1,0},{1,-1},{-1,0},{-1,-1},{1,1},{-1,1}};
+    int result[][] = new int[m][n];
+    for(int i=0; i<m; i++)
+        for (int j=0;j<n;j++)
+            result[i][j] = averaging_helper(img, i, j, dir, m, n);
+    return result;
+}
+public int averaging_helper(int[][] img, int row, int col, int dir[][], int m, int n)
+{
+    int total_neighbor_count = 1, total_sum = img[row][col], new_row, new_col;
+    for(int d[]: dir)
+    {
+        new_row = d[0]+row;
+        new_col = d[1]+col;
+        if(new_row>-1 && new_col>-1 && new_row<m && new_col<n)
+        {
+            total_sum += img[new_row][new_col];
+            total_neighbor_count += 1;
+        }
+    }
+    return total_sum/total_neighbor_count;
+}
+
+/*
+    134. PROBLEM DESCRIPTION (https://leetcode.com/problems/binary-tree-tilt/)
+*/
+int total_tilt = 0;
+public int findTilt(TreeNode root) {
+    helper(root);
+    return total_tilt;
+}
+public int helper(TreeNode root)
+{
+    if(root == null)
+        return 0;
+    int leftsum = helper(root.left), rightsum = helper(root.right);
+    total_tilt += Math.abs(leftsum-rightsum);
+    return leftsum+rightsum+root.val; 
+}
+
+/*
+    135. PROBLEM DESCRIPTION (https://leetcode.com/problems/distribute-candies/)
+*/
+public int distributeCandies(int[] candyType) {
+    HashSet<Integer> hset = new HashSet<>();
+    for(int x: candyType)
+        hset.add(x);
+    return Math.min(hset.size(), candyType.length/2);
+}
+
+/*
+    136. PROBLEM DESCRIPTION (https://leetcode.com/problems/trapping-rain-water/)
+*/
+public int trap(int[] height) {
+    int left=0, right=height.length-1, result=0;
+    int left_max_encountered = height[left] , right_max_encountered = height[right];
+    while(left<right)
+    {
+        if(height[left]<=height[right])
+        {
+            left_max_encountered = Math.max(left_max_encountered, height[left]);
+            result+=left_max_encountered-height[left];
+            left++;
+        }
+        else
+        {
+            right_max_encountered = Math.max(right_max_encountered, height[right]);
+            result+=right_max_encountered-height[right];
+            right--;
+        }
+    }
+    return result;
+}
+
+/*
+    137. PROBLEM DESCRIPTION (https://leetcode.com/problems/first-unique-character-in-a-string/)
+*/
+public int firstUniqChar(String s) {
+    int char_map[] = new int[26];
+    char[] s_arr = s.toCharArray();
+    for(char c: s_arr)
+        char_map[c-'a']++;
+    for(int i=0; i<s_arr.length; i++)
+    {
+        char c = s_arr[i];
+        if(char_map[c-'a']==1)
+            return i;
+    }
+    return -1;
+}
+
+/*
+    138. PROBLEM DESCRIPTION (https://leetcode.com/problems/perfect-squares/)
+*/
+public int numSquares(int n) {
+    int dp[] = new int[n+1], cur_square;
+    for(int i=1;i<=n;i++)
+    {
+        dp[i] = i;
+        for(int j=1; j*j<=i;j++)
+        {
+            cur_square = j*j;
+            dp[i] = Math.min(dp[i], 1+dp[i-cur_square]);
+        }
+    }
+    return dp[n];
+}
+
+/*
+    139. PROBLEM DESCRIPTION (https://leetcode.com/problems/path-sum/)
+*/
+public boolean hasPathSum(TreeNode root, int targetSum) {
+    if(root==null)
+        return false;
+    int cur_sum = targetSum-root.val;
+    if(cur_sum==0 & root.left==null && root.right==null)
+        return true;
+    return hasPathSum(root.left, cur_sum) | hasPathSum(root.right, cur_sum);
+}
+
+/*
+    140. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-k-sorted-lists/)
+*/
+public ListNode mergeKLists(ListNode[] lists) {
+    if(lists.length==0)
+        return null;
+    return mergeHelper(lists, 0, lists.length-1);
+}
+
+public ListNode merge(ListNode left, ListNode right)
+{
+    ListNode dummy = new ListNode();
+    ListNode head = dummy;
+    while(left!=null && right!=null)
+    {
+        if(left.val<=right.val)
+        {
+            dummy.next = left;
+            left = left.next;
+        }
+        else
+        {
+            dummy.next = right;
+            right = right.next;
+        }
+        dummy = dummy.next;
+    }
+    dummy.next = (left==null?right:left);
+    return head.next;
+}
+
+public ListNode mergeHelper(ListNode[] lists, int lb, int ub)
+{
+    if(lb==ub)
+        return lists[lb];
+    int mid = (lb+ub)/2;
+    ListNode left = mergeHelper(lists, lb, mid), right = mergeHelper(lists, mid+1, ub);
+    return merge(left, right);
+}
+
+/*
+    141. PROBLEM DESCRIPTION (https://leetcode.com/problems/longest-increasing-path-in-a-matrix/)
+*/
+public int longestIncreasingPath(int[][] matrix) {
+    int m=matrix.length, n=matrix[0].length, longest_path = 0, dir[][]={{1,0},{0,1},{-1,0},{0,-1}};
+    int memo[][] = new int[m][n];
+    for(int i=0;i<m;i++)
+        Arrays.fill(memo[i],-1);
+    for(int i=0; i<m; i++)
+        for(int j=0; j<n; j++)
+            longest_path = Math.max(longest_path, helper(matrix,i,j, dir,  m,  n, memo));
+    return longest_path;
+}
+
+public int helper(int[][] matrix, int row, int col, int[][] dir, int m, int n, int[][] memo)
+{
+    if(memo[row][col]>-1)
+        return memo[row][col];
+    int cur_max_path = 0, cur_num = matrix[row][col];
+    for(int d[]: dir)
+    {
+        int new_row = d[0]+row, new_col=d[1]+col;
+        if(new_row>-1 && new_col>-1 && new_row<m && new_col<n && matrix[new_row][new_col]>cur_num)
+            cur_max_path = Math.max(cur_max_path, helper(matrix, new_row, new_col, dir, m, n, memo));
+    }
+    memo[row][col] = cur_max_path+1;
+    return memo[row][col];
+}
+
+/*
+    142. PROBLEM DESCRIPTION (https://leetcode.com/problems/intersection-of-two-arrays-ii/)
+*/
+public int[] intersect(int[] nums1, int[] nums2) {
+    HashMap<Integer, Integer> hmap = new HashMap<>();
+    int answer[] = new int[nums1.length], index=0;
+    for(int x: nums1)
+        hmap.put(x, hmap.getOrDefault(x, 0)+1);
+    for(int x: nums2)
+    {
+        if(hmap.getOrDefault(x, 0)>0)
+        {
+            hmap.put(x, hmap.get(x)-1);
+            answer[index++] = x;
+        }
+    }
+    return Arrays.copyOf(answer, index);
+}
+
+/*
+    143. PROBLEM DESCRIPTION (https://leetcode.com/problems/reverse-string/)
+*/
+public void reverseString(char[] s) {
+    int n=s.length;
+    char temp;
+    for(int i=0; i<n/2; i++)
+    {
+        temp = s[i];
+        s[i] = s[n-1-i];
+        s[n-1-i] = temp;
+    }
+}
+
+/*
+    144. PROBLEM DESCRIPTION (https://leetcode.com/problems/merge-intervals/)
+*/
+public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a,b)->(Integer.compare(a[0],b[0])));
+    int current_start = intervals[0][0], current_end = intervals[0][1], answer[][] = new int[intervals.length][2], index = 0;
+    for(int interval[]: intervals)
+    {
+        if(interval[0]>current_end)
+        {
+            answer[index++] = new int[]{current_start, current_end};
+            current_start = interval[0];
+            current_end = interval[1];
+        }
+        else
+            current_end = Math.max(current_end, interval[1]);
+    }
+    answer[index++] = new int[]{current_start, current_end};
+    return Arrays.copyOf(answer, index);
+}
+
+/*
+    145. PROBLEM DESCRIPTION (https://leetcode.com/problems/median-of-two-sorted-arrays/)
+*/
+public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    int n1=nums1.length, n2=nums2.length, L1, R1, L2, R2, mid1, mid2;
+    if(n1>n2)
+        return findMedianSortedArrays(nums2, nums1);
+    int lb=0, ub = 2*n1, mid;
+    while(lb<=ub)
+    {
+        mid1 = (lb+ub)/2;
+        mid2 = n1+n2-mid1;
+        L1 = mid1==0?Integer.MIN_VALUE:nums1[(mid1-1)/2];
+        L2 = mid2==0?Integer.MIN_VALUE:nums2[(mid2-1)/2];
+        R1 = mid1==2*n1?Integer.MAX_VALUE:nums1[mid1/2];
+        R2 = mid2==2*n2?Integer.MAX_VALUE:nums2[mid2/2];
+        if(R2<L1)
+            ub = mid1-1;
+        else if(R1<L2)
+            lb = mid1+1;
+        else
+            return (double)(Math.min(R1,R2) + Math.max(L1,L2))/2.0;
+    }
+    return -1;
+}
+
+/*
+    146. PROBLEM DESCRIPTION (https://leetcode.com/problems/excel-sheet-column-title/)
+*/
 
 public static void main(String args[])
 {
